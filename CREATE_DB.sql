@@ -82,6 +82,7 @@ INSERT into groups (group_info) values ('the cool group');
 INSERT into excluded_groups (uid_day, uid_group) values (1,1);
 
 INSERT into students (student_info) values ('Johnny');
+INSERT into students (student_info) values ('William')
 INSERT into students (student_info) values ('Derp');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
