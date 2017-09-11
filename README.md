@@ -24,7 +24,7 @@ npm install
 ```
 A new folder called `node_modules` should magically appear.
 
-Before `server.js` can be run, the MySQL server must be formatted properly or else `server.js` won't know what the fuck is going on. To do this, log into your MySQL server with `mysql -u <YOUR_USERNAME> -p` and enter your password. You should see `mysql>`. If you don't, then your fucked. The `CREATE_DB.sql` file can now be run to create a database with a table. **Very important:** This will automatically change your root password to `root` so that `server.js` knows how the fuck to access the MySQL server.
+Before `server.js` can be run, the MySQL server must be formatted properly or else `server.js` won't know what the fuck is going on. To do this, log into your MySQL server with `mysql -u <YOUR_USERNAME> -p` and enter your password. You should see `mysql>`. If you don't, then you’re fucked. The `CREATE_DB.sql` file can now be run to create a database with a table. **Very important:** This will automatically change your root password to `root` so that `server.js` knows how the fuck to access the MySQL server.
 
 You can run some test queries if you're a smug bastard to see if everything is functioning properly.
 
