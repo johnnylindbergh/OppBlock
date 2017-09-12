@@ -11,12 +11,14 @@
     "url": "git+https://github.com/johnnylindbergh/OppBlock.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/johnnylindbergh/OppBlock/issues"
   },
   "homepage": "https://github.com/johnnylindbergh/OppBlock#readme",
   "dependencies": {
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "moment": "^2.18.1",
+    "node-mysql": "^0.4.2"
   }
 }
