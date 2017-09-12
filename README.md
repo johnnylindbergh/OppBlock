@@ -1,8 +1,8 @@
 # OppBlock #
 OppBlock service for St. Anne's Belfield School 
 
-Creators: William Du, Hewson Duffy, Milo Last-Yuen, Johnny Lindbergh, Conrad MacKethan, and Jerry Yao
-=======
+##### Creators: William Du, Hewson Duffy, Milo Last-Yuen, Johnny Lindbergh, Conrad MacKethan, and Jerry Yao
+
 # OppBlock
 
 OppBlock service for St. Anne's Belfield School 
