@@ -33,3 +33,36 @@ con.end();
 var server = app.listen(8080, function () {
   console.log('OppBlock server listening on port %s', server.address().port);
 });
+//Function gets Offerings and their teachers from database;
+//Returns list ('offerList') of Offering objects, with all necessary properties
+function getOfferings() {
+  function Offering(uid, name, description, maxSize, recurring, teacher) {
+    this.uid = uid;
+    this.name = name;
+    this.description = description;
+    this.maxSize = maxSize;
+    this.recur = recurring;
+    this.teacher = teacher;
+  }
+  var offerList = [];
+  con.query('SELECT * FROM offerings').on('data', 
+    function(row){
+      var offerList.size() = new Offering(row.uid_offering, row.name, row.description, row.max_size, row.recurring, row.uid_teacher);
+      offerList.push(offerList.size());
+    }).on('end', function() {
+      con.query('SELECT * FROM teachers').on('data',
+        function(row) {
+          for(var i=0; i<offerList.size(); i++) {
+            if(row.uid_teacher == offerList[i].teacher) {
+              offerList[i].teacher = row.teacher_info;
+            };
+          };
+        }).on('end', function() {
+          return offerList;
+        })
+    })
+};
+//takes in the student uid, offering uid and day uid
+function saveOffering(day, student, offering) {
+  con.query('INSERT INTO choices (uid_day, uid_student, uid_offering) VALUES ($1, $2, $3)', [day, student, offering]);
+};
