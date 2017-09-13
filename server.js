@@ -66,27 +66,41 @@ function OppBlockCalendar(name, DayArray, recurring) {
 function getUidFromValue(tableType, value, callback) {
 	if (tableType == "teachers"){
 		con.query('SELECT uid_teacher FROM teachers WHERE name = ?', [value], function(err, results) {
-			callback(results[0].uid_teacher)       
+			if (results.length > 0){
+				callback(results[0].uid_teacher);
+			}else{
+				callback(null); 
+			}    
 		});
 	}
 
 	if (tableType == "students"){
 		con.query('SELECT uid_student FROM students WHERE name = ?', [value], function(err, results) {
-			callback(results[0].uid_student)       
+			if (results.length > 0){
+				callback(results[0].uid_student);
+			}else{
+				callback(null); 
+			}    
 		});
 	}
 
 	if (tableType == "opp_block_day"){
-		value = moment(value).format('YYYY-MM-DD');
-		console.log("formatted: "+value);
-		con.query('SELECT uid_day FROM opp_block_day WHERE day = ?', [value], function(err, results) {
-			callback(results[0].opp_block_day)       
+		valueFormatted = moment(value).format('YYYY-MM-DD');
+		console.log("formatted: "+valueFormatted);
+		con.query('SELECT uid_day FROM opp_block_day WHERE day = ?', [valueFormatted], function(err, results) {
+			console.log(results,err);
+			if (results.length > 0){
+				console.log(results,err);
+				callback(results[0].uid_day);  
+			}else{
+				callback(null); 
+			}     
 		});
 	}
 
 }
 
-getUidFromValue("opp_block_day", "august 20 1999 2:00", function(res){
+getUidFromValue("opp_block_day", "08/20/1999", function(res){
 	console.log("this:"+res+".");
 });
 
