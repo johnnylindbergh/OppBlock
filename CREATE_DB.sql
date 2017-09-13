@@ -7,7 +7,7 @@ USE opp_block;
 
 CREATE TABLE  opp_block_day (
     uid_day INT NOT NULL AUTO_INCREMENT,
-    day DATETIME,
+    day DATE,
     PRIMARY KEY (uid_day)
 );
 
@@ -34,7 +34,7 @@ CREATE TABLE teachers (
 CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(32),
-    arrived TINYINT(1),
+    arrived TINYINT(1) DEFAULT 0,
     PRIMARY KEY (uid_student)
 );
 
@@ -62,7 +62,7 @@ CREATE TABLE offerings (
     FOREIGN KEY (uid_teacher) REFERENCES teachers(uid_teacher)
 );
 
-CREATE TABLE calender (
+CREATE TABLE calendar (
     uid_day INT,
     uid_offering INT,
     FOREIGN KEY (uid_day) REFERENCES opp_block_day(uid_day),
@@ -79,10 +79,10 @@ CREATE TABLE choices (
 
 );
 
-INSERT into opp_block_day (day) values ('1999-08-20 2:00:00.0');
-INSERT into opp_block_day (day) values ('2017-09-1 2:00:00.0');
-INSERT into opp_block_day (day) values ('2017-09-2 2:00:00.0');
-INSERT into opp_block_day (day) values ('2017-09-3 2:00:00.0');
+INSERT into opp_block_day (day) values ('1999-08-20');
+INSERT into opp_block_day (day) values ('2017-09-1');
+INSERT into opp_block_day (day) values ('2017-09-2');
+INSERT into opp_block_day (day) values ('2017-09-3');
 
 
 INSERT into teachers (name, teacher_info) values ('Mr. Minster', "he's a cool guy");
@@ -99,8 +99,8 @@ INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
 
 INSERT into offerings (name, max_size, uid_teacher, recurring) values ("The Minster Opp Block", 0, 1, 0);
-INSERT into calender (uid_day, uid_offering) values (1,1);
-INSERT into calender (uid_day, uid_offering) values (2,1);
+INSERT into calendar (uid_day, uid_offering) values (1,1);
+INSERT into calendar (uid_day, uid_offering) values (2,1);
 
 INSERT into choices (uid_day, uid_student) values (1,1);
 INSERT into choices (uid_day, uid_student) values (1,2);
