@@ -54,8 +54,7 @@ CREATE TABLE offerings (
     uid_offering INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(32),
     max_size INT,
-    location VARCHAR(32),
-    materials VARCHAR(32),
+    description TEXT,
     uid_teacher INT,
     recurring TINYINT(1),
     PRIMARY KEY (uid_offering),
@@ -97,7 +96,7 @@ INSERT into students (name) values ('Derp');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
-
+/*
 INSERT into offerings (name, max_size, uid_teacher, recurring) values ("The Minster Opp Block", 0, 1, 0);
 INSERT into calendar (uid_day, uid_offering) values (1,1);
 INSERT into calendar (uid_day, uid_offering) values (2,1);
@@ -112,4 +111,7 @@ INSERT into choices (uid_day, uid_student ) values (2,2 );
 
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
+
+*/
+
 

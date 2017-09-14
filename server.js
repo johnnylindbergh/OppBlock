@@ -24,19 +24,15 @@ function test() {
 	});
 }
 
-function createOffering(name, maxSize, location, materials, recurring, teacherName, uidTeacher, DayArray) {
-	var i = getUid();
+function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
-		con.query('SELECT uid_teacher FROM teachers WHERE name=?', [teacherName], function(err, results) {
-			results = results[0];
-			var uidTeacher = results.uid_teacher;
-			console.log(uidTeacher);
-			con.query('INSERT into offerings (name, max_size, location, materials, uid_teacher, recurring) values (?,?,?,?,?,?);', [name, maxSize, location, materials, uidTeacher, recurring], function(err, results) {
+		getUidFromValue('teachers', teacherName, function(uidTeacher){
+			con.query('INSERT into offerings (name, max_size, description, uid_teacher, recurring) values (?,?,?,?,?);', [name, maxSize, description, uidTeacher, recurring], function(err, results) {
 				OppBlockCalendar(name, DayArray, recurring);
 			});
 		});
 	} else {
-		con.query('INSERT into offerings (name, max_size, location, materials, uid_teacher, recurring) values (?,?,?,?,?,?);', [name, maxSize, location, materials, uidTeacher, recurring], function(err, results) {
+		con.query('INSERT into offerings (name, max_size, description, uid_teacher, recurring) values (?,?,?,?,?);', [name, maxSize, description, uidTeacher, recurring], function(err, results) {
 			OppBlockCalendar(name, DayArray, recurring)
 		});
 	}
@@ -44,16 +40,14 @@ function createOffering(name, maxSize, location, materials, recurring, teacherNa
 
 function OppBlockCalendar(name, DayArray, recurring) {
 	if (!recurring) {
-		con.query('SELECT uid_offering FROM offerings WHERE name=?', [name], function(err, results) {
-			console.log(DayArray[i]);
-			console.log(results);
-			results = results[0];
-			var uidOffering = results.uid_offering;
-			console.log(uidOffering);
-			for (var i = 0; i < DayArray.length; i++) {
-				con.query('INSERT into calendar (uid_day, uid_offering) values (?,?);', [DayArray[i], uidOffering]);
-			}
-		});
+		if (DayArray != null){
+			getUidFromValue('offerings', name, function(uid){
+				for (var i = 0; i < DayArray.length; i++) {
+					console.log("uid: "+uid+"  day:  "+ DayArray[i]);
+					con.query('INSERT into calendar (uid_day, uid_offering) values (?,?);', [DayArray[i], uid]);
+				}
+			});
+		}
 	}
 }
 
@@ -86,12 +80,19 @@ function getUidFromValue(tableType, value, callback) {
 
 	if (tableType == "opp_block_day"){
 		valueFormatted = moment(value).format('YYYY-MM-DD');
-		console.log("formatted: "+valueFormatted);
 		con.query('SELECT uid_day FROM opp_block_day WHERE day = ?', [valueFormatted], function(err, results) {
-			console.log(results,err);
 			if (results.length > 0){
-				console.log(results,err);
 				callback(results[0].uid_day);  
+			}else{
+				callback(null); 
+			}     
+		});
+	}
+
+	if (tableType == "offerings"){
+		con.query('SELECT uid_offering FROM offerings WHERE name = ?', [value], function(err, results) {
+			if (results.length > 0){
+				callback(results[0].uid_offering);  
 			}else{
 				callback(null); 
 			}     
@@ -100,15 +101,16 @@ function getUidFromValue(tableType, value, callback) {
 
 }
 
-getUidFromValue("opp_block_day", "08/20/1999", function(res){
-	console.log("this:"+res+".");
-});
+// getUidFromValue("opp_block_day", "08/20/1999", function(res){
+// 	console.log("this:"+res+".");
+// });
 
 
 
 
 
-//createOffering("newOppBlock", 2, "The CS Lab", "nothing", false, "Mr. Minster", null, [1, 2, 4]);
+createOffering("newOppBlock", 2, "this is the opp block description", false, null, 1, null);
+
 var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
