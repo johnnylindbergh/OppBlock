@@ -10,20 +10,6 @@ var con = mysql.createConnection({
 });
 con.connect();
 
-function test() {
-	con.query('SELECT day from opp_block_day', function(err, rows, fields) {
-		if (!err) {
-			console.log('\nOppBlock days:')
-			for (var i in rows) {
-				var day = rows[i]["day"];
-				console.log('\t' + moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
-			}
-		} else {
-			console.log('Error, are you sure you ran CREATE_DB.sql?');
-		}
-	});
-}
-
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
 		getUidFromValue('teachers', teacherName, function(uidTeacher){
@@ -50,12 +36,6 @@ function OppBlockCalendar(name, DayArray, recurring) {
 		}
 	}
 }
-
-
-
-
-
-
 
 function getUidFromValue(tableType, value, callback) {
 	if (tableType == "teachers"){
@@ -91,7 +71,7 @@ function getUidFromValue(tableType, value, callback) {
 
 	if (tableType == "offerings"){
 		con.query('SELECT uid_offering FROM offerings WHERE name = ?', [value], function(err, results) {
-			if (results.length > 0){
+			if (results != undefined){
 				callback(results[0].uid_offering);  
 			}else{
 				callback(null); 
@@ -101,15 +81,64 @@ function getUidFromValue(tableType, value, callback) {
 
 }
 
-// getUidFromValue("opp_block_day", "08/20/1999", function(res){
-// 	console.log("this:"+res+".");
-// });
+function getExcludedStudentsOnDay(uidDay,callback){
+	var excludedStudentUidArray = [];
+	getExcludedGroupsOnDay(1, function(groups){
+		con.query('SELECT uid_student FROM student_groups WHERE uid_group in (?)', [groups], function(err, results) {
+				//console.log("this:  "+results);
+				if (results != undefined){
+					for (var i = 0; i < results.length; i++) {
+						excludedStudentUidArray.push(results[i].uid_student);
+					}
+				} 
+		callback(excludedStudentUidArray);
+
+		});
+	});
+}
+
+function getExcludedGroupsOnDay(uidDay,callback){
+	var excludedGroupsArray = [];
+	con.query('SELECT uid_group FROM excluded_groups WHERE uid_day = ?', [uidDay], function(err, results) {
+ 
+  			if (results != undefined){
+  				for (var i = 0; i < results.length; i++) {
+					excludedGroupsArray.push(results[i].uid_group);
+				}
+				callback(excludedGroupsArray);  
+			}else{
+				callback(excludedGroupsArray); 
+			}    
+		});
+	
+}
 
 
 
+function addStudentsToChoiceTable(uidDay){
+	getExcludedStudentsOnDay(uidDay, function(students){
+
+		con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
+			if (results != undefined){
+  				for (var i = 0; i < results.length; i++) {
+					con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uidDay, results[i].uid_student]);
+				}
+			}else{
+				con.query('SELECT uid_student FROM students', [students], function(err, results) {
+					if (results != undefined){
+  						for (var i = 0; i < results.length; i++) {
+							con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uidDay, results[i].uid_student]);
+						}	
+					}    
+				});
+			}
+		});
+	});
+}
+
+addStudentsToChoiceTable(1);
 
 
-createOffering("newOppBlock", 2, "this is the opp block description", false, null, 1, null);
 
 var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);

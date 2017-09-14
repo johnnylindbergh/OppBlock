@@ -82,17 +82,20 @@ INSERT into opp_block_day (day) values ('1999-08-20');
 INSERT into opp_block_day (day) values ('2017-09-1');
 INSERT into opp_block_day (day) values ('2017-09-2');
 INSERT into opp_block_day (day) values ('2017-09-3');
-
+INSERT into opp_block_day (day) values ('2017-09-13');
 
 INSERT into teachers (name, teacher_info) values ('Mr. Minster', "he's a cool guy");
 
 INSERT into groups (group_info) values ('the lame group');
+INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
-INSERT into excluded_groups (uid_day, uid_group) values (1,1);
+INSERT INTO excluded_groups (uid_day,uid_group) VALUES (1,2);
+
 
 INSERT into students (name) values ('Johnny');
 INSERT into students (name) values ('Derp');
+INSERT into students (name) values ('Derpy');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
