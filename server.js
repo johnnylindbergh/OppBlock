@@ -28,6 +28,14 @@ con.query('SELECT day from opp_block_day', function(err, rows, fields) {
   }
 });
 
+function createTeacher(name,teacher_info,callback){
+  if (name != null && teacher_info != null){
+    con.query('INSERT into teacher (name,teacher_info) values (?,?);',[name,teacher_info],function(err,results){
+      callback(results);
+    });
+  }
+}
+
 con.end();
 
 var server = app.listen(8080, function () {
