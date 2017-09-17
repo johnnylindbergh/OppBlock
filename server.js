@@ -3,8 +3,8 @@ var moment = require('moment');
 var express = require('express');
 var app = express(); 
 var twilio = require('twilio');
-var accountSid = 'XXXXX';
-var authToken = 'XXXXXX';  
+var accountSid = '';
+var authToken = '';  
 var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
@@ -164,7 +164,7 @@ app.post("/sms", function (request, response) {
 	console.log(body);
 	response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
 });
-sendMessage("Goodbye!");
+
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
