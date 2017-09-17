@@ -138,6 +138,13 @@ function addStudentsToChoiceTable(uidDay){
 
 addStudentsToChoiceTable(1);
 
+function chooseOffering(uid_day,uid_student,uid_offering, callback){
+	con.query('UPDATE choices SET uid_offering = ? WHERE uid_day = ? AND uid_student = ?;', [uid_offering, uid_day, uid_student], function(err, results) {
+		callback(results);   
+	});
+}
+
+
 
 
 var server = app.listen(8080, function() {

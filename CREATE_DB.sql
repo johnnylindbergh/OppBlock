@@ -99,7 +99,7 @@ INSERT into students (name) values ('Derpy');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
-/*
+
 INSERT into offerings (name, max_size, uid_teacher, recurring) values ("The Minster Opp Block", 0, 1, 0);
 INSERT into calendar (uid_day, uid_offering) values (1,1);
 INSERT into calendar (uid_day, uid_offering) values (2,1);
@@ -115,6 +115,6 @@ INSERT into choices (uid_day, uid_student ) values (2,2 );
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
 
-*/
+
 
 
