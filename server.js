@@ -1,7 +1,11 @@
 var mysql = require('mysql');
 var moment = require('moment');
 var express = require('express');
-var app = express();
+var app = express(); 
+var twilio = require('twilio');
+var client = new twilio(accountSid, authToken);
+
+
 var con = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
@@ -143,8 +147,16 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 		callback(results);   
 	});
 }
+function sendMessage(){
+	client.messages.create({
+		body: 'Hello from Node.JS',
+		to: '+14342491362',  // Text this number
+		from: '+17604627244' // From a valid Twilio number
+	})
+	.then((message) => console.log(message.sid));
+}
 
-
+sendMessage();
 
 
 var server = app.listen(8080, function() {
