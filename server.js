@@ -27,7 +27,6 @@ con.query('SELECT day from opp_block_day', function(err, rows, fields) {
   }
 });
 
-con.end();
 
 var server = app.listen(8080, function () {
   console.log('OppBlock server listening on port %s', server.address().port);
@@ -88,7 +87,7 @@ function getOfferings(callback) {
   var offerList = [];
   con.query('SELECT * FROM offerings').on('data', 
     function(row){
-      var offerList.length = new Offering(row.uid_offering, row.name, row.description, row.max_size, row.recurring, row.uid_teacher);
+      var offerList = new Offering(row.uid_offering, row.name, row.description, row.max_size, row.recurring, row.uid_teacher);
       offerList.push(offerList.length);
     }).on('end', function() {
       con.query('SELECT * FROM teachers').on('data',
@@ -105,6 +104,9 @@ function getOfferings(callback) {
 };
 //takes in the student uid, offering uid and day uid
 function saveOffering(day, student, offering) {
-  con.query('UPDATE choices (uid_day, uid_student, uid_offering) VALUES ($1, $2, $3)', [day, student, offering]);
+  con.query('UPDATE choices SET uid_offering = ? WHERE uid_day = ? AND uid_student = ?;', [offering, day, student]);
 };
-//MAKE CALLBACK
+saveOffering(1, 1, 1);
+numStudents(1, 1, false, function(a,b){
+  console.log(a,b);
+})
