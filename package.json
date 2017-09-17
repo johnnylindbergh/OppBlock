@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/johnnylindbergh/OppBlock#readme",
   "dependencies": {
+    "body-parser": "^1.18.1",
     "express": "^4.15.4",
     "moment": "^2.18.1",
     "node-mysql": "^0.4.2",

@@ -3,8 +3,11 @@ var moment = require('moment');
 var express = require('express');
 var app = express(); 
 var twilio = require('twilio');
+var accountSid = 'AC390563e2e73718ab901a3f42d0ee7cae';
+var authToken = '5dc0b5fc0be23c4e885c8f5cdd5f8100';  
 var client = new twilio(accountSid, authToken);
-
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
 
 var con = mysql.createConnection({
 	host: 'localhost',
@@ -147,18 +150,21 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 		callback(results);   
 	});
 }
-function sendMessage(){
+function sendMessage(message){
 	client.messages.create({
-		body: 'Hello from Node.JS',
+		body: message,
 		to: '+14342491362',  // Text this number
 		from: '+17604627244' // From a valid Twilio number
 	})
 	.then((message) => console.log(message.sid));
 }
 
-sendMessage();
-
-
-var server = app.listen(8080, function() {
+app.post("/sms", function (request, response) {
+  var body = request.body.Body;
+	console.log(body);
+	response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
+});
+sendMessage("Goodbye!");
+var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
