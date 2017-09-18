@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var moment = require('moment');
 var express = require('express');
 var app = express(); 
+var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
 var accountSid = '';
 var authToken = '';  
@@ -160,11 +161,27 @@ function sendMessage(message){
 }
 
 app.post("/sms", function (request, response) {
-  var body = request.body.Body;
-	console.log(body);
+	console.log(request.body.From + " says " +request.body.Body);
 	response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
 });
 
+app.post('/voice', function(request, response){
+  const twiml = new VoiceResponse();
+  twiml.say('Hello. Please leave a message after the beep.');
+
+  // Use <Record> to record and transcribe the caller's message
+  twiml.record({transcribeCallback: '/transcribe',transcribe: true, maxLength: 30});
+
+  // End the call with <Hangup>
+  twiml.hangup();
+
+  // Render the response as XML in reply to the webhook request
+  response.type('text/xml');
+  response.send(twiml.toString());
+});
+app.post('/transcribe', function(req,res){
+console.log(req.body.TranscriptionText);
+});
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
