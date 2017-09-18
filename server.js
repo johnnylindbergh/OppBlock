@@ -3,7 +3,7 @@ var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
 var app = express(); 
-var Levenshtein = require("Levenshtein");
+var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio'); 
 var client = new twilio(accountSid, authToken);
@@ -166,18 +166,24 @@ function sendMessage(studentUid,message){
 	
 }
 
+
+function getStudentFromNumber(studentNumber, callback){
+        con.query('SELECT * FROM students WHERE phone = ?;', [studentNumber], function(err, results) {
+                console.log(results);
+                if (results != undefined){
+                        callback(results);
+                }    
+        });
+}
+
 app.post("/sms", function (request, response) {
-	console.log("sms");
-	con.query('SELECT * FROM students WHERE phone = ?;', [request.body.From], function(err, results) {
-		
-		if (results != undefined){
-			console.log(results[0].name);
-			console.log(request.body.From + " says " +request.body.Body);
-			//response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
+	getStudentFromNumber(request.body.From, function(res){
+		if (res != undefined){
+			console.log(res[0].name + " says " +request.body.Body);
+			response.send("<Response><Message>Hello, " + res[0].name + "</Message></Response>");
 		}    
 	});
-	console.log(request.body.From + " says " +request.body.Body);
-	response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
+	//console.log(request.body.From + " says " +request.body.Body);
 });
 
 app.post('/voice', function(request, response){
@@ -207,6 +213,7 @@ app.post('/transcribe', function(req,res){
 function compareLevenshteinDistance(compareTo, baseItem) {
   return new Levenshtein(compareTo, baseItem).distance;
 }
+
 
 function getClosestOppBlock(input, callback){
 	var OppBlockNames = [];
@@ -238,6 +245,6 @@ function getClosestOppBlock(input, callback){
 
 //sendMessage(1,"Hi");
 
-var server = app.listen(8080, function() {
+var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
