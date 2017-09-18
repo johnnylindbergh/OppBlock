@@ -100,11 +100,11 @@ INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
-INSERT INTO excluded_groups (uid_day,uid_group) VALUES (1,2);
+
 
 
 INSERT into students (name, phone) values ('Johnny', "+14342491362");
-INSERT into students (name) values ('Derp');
+INSERT into students (name, phone) values ('Derp', "+14342491362");
 INSERT into students (name) values ('Derpy');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
@@ -132,16 +132,16 @@ INSERT into calendar (uid_day, uid_offering) values (2,8);
 
 
 
-INSERT into choices (uid_day, uid_student) values (1,1);
-INSERT into choices (uid_day, uid_student) values (1,2);
+-- INSERT into choices (uid_day, uid_student) values (1,1);
+-- INSERT into choices (uid_day, uid_student) values (1,2);
 
-UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
+-- UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
 
-INSERT into choices (uid_day, uid_student ) values (2,1);
-INSERT into choices (uid_day, uid_student ) values (2,2 );
+-- INSERT into choices (uid_day, uid_student ) values (2,1);
+-- INSERT into choices (uid_day, uid_student ) values (2,2 );
 
-UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
-UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
+-- UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
+-- UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
 
 
 

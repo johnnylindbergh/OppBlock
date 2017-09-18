@@ -5,7 +5,7 @@ var express = require('express');
 var app = express(); 
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
-var twilio = require('twilio'); 
+var twilio = require('twilio');
 var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
@@ -144,7 +144,6 @@ function addStudentsToChoiceTable(uidDay){
 	});
 }
 
-addStudentsToChoiceTable(1);
 
 function chooseOffering(uid_day,uid_student,uid_offering, callback){
 	con.query('UPDATE choices SET uid_offering = ? WHERE uid_day = ? AND uid_student = ?;', [uid_offering, uid_day, uid_student], function(err, results) {
@@ -169,7 +168,6 @@ function sendMessage(studentUid,message){
 
 function getStudentFromNumber(studentNumber, callback){
         con.query('SELECT * FROM students WHERE phone = ?;', [studentNumber], function(err, results) {
-                console.log(results);
                 if (results != undefined){
                         callback(results);
                 }    
@@ -180,7 +178,11 @@ app.post("/sms", function (request, response) {
 	getStudentFromNumber(request.body.From, function(res){
 		if (res != undefined){
 			console.log(res[0].name + " says " +request.body.Body);
-			response.send("<Response><Message>Hello, " + res[0].name + "</Message></Response>");
+			getClosestOppBlock(equest.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
+				console.log("You chose: "+ OppBlockName);
+				response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
+
+			});
 		}    
 	});
 	//console.log(request.body.From + " says " +request.body.Body);
@@ -218,7 +220,7 @@ function compareLevenshteinDistance(compareTo, baseItem) {
 function getClosestOppBlock(input, callback){
 	var OppBlockNames = [];
 	var OppBlocks = [];
-	con.query('SELECT * FROM offerings;', function(err, results) {
+	con.query('SELECT * FROM offerings;', function(err, results) { 
 		if (results != undefined){
   			for (var i = 0; i < results.length; i++) {
   				OppBlocks.push(results[i]);
@@ -236,6 +238,51 @@ function getClosestOppBlock(input, callback){
 	
 }
 
+function getAvailableOfferings(callback){
+	//This will be hewson's function
+	con.query('SELECT * FROM offerings;', function(err, results) { 
+		callback(results);
+	});
+
+}
+
+function makeOfferingText(callback){
+	getAvailableOfferings(function(results){
+		offerings = "";
+		for (var i = 0; i < results.length; i++) {
+  				offerings = offerings+"\n-"+results[i].name;
+		}	
+		callback(offerings);
+	});
+}
+
+function getStudentThatNeedToChooseOffering(uidDay, callback){
+	con.query('SELECT uid_student FROM choices WHERE uid_day = ? AND uid_offering is NULL;',[uidDay], function(err, res) { 
+		callback(res);
+	});
+}
+
+function sendOfferingText(uidDay, callback){
+	makeOfferingText(function(offeringText){
+		getStudentThatNeedToChooseOffering(1, function(students){
+			for (var i = 0; i < students.length; i++) {
+  				con.query('SELECT * FROM students WHERE uid_student = ?;',[students[i].uid_student], function(err, res) { 
+  					if (res[0].phone != null){
+  						console.log("message to: "+res[0].name+ " Phone: "+ res[0].phone); 
+  						offeringText = "Hello " +res[0].name+",\nthese are the available OppBlock offerings: "+offeringText;
+  						console.log(offeringText);
+						sendMessage(res[0].uid_student, offeringText);
+					}
+				});
+			}	
+		});
+	});
+}
+
+ //addStudentsToChoiceTable(1);
+sendOfferingText(1, function(res){
+	console.log(res);
+});
 // getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
 // 	console.log(request+" -----> " + OppBlockName);
 	
@@ -245,6 +292,6 @@ function getClosestOppBlock(input, callback){
 
 //sendMessage(1,"Hi");
 
-var server = app.listen(80, function() {
+var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
