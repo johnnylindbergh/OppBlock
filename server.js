@@ -3,10 +3,9 @@ var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
 var app = express(); 
+var Levenshtein = require("Levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
-var twilio = require('twilio');
-var accountSid = '';
-var authToken = '';  
+var twilio = require('twilio'); 
 var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
@@ -183,8 +182,26 @@ app.post('/voice', function(request, response){
 app.post('/transcribe', function(req,res){
 	console.log(req.body.TranscriptionText);
 	sendMessage(req.body.TranscriptionText);
-	con.query();
+	getClosestOppBlock(req.body.TranscriptionText, function(result){
+		sendMessage(result);
+	});
+
+	
 });
-var server = app.listen(80, function() {
+
+function compareLevenshteinDistance(compareTo, baseItem) {
+  return new Levenshtein(compareTo, baseItem).distance;
+}
+
+function getClosestOppBlock(input, callback){
+	var OppBlocks = ["SAT or ACT Math","One on One thinking games","Stab Yoga","Stab Investment Group","Open Clinic Treatments for students","Spanish TV series","Costume/set/property assistance","Art History","Nature Walk","Documentary: the minimalist","Useful Knot Series","Exploring our campus","Photojournalists-Lightroom/editing","Hispanic culture trivia competition","Jam Session","Film screening and Discussion","In season athletic performance Maintence","conversation in french","Outdoor walk","Stab Investment Group","CS Studio"];
+	var c = getClosest.custom(input,OppBlocks,compareLevenshteinDistance);
+	console.log(c);
+	console.log(OppBlocks[c]);
+	callback(OppBlock[c]);
+}
+
+
+var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
