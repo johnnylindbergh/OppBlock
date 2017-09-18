@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.18.1",
     "express": "^4.15.4",
+    "get-closest": "0.0.4",
     "moment": "^2.18.1",
     "node-mysql": "^0.4.2",
     "twilio": "^3.6.7"

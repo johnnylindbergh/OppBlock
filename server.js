@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var moment = require('moment');
+var getClosest = require("get-closest");
 var express = require('express');
 var app = express(); 
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
@@ -167,7 +168,7 @@ app.post("/sms", function (request, response) {
 
 app.post('/voice', function(request, response){
   const twiml = new VoiceResponse();
-  twiml.say('Hello. Please leave a message after the beep.');
+  twiml.say('Hello. Please state Opp Block choice after the beep.');
 
   // Use <Record> to record and transcribe the caller's message
   twiml.record({transcribeCallback: '/transcribe',transcribe: true, maxLength: 30});
@@ -180,7 +181,9 @@ app.post('/voice', function(request, response){
   response.send(twiml.toString());
 });
 app.post('/transcribe', function(req,res){
-console.log(req.body.TranscriptionText);
+	console.log(req.body.TranscriptionText);
+	sendMessage(req.body.TranscriptionText);
+	con.query();
 });
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
