@@ -151,16 +151,31 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 		callback(results);   
 	});
 }
-function sendMessage(message){
-	client.messages.create({
-		body: message,
-		to: '+14342491362',  // Text this number
-		from: '+17604627244' // From a valid Twilio number
-	})
-	.then((message) => console.log(message.sid));
+function sendMessage(studentUid,message){
+	con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
+		console.log(results);
+		if (results != undefined){
+			client.messages.create({
+				body: message,
+				to: results[0].phone,  
+				from: '+17604627244' 
+			});
+		}    
+	});
+
+	
 }
 
 app.post("/sms", function (request, response) {
+	console.log("sms");
+	con.query('SELECT * FROM students WHERE phone = ?;', [request.body.From], function(err, results) {
+		
+		if (results != undefined){
+			console.log(results[0].name);
+			console.log(request.body.From + " says " +request.body.Body);
+			//response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
+		}    
+	});
 	console.log(request.body.From + " says " +request.body.Body);
 	response.send("<Response><Message>" + request.body.Body + "</Message></Response>");
 });
@@ -194,13 +209,34 @@ function compareLevenshteinDistance(compareTo, baseItem) {
 }
 
 function getClosestOppBlock(input, callback){
-	var OppBlocks = ["SAT or ACT Math","One on One thinking games","Stab Yoga","Stab Investment Group","Open Clinic Treatments for students","Spanish TV series","Costume/set/property assistance","Art History","Nature Walk","Documentary: the minimalist","Useful Knot Series","Exploring our campus","Photojournalists-Lightroom/editing","Hispanic culture trivia competition","Jam Session","Film screening and Discussion","In season athletic performance Maintence","conversation in french","Outdoor walk","Stab Investment Group","CS Studio"];
-	var c = getClosest.custom(input,OppBlocks,compareLevenshteinDistance);
-	console.log(c);
-	console.log(OppBlocks[c]);
-	callback(OppBlock[c]);
+	var OppBlockNames = [];
+	var OppBlocks = [];
+	con.query('SELECT * FROM offerings;', function(err, results) {
+		if (results != undefined){
+  			for (var i = 0; i < results.length; i++) {
+  				OppBlocks.push(results[i]);
+  				OppBlockNames.push(results[i].name);
+			}	
+
+			var c = getClosest.custom(input,OppBlockNames,compareLevenshteinDistance);
+			var OppBlockName = OppBlockNames[c];
+			var maxLev = OppBlockName.length;
+			var lev = compareLevenshteinDistance(input, OppBlockName);
+			var confidence = ((maxLev-lev)/(maxLev))*100;
+			callback(input, c, OppBlockName, OppBlocks, confidence);
+		}    
+	});
+	
 }
 
+// getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
+// 	console.log(request+" -----> " + OppBlockName);
+	
+
+// 	console.log("Confidence: "+confidence+"%");
+// })
+
+//sendMessage(1,"Hi");
 
 var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
