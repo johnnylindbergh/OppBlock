@@ -102,11 +102,8 @@ INSERT into groups (group_info) values ('the cool group');
 
 
 
-
 INSERT into students (name, phone) values ('Johnny', "+14342491362");
 
-INSERT into students (name) values ('Derp');
-INSERT into students (name) values ('Derpy');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
