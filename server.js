@@ -1,3 +1,4 @@
+
 var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
@@ -13,7 +14,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 var con = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: 'root',
+	password: '',
 	database: 'opp_block'
 });
 con.connect();
@@ -153,11 +154,12 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 function sendMessage(studentUid,number,message){
 	if (studentUid != null){
 		con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
-			console.log(results);
+			console.log(results[0].phone);
+			number = results[0].phone;
 			if (results != undefined){
 				client.messages.create({
 					body: message,
-					to: "+14342491362",  
+					to: number,  
 					from: '+17604627244' 
 				});
 			}    
@@ -214,9 +216,9 @@ app.post('/voice', function(request, response){
 
 app.post('/transcribe', function(req,res){
 	console.log(req.body.TranscriptionText);
-	sendMessage(req.body.TranscriptionText);
+	
 	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
-		sendMessage(null,req.body.From,OppBlockName);
+		sendMessage(null, req.body.From, OppBlockName);
 	});
 });
 
@@ -279,7 +281,7 @@ function sendOfferingText(uidDay, callback){
   						console.log("message to: "+res[0].name+ " Phone: "+ res[0].phone); 
   						offeringText = "Hello " +res[0].name+",\nthese are the available OppBlock offerings: "+offeringText;
   						console.log(offeringText);
-						sendMessage(res[0].uid_student, offeringText);
+						sendMessage(res[0].uid_student,null, offeringText);
 					}
 				});
 			}	
@@ -287,7 +289,8 @@ function sendOfferingText(uidDay, callback){
 	});
 }
 
-// addStudentsToChoiceTable(1);
+
+//addStudentsToChoiceTable(1);
 //sendOfferingText(1, function(res){
 //	console.log(res);
 //});
@@ -298,7 +301,7 @@ function sendOfferingText(uidDay, callback){
 // 	console.log("Confidence: "+confidence+"%");
 // })
 
-//sendMessage(1,"Hi");
+//sendMessage(null, "+14342491362","Hi");
 
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
