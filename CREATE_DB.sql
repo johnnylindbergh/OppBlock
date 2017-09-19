@@ -104,7 +104,6 @@ INSERT into groups (group_info) values ('the cool group');
 
 
 INSERT into students (name, phone) values ('Johnny', "+14342491362");
-INSERT into students (name, phone) values ('Thomas Castleman', "+14349628273");
 
 INSERT into students (name) values ('Derp');
 INSERT into students (name) values ('Derpy');
