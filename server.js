@@ -5,9 +5,9 @@ var getClosest = require("get-closest");
 var express = require('express');
 var app = express(); 
 var Levenshtein = require("levenshtein");
-var VoiceResponse = require('twilio').twiml.VoiceResponse;
-var twilio = require('twilio');
-var client = new twilio(accountSid, authToken);
+// var VoiceResponse = require('twilio').twiml.VoiceResponse;
+// var twilio = require('twilio');
+// var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -288,6 +288,15 @@ function sendOfferingText(uidDay, callback){
 		});
 	});
 }
+
+function removeOppblock(offeringid, dayid){
+	if (dayid!=null){
+	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid');
+	};
+	if(dayid==null){
+		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid');
+	};
+};
 
 
 //addStudentsToChoiceTable(1);
