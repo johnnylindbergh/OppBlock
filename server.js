@@ -13,23 +13,39 @@ var con = mysql.createConnection({
 
 con.connect();
 
-con.query('SELECT day from opp_block_day', function(err, rows, fields) {
- if (!err){
-    
-    console.log('\nOppBlock days:')
-    for (var i in rows) {
-      var day = rows[i]["day"];
-      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+//create student if nothing exists in database, update student_info if something does
+function createStudent(studentName, callback) {
+  con.query('SELECT uid_student FROM students WHERE student_info = ?;', [studentName], function(err, results) {
+    if(results[0] == undefined) {
+      //if nothing is found in database, create new student
+      con.query('INSERT INTO students(student_info) VALUES (?);', [studentName], function(result) {
+      callback(result);
+      });
     }
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_info = ? WHERE (uid_student = ?);', [studentName, results[0].uid_student], function(result) {
+      callback(result);
+      });
+    }
+  });
+}
+/*
+called with
+createStudent("name", function(res){
 
-  }
-  else{
-    console.log('Error, are you sure you ran CREATE_DB.sql?');
-  }
+});
+*/
+
+createStudent("Conrad Mackethan", function(result) {
 });
 
-con.end();
+createStudent("Quint McNeely", function(result) {
+});
 
 var server = app.listen(8080, function () {
   console.log('OppBlock server listening on port %s', server.address().port);
 });
+
+
+//TWO FUNCTIONS: ONE FOR .CSV, ONE FOR INDIVIDUAL
