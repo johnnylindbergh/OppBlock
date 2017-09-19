@@ -1,4 +1,5 @@
 
+
 var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
@@ -18,6 +19,7 @@ var con = mysql.createConnection({
 	database: 'opp_block'
 });
 con.connect();
+
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
@@ -220,6 +222,7 @@ app.post('/transcribe', function(req,res){
 	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
 		sendMessage(null, req.body.From, OppBlockName);
 	});
+
 });
 
 function compareLevenshteinDistance(compareTo, baseItem) {
@@ -315,3 +318,16 @@ function removeOppblock(offeringid, dayid){
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
+
+function removeOppblock(offeringid, dayid){
+	if (dayid!=null){
+	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid');
+	};
+	if(dayid==null){
+		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid');
+	};
+};
+
+//function makeTeacher(name, info){
+	//William got assigned this as well an his works so we're using his
+//};
