@@ -306,3 +306,5 @@ function sendOfferingText(uidDay, callback){
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
+
+//initial Commit
