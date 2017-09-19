@@ -150,30 +150,19 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 		callback(results);   
 	});
 }
-function sendMessage(studentUid,number,message){
-	if (studentUid != null){
-		con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
-			console.log(results);
-			if (results != undefined){
-				client.messages.create({
-					body: message,
-					to: "+14342491362",  
-					from: '+17604627244' 
-				});
-			}    
-		});
-	}else{
-		getStudentFromNumber(number, function(res){
-			if (res != undefined){
-                                client.messages.create({
-                                        body: message,
-                                        to: number,  
-                                        from: '+17604627244' 
-                                });
-                        }    
+function sendMessage(studentUid,message){
+	con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
+		console.log(results);
+		if (results != undefined){
+			client.messages.create({
+				body: message,
+				to: results[0].phone,  
+				from: '+17604627244' 
+			});
+		}    
+	});
 
-		});
-	}
+	
 }
 
 
@@ -189,35 +178,38 @@ app.post("/sms", function (request, response) {
 	getStudentFromNumber(request.body.From, function(res){
 		if (res != undefined){
 			console.log(res[0].name + " says " +request.body.Body);
-			getClosestOppBlock(request.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
-				console.log(confidence+" "+OppBlockName);
-				if (confidence>20){
-					console.log("You chose: "+ OppBlockName);
-					response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
-				}else{
-					response.send("<Response><Message>I don't know that OppBlock 💩  \n Did you mean "+OppBlockName+"?</Message></Response>");
-					}
+			getClosestOppBlock(equest.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
+				console.log("You chose: "+ OppBlockName);
+				response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
+
 			});
 		}    
 	});
+	//console.log(request.body.From + " says " +request.body.Body);
 });
-
 
 app.post('/voice', function(request, response){
   const twiml = new VoiceResponse();
   twiml.say('Hello. Please state Opp Block choice after the beep.');
+
+  // Use <Record> to record and transcribe the caller's message
   twiml.record({transcribeCallback: '/transcribe',transcribe: true, maxLength: 30});
+
+  // End the call with <Hangup>
   twiml.hangup();
+
+  // Render the response as XML in reply to the webhook request
   response.type('text/xml');
   response.send(twiml.toString());
 });
-
 app.post('/transcribe', function(req,res){
 	console.log(req.body.TranscriptionText);
 	sendMessage(req.body.TranscriptionText);
-	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
-		sendMessage(null,req.body.From,OppBlockName);
+	getClosestOppBlock(req.body.TranscriptionText, function(result){
+		sendMessage(result);
 	});
+
+	
 });
 
 function compareLevenshteinDistance(compareTo, baseItem) {
@@ -287,10 +279,10 @@ function sendOfferingText(uidDay, callback){
 	});
 }
 
-// addStudentsToChoiceTable(1);
-//sendOfferingText(1, function(res){
-//	console.log(res);
-//});
+ //addStudentsToChoiceTable(1);
+sendOfferingText(1, function(res){
+	console.log(res);
+});
 // getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
 // 	console.log(request+" -----> " + OppBlockName);
 	
@@ -300,6 +292,6 @@ function sendOfferingText(uidDay, callback){
 
 //sendMessage(1,"Hi");
 
-var server = app.listen(80, function() {
+var server = app.listen(8080, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
