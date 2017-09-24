@@ -6,13 +6,26 @@ var app = express();
 var con = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'root',
+  password : 'mysql',
   database : 'opp_block'
 });
 
 con.connect();
+saveOffering(0, 1, 1, function() {
+  isOfferingFull(0, 1, function(response){
+    console.log("Hiiiiii!");
+    console.log(response);
+  });
+  numStudents(0, 1, true, function(numStudents, infoList) {
+    console.log("number of students: " + numStudents);
+    console.log("The first name: " + infoList[0]);
+  });
+})
+getOfferings(function(response){
+  console.log(response[0]);
+});
 
-con.query('SELECT day from opp_block_day', function(err, rows, fields) {
+con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
  if (!err){
     
     console.log('\nOppBlock days:')
@@ -27,8 +40,6 @@ con.query('SELECT day from opp_block_day', function(err, rows, fields) {
   }
 });
 
-con.end();
-
 var server = app.listen(8080, function () {
   console.log('OppBlock server listening on port %s', server.address().port);
 });
@@ -38,44 +49,60 @@ var server = app.listen(8080, function () {
 function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
 	var numStud = 0;
 	var studList = [];
-	con.query('SELECT * FROM choices').on('data', function(row) {
-		if(uid_offering == row.uid_offering && uid_day == row.uid_day) {
-			numStud += 1;
-			if(getStudentInfo) {
-				studList.push(row.uid_student);
-			};
-		};
-	}).on('end', function() {
-		if(getStudentInfo) {
-			infoList = [];		
-			con.query('SELECT * FROM students WHERE uid_student in (?)', [studList]).on('data', function(row) {
-				for(var i=0; i<studList.length; i++) {
-          if(row.uid_student == studList[i]) {
-    	  		infoList.push(row.student_info);
-        		};
-      		};
-			}).on('end', function() {
-				callback(numStud, infoList)
-			})
-		} else {
-			callback(numStud, null);
-		}
-	});
+	con.query('SELECT * FROM choices', function(err, row) {
+    if(!err) {
+      for(var i=0; i<row.length; i++) {
+        if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
+          numStud += 1;
+          if(getStudentInfo) {
+            studList.push(row[i].uid_student);
+          };
+        };  
+      }
+      if(getStudentInfo) {
+        var infoList = [];    
+        //FIX THIS ERR
+        con.query('SELECT * FROM students WHERE uid_student IN (?)', [studList], function(err, row) {
+          if(!err) {
+            for(var i=0; i<row.length; i++) {
+              for(var j=0; j<studList.length; j++) {
+                if(row[i].uid_student == studList[j]) {
+                  infoList.push(row[i].student_info);
+                }
+              }
+            }
+            callback(numStud, infoList)
+          } else {
+            console.log("SELECT FROM CHOICES DONE ERRD");
+            console.log(err);
+          }
+        })
+      } else {
+        callback(numStud, null);
+      }
+    } else {
+      console.log("IT DONE ERRD");
+    }
+  })
 }
 //Function takes in an offering, returns true or false whether its full or not
 function isOfferingFull(uid_day, uid_offering, callback) {
-  con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering]).on('data', function(data) {
-    numStudents(uid_day, uid_offering, false, function(num, infoList){
-      if(num == data) {
-        callback(true);
-      } else {
-        callback(false);
-      }    
-    })
+  con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
+    if(!err) {
+      numStudents(uid_day, uid_offering, false, function(num, infoList){
+        if(num == data) {
+          callback(true);
+        } else {
+          callback(false);
+        }    
+      })
+    } else {
+      console.log("The function produced an error.");
+    }
   })
 }
 //Function gets Offerings and their teachers from database;
-//Returns list ('offerList') of Offering objects, with all necessary properties
+//Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
 function getOfferings(callback) {
   function Offering(uid, name, description, maxSize, recurring, teacher) {
     this.uid = uid;
@@ -86,25 +113,40 @@ function getOfferings(callback) {
     this.teacher = teacher;
   }
   var offerList = [];
-  con.query('SELECT * FROM offerings').on('data', 
-    function(row){
-      var offerList.length = new Offering(row.uid_offering, row.name, row.description, row.max_size, row.recurring, row.uid_teacher);
-      offerList.push(offerList.length);
-    }).on('end', function() {
-      con.query('SELECT * FROM teachers').on('data',
-        function(row) {
-          for(var i=0; i<offerList.length; i++) {
-            if(row.uid_teacher == offerList[i].teacher) {
-              offerList[i].teacher = row.teacher_info;
+  con.query('SELECT * FROM offerings', function(err, row){
+      if(!err) {
+        for(var i=0; i<row.length; i++) {
+          var offering = new Offering(row[i].uid_offering, row[i].name, row[i].description, row[i].max_size, row[i].recurring, row[i].uid_teacher);
+          offerList.push(offering);
+        }
+        con.query('SELECT * FROM teachers', function(err, row) {
+          if(!err) {
+            for(var j=0; j<row.length; j++) {
+              for(var i=0; i<offerList.length; i++) {
+                if(row[j].uid_teacher == offerList[i].teacher) {
+                  offerList[i].teacher = row[j].teacher_info;
+                };
+              };
             };
-          };
-        }).on('end', function() {
-          callback(offerList);
+            callback(offerList);
+          } else {
+            console.log("We're sorry. getOfferings() produced an error.");
+          }
         })
+      } else {
+        console.log("We're sorry. getOfferings() produced an error.");
+      }
     })
 };
 //takes in the student uid, offering uid and day uid
-function saveOffering(day, student, offering) {
-  con.query('UPDATE choices (uid_day, uid_student, uid_offering) VALUES ($1, $2, $3)', [day, student, offering]);
+//FIX THIS ERRR
+function saveOffering(day, student, offering, callback) {
+  con.query('UPDATE choices uid_day, uid_student, uid_offering VALUES $1, $2, $3', [day, student, offering], function(err) {
+    if(!err) {
+      callback();
+    } else {
+      console.log("We're sorry. saveOffering() produced an error.");
+      console.log(err);
+    }
+  });
 };
-//MAKE CALLBACK
