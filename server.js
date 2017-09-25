@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 var con = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: '',
+	password: 'mysql',
 	database: 'opp_block'
 });
 con.connect();
@@ -294,12 +294,30 @@ function sendOfferingText(uidDay, callback){
 
 function removeOppblock(offeringid, dayid){
 	if (dayid!=null){
-	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid');
+	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;');
 	};
 	if(dayid==null){
-		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid');
+		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;');
 	};
+}
+
+function editStudent (studentid,newname,newphone){
+if(newname !=null && newphone!=null){
+	con.query('DELETE name FROM students WHERE studentid=uid_student');
+	con.query('DELETE phone FROM students WHERE studentid=uid_student');
+	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, newname, newphone]);
 };
+if(newname=null && newphone!=null){
+	con.query('DELETE phone FROM students WHERE studentid=uid_student');
+	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, name, newphone]);
+};
+};
+if(newname!=null && newphone=null){
+	con.query('DELETE name FROM students WHERE studentid=uid_student');
+	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, newname, phone]);
+	};
+}
+
 
 
 //addStudentsToChoiceTable(1);
@@ -319,14 +337,10 @@ var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
 
-function removeOppblock(offeringid, dayid){
-	if (dayid!=null){
-	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid');
-	};
-	if(dayid==null){
-		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid');
-	};
-};
+
+con.on('error', function(err) {
+  console.log("[mysql error]",err);
+});
 
 //function makeTeacher(name, info){
 	//William got assigned this as well an his works so we're using his
