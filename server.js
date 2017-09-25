@@ -8,7 +8,20 @@ var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
 var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
+var firebase = require('firebase');
+
 app.use(bodyParser.urlencoded({extended: false}));
+
+var config = {
+    apiKey: "AIzaSyCmqkDAjMoiczrfVVqeGWk978VDHTZxfXU",
+    authDomain: "staboppblock.firebaseapp.com",
+    databaseURL: "https://staboppblock.firebaseio.com",
+    projectId: "staboppblock",
+    storageBucket: "staboppblock.appspot.com",
+    messagingSenderId: "760618361493"
+};
+
+firebase.initializeApp(config);
 
 var con = mysql.createConnection({
 	host: 'localhost',
