@@ -34,6 +34,7 @@ CREATE TABLE teachers (
 
 CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
+    authToken int,
     name VARCHAR(32),
     phone VARCHAR(12),
     arrived TINYINT(1) DEFAULT 0,
@@ -105,7 +106,6 @@ INSERT into groups (group_info) values ('the cool group');
 
 INSERT into students (name, phone) values ('Johnny', "+14342491362");
 INSERT into students (name, phone) values ('Derp', "+14342491362");
-INSERT into students (name) values ('Derpy');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
