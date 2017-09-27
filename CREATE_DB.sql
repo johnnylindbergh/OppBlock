@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS student_groups (
 CREATE TABLE IF NOT EXISTS offerings (
     uid_offering INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(32),
-    description VARCHAR(32),
+    description TEXT,
     max_size INT,
     uid_teacher INT,
     recurring TINYINT(1),
@@ -83,13 +83,13 @@ INSERT into groups (group_info) values ('the cool group');
 INSERT into excluded_groups (uid_day, uid_group) values (1,1);
 
 INSERT into students (student_info) values ('Johnny');
-INSERT into students (student_info) values ('William')
+INSERT into students (student_info) values ('William');
 INSERT into students (student_info) values ('Derp');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
 
-INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 0, 1, 0);
+INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
 INSERT into calender (uid_day, uid_offering) values (1,1);
 INSERT into calender (uid_day, uid_offering) values (2,1);
 
