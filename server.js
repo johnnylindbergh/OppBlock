@@ -303,20 +303,19 @@ function removeOppblock(offeringid, dayid){
 
 function editStudent (studentid,newname,newphone){
 if(newname !=null && newphone!=null){
-	con.query('DELETE name FROM students WHERE studentid=uid_student');
-	con.query('DELETE phone FROM students WHERE studentid=uid_student');
-	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, newname, newphone]);
+	
+	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;')
 };
 if(newname=null && newphone!=null){
-	con.query('DELETE phone FROM students WHERE studentid=uid_student');
-	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, name, newphone]);
+	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;')
 };
 };
 if(newname!=null && newphone=null){
-	con.query('DELETE name FROM students WHERE studentid=uid_student');
-	con.query('INSERT into students (uid_student, name, phone) values ($1, $2, $3);', [uid_student, newname, phone]);
+	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;')
 	};
 }
+
+
 
 
 
