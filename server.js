@@ -294,24 +294,36 @@ function sendOfferingText(uidDay, callback){
 
 function removeOppblock(offeringid, dayid){
 	if (dayid!=null){
-	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;');
+	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;', function(err, results) {
+		callback(results);   
+	});
 	};
 	if(dayid==null){
-		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;');
+		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;', function(err, results){
+		callback(results);
+		});
 	};
 }
 
 function editStudent (studentid,newname,newphone){
 if(newname !=null && newphone!=null){
 	
-	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;')
+	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
+		callback(results);
+	});
+	
 };
 if(newname=null && newphone!=null){
-	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;')
+	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
+		callback(results);
+	});
 };
-};
+
 if(newname!=null && newphone=null){
-	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;')
+	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
+
+	callback(results);		
+	});
 	};
 }
 
