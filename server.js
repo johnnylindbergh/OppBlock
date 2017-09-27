@@ -307,24 +307,27 @@ function removeOppblock(offeringid, dayid){
 
 function editStudent (studentid,newname,newphone){
 if(newname !=null && newphone!=null){
-	
 	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
 		callback(results);
 	});
-	
-};
+	};
 if(newname=null && newphone!=null){
 	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
 		callback(results);
 	});
 };
-
 if(newname!=null && newphone=null){
 	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
-
 	callback(results);		
 	});
 	};
+}
+
+//find a way to fill in old infor here
+function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newrecur){
+	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', function(err,results){
+		callback(results);
+	});
 }
 
 
