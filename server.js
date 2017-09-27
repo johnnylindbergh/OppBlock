@@ -1,3 +1,4 @@
+
 var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
@@ -29,6 +30,7 @@ var con = mysql.createConnection({
 	password: 'root',
 	database: 'opp_block'
 });
+
 con.connect();
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
@@ -165,21 +167,21 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 }
 
 function sendMessage(studentUid,number,message){
-        if (studentUid != null){
-                con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
-                        console.log(results[0].phone);
-                        number = results[0].phone;
-                        if (results != undefined){
-                                client.messages.create({
-                                        body: message,
-                                        to: number,  
-                                        from: '+17604627244' 
-                                });
-                        }    
-                });
-        }else{
-                getStudentFromNumber(number, function(res){
-                        if (res != undefined){
+	if (studentUid != null){
+		con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
+			console.log(results[0].phone);
+			number = results[0].phone;
+			if (results != undefined){
+				client.messages.create({
+					body: message,
+					to: number,  
+					from: '+17604627244' 
+				});
+			}    
+		});
+	}else{
+		getStudentFromNumber(number, function(res){
+			if (res != undefined){
                                 client.messages.create({
                                         body: message,
                                         to: number,  
@@ -232,12 +234,9 @@ app.post('/voice', function(request, response){
 
 app.post('/transcribe', function(req,res){
 	console.log(req.body.TranscriptionText);
-	getClosestOppBlock(req.body.TranscriptionText, function(result){
-		sendMessage(req.body.From, null, req.body.TranscriptionText);
-
+	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
+		sendMessage(null, req.body.From, OppBlockName);
 	});
-
-	
 });
 
 function compareLevenshteinDistance(compareTo, baseItem) {
@@ -314,10 +313,7 @@ function sendOfferingText(uidDay, callback){
 	});
 }
 
- //addStudentsToChoiceTable(1);
-// sendOfferingText(1, function(res){
-// 	console.log(res);
-// });
+
 // getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
 // 	console.log(request+" -----> " + OppBlockName);
 	
@@ -325,7 +321,7 @@ function sendOfferingText(uidDay, callback){
 // 	console.log("Confidence: "+confidence+"%");
 // })
 
-//sendMessage(1,"Hi");
+//sendMessage(null, "+14342491362","Hi");
 
 
 
