@@ -113,6 +113,7 @@ function getOfferings(uid_day, callback) {
     this.teacher = teacher;
   }
   var offerList = [];
+<<<<<<< HEAD
   var trueOffers = [];
   con.query('SELECT * FROM calender', function(err, dayList){
     for(var i=0; i<dayList.length; i++) {
