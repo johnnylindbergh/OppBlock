@@ -6,7 +6,7 @@ var app = express();
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
-var client = new twilio(accountSid, authToken);
+//var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 var firebase = require('firebase');
 
@@ -252,6 +252,12 @@ app.post('/transcribe', function(req,res){
 	});
 });
 
+
+// app.get('/',function(req,res){
+	
+// });
+
+}
 function compareLevenshteinDistance(compareTo, baseItem) {
   return new Levenshtein(compareTo, baseItem).distance;
 }
