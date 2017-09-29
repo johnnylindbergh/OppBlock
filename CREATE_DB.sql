@@ -55,9 +55,9 @@ CREATE TABLE student_groups (
 
 CREATE TABLE offerings (
     uid_offering INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(52),
-    max_size INT,
+    name VARCHAR(32),
     description TEXT,
+    max_size INT,
     uid_teacher INT,
     recurring TINYINT(1),
     PRIMARY KEY (uid_offering),
@@ -80,6 +80,9 @@ CREATE TABLE choices (
     FOREIGN KEY (uid_offering) REFERENCES offerings(uid_offering)
 
 );
+## Test Data
+/* INSERT into opp_block_day (day) values ('1999-08-20');
+INSERT into opp_block_day (day) values ('2017-09-20');
 
 INSERT into opp_block_day (day) values ('2017-09-19');
 INSERT into opp_block_day (day) values ('2017-09-22');
@@ -96,11 +99,14 @@ INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', 
 INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
 
 
-
 INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
+
+INSERT into students (name) values ('Johnny');
+INSERT into students (name) values ('William');
+INSERT into students (name) values ('Derp');
 
 
 
@@ -109,6 +115,10 @@ INSERT into students (name, phone) values ('Derp', "+14342491362");
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
+
+INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
+INSERT into calender (uid_day, uid_offering) values (1,1);
+INSERT into calender (uid_day, uid_offering) values (2,1);
 
 INSERT into offerings (name, max_size, uid_teacher, recurring) values ("CS Studio", 10, 1, 0);
 INSERT into offerings (name, max_size, uid_teacher, recurring) values ("SAT or ACT Math", 10, 2, 0);
@@ -129,7 +139,7 @@ INSERT into calendar (uid_day, uid_offering) values (2,5);
 INSERT into calendar (uid_day, uid_offering) values (2,6);
 INSERT into calendar (uid_day, uid_offering) values (2,7);
 INSERT into calendar (uid_day, uid_offering) values (2,8);
-
+ */
 
 
 -- INSERT into choices (uid_day, uid_student) values (1,1);
