@@ -16,7 +16,7 @@ app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
 var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth;
-var client = new auth.OAuth2(credentials.CLIENT_ID);
+var clientGoogle = new auth.OAuth2(credentials.CLIENT_ID);
 var https = require('https');
 
 
@@ -204,7 +204,7 @@ app.post("/sms", function (request, response) {
 	getStudentFromNumber(request.body.From, function(res){
 		if (res != undefined){
 			console.log(res[0].name + " says " +request.body.Body);
-			getClosestOppBlock(equest.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
+			getClosestOppBlock(request.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
 				console.log("You chose: "+ OppBlockName);
 				response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
 			});
@@ -499,7 +499,7 @@ app.get('/landingpage', function(req,res){
 function authenticate(req,res, callback){
 	var token = req.body.idtoken;
 
-	client.verifyIdToken(
+	clientGoogle.verifyIdToken(
     token,
     CLIENT_ID,
 
@@ -543,7 +543,7 @@ function isLoggedIn(req,res){
 app.post('/auth', function(req,res){
 	var token = req.body.idtoken;
 
-	client.verifyIdToken(
+	clientGoogle.verifyIdToken(
     token,
     CLIENT_ID,
 
