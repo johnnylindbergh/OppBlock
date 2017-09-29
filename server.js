@@ -30,6 +30,7 @@ var con = mysql.createConnection({
 
 con.connect();
 
+
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
 		getUidFromValue('teachers', teacherName, function(uidTeacher){
@@ -234,6 +235,7 @@ app.post('/transcribe', function(req,res){
 	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
 		sendMessage(null, req.body.From, OppBlockName);
 	});
+
 });
 
 function compareLevenshteinDistance(compareTo, baseItem) {
@@ -301,6 +303,50 @@ function sendOfferingText(uidDay, callback){
 		});
 	});
 }
+
+function removeOppBlock(offeringid, dayid ){
+	if (dayid!=null){
+	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;', function(err, results) {
+		console.log(results);   
+	});
+	};
+	if(dayid==null){
+		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;', function(err, results){
+		console.log(results);
+		});
+	};
+}
+
+
+function editStudent (studentid,newname,newphone){
+if(newname&& newphone ){
+	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
+		console.log(results);
+	});
+	};
+if(newname == null && newphone ){
+	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
+		console.log(results);
+	});
+};
+if(newname&& newphone == null){
+	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
+	console.log(results);		
+	
+	});
+	};
+}
+
+
+//find a way to fill in old infor here
+function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newrecur){
+	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', function(err,results){
+		console.log(results);
+	});
+}
+
+
+
 
 
 // getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
@@ -609,4 +655,3 @@ con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
     console.log('Error, are you sure you ran CREATE_DB.sql?');
   }
 });
-*/
