@@ -21,6 +21,7 @@ var https = require('https');
 
 
 
+
 var con = mysql.createConnection({
 	host: 'localhost',
 	user: credentials.MySQL_username,
@@ -30,6 +31,20 @@ var con = mysql.createConnection({
 
 con.connect();
 
+
+function createStudentCSV(studentList) {
+  var input = //input
+
+}
+
+//create student if nothing exists in database, update student_info if something does
+function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
+  con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
+    if(results[0] == undefined) {
+      //if nothing is found in database, create new student
+      con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
+      callback(result);
+      });
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
@@ -649,9 +664,11 @@ con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
       var day = rows[i]["day"];
       console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
     }
-
-  }
-  else{
-    console.log('Error, are you sure you ran CREATE_DB.sql?');
-  }
-});
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+      callback(result);
+      });
+    }
+  });
+}
