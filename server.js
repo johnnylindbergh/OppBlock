@@ -2,19 +2,30 @@ var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
+var mustacheExpress = require('mustache-express');
 var app = express(); 
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
-var client = new twilio(accountSid, authToken);
+var credentials = require("./credentials.js");
+var client = new twilio(credentials.accountSid, credentials.authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
+app.engine('mustache', mustacheExpress());
+app.set('view engine', 'mustache');
+app.set('views', __dirname + '/views');
+var GoogleAuth = require('google-auth-library');
+var auth = new GoogleAuth;
+var client = new auth.OAuth2(credentials.CLIENT_ID);
+var https = require('https');
+
+
 
 var con = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'mysql',
-  database : 'opp_block'
+	host: 'localhost',
+	user: credentials.MySQL_username,
+	password: credentials.MySQL_password,
+	database: 'opp_block'
 });
 
 con.connect();
@@ -151,6 +162,7 @@ function chooseOffering(uid_day,uid_student,uid_offering, callback){
 		callback(results);   
 	});
 }
+
 function sendMessage(studentUid,number,message){
 	if (studentUid != null){
 		con.query('SELECT phone FROM students WHERE uid_student = ?;', [studentUid], function(err, results) {
@@ -174,9 +186,10 @@ function sendMessage(studentUid,number,message){
                                 });
                         }    
 
-		});
-	}
+                });
+        }
 }
+
 
 
 function getStudentFromNumber(studentNumber, callback){
@@ -191,32 +204,33 @@ app.post("/sms", function (request, response) {
 	getStudentFromNumber(request.body.From, function(res){
 		if (res != undefined){
 			console.log(res[0].name + " says " +request.body.Body);
-			getClosestOppBlock(request.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
-				console.log(confidence+" "+OppBlockName);
-				if (confidence>20){
-					console.log("You chose: "+ OppBlockName);
-					response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
-				}else{
-					response.send("<Response><Message>I don't know that OppBlock 💩  \n Did you mean "+OppBlockName+"?</Message></Response>");
-					}
+			getClosestOppBlock(equest.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
+				console.log("You chose: "+ OppBlockName);
+				response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
 			});
 		}    
 	});
+	//console.log(request.body.From + " says " +request.body.Body);
 });
 
 
 app.post('/voice', function(request, response){
   const twiml = new VoiceResponse();
   twiml.say('Hello. Please state Opp Block choice after the beep.');
+
+  // Use <Record> to record and transcribe the caller's message
   twiml.record({transcribeCallback: '/transcribe',transcribe: true, maxLength: 30});
+
+  // End the call with <Hangup>
   twiml.hangup();
+
+  // Render the response as XML in reply to the webhook request
   response.type('text/xml');
   response.send(twiml.toString());
 });
 
 app.post('/transcribe', function(req,res){
 	console.log(req.body.TranscriptionText);
-	
 	getClosestOppBlock(req.body.TranscriptionText, function(input, c, OppBlockName, OppBlocks, confidence){
 		sendMessage(null, req.body.From, OppBlockName);
 	});
@@ -264,6 +278,13 @@ function getStudentThatNeedToChooseOffering(uidDay, callback){
 	});
 }
 
+function getChoice(uidDay, uidStudent, callback){
+	con.query('SELECT uid_offering FROM choices WHERE uid_day = ? AND uid_student = ?;',[uidDay, uidStudent], function(err, res) { 
+		callback(res);
+	});
+}
+
+
 function sendOfferingText(uidDay, callback){
 	makeOfferingText(function(offeringText){
 		getStudentThatNeedToChooseOffering(1, function(students){
@@ -282,10 +303,6 @@ function sendOfferingText(uidDay, callback){
 }
 
 
-//addStudentsToChoiceTable(1);
-//sendOfferingText(1, function(res){
-//	console.log(res);
-//});
 // getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
 // 	console.log(request+" -----> " + OppBlockName);
 	
@@ -294,6 +311,7 @@ function sendOfferingText(uidDay, callback){
 // })
 
 //sendMessage(null, "+14342491362","Hi");
+
 
 //Function numStudents checks number of students in an offering and maybe gets their info
 //takes in an offering uid, a day uid, and a boolean getStudentInfo, telling it whether to just sum the students or whether to return their information as well
@@ -456,6 +474,106 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
     }
   })
 }
+
+
+
+app.get('/', function(req,res){
+	console.log(req);
+	res.render('login');
+
+});
+
+app.get('/newlogin', function(req,res){
+
+	res.send('New User!');
+
+});
+
+app.get('/landingpage', function(req,res){
+
+	console.log(req);
+	res.send("profile");
+});
+
+
+function authenticate(req,res, callback){
+	var token = req.body.idtoken;
+
+	client.verifyIdToken(
+    token,
+    CLIENT_ID,
+
+
+    function(e, login) {
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+      callback(payload, userid,token);
+
+    });
+}
+
+
+function isLoggedIn(req,res){
+	var token = req.body.idtoken;
+	
+	client.verifyIdToken(
+    token,
+    CLIENT_ID,
+
+    function(e, login) {
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+
+		con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
+			if (result.length != 0){
+				if (result[0].authToken == userid){
+					return callback();
+				}else{
+					res.redirect('/newlogin');
+				}
+			}
+			res.redirect('/');
+			
+  					
+		});
+	});
+}
+
+
+app.post('/auth', function(req,res){
+	var token = req.body.idtoken;
+
+	client.verifyIdToken(
+    token,
+    CLIENT_ID,
+
+    function(e, login) {
+    	console.log(login);
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+      res.send(payload['name']);
+       
+
+
+		// con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
+		// 	if (result.length != 0){
+		// 		if (result[0].authToken == userid){
+		// 			console.log("a");
+		// 		}else{
+		// 			console.log("b")
+		// 		}
+		// 	}
+		// 		console.log("c");
+
+  					
+		// });
+	});
+	
+
+});
+// app.get('/auth', function(req,res){
+// 	console.log("get auth");
+// });
 
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);

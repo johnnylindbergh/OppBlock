@@ -34,6 +34,7 @@ CREATE TABLE teachers (
 
 CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
+    authToken int,
     name VARCHAR(32),
     phone VARCHAR(12),
     arrived TINYINT(1) DEFAULT 0,
@@ -80,7 +81,7 @@ CREATE TABLE choices (
 
 );
 ## Test Data
-INSERT into opp_block_day (day) values ('1999-08-20');
+/* INSERT into opp_block_day (day) values ('1999-08-20');
 INSERT into opp_block_day (day) values ('2017-09-20');
 
 INSERT into opp_block_day (day) values ('2017-09-19');
@@ -107,7 +108,10 @@ INSERT into students (name) values ('Johnny');
 INSERT into students (name) values ('William');
 INSERT into students (name) values ('Derp');
 
+
+
 INSERT into students (name, phone) values ('Johnny', "+14342491362");
+INSERT into students (name, phone) values ('Derp', "+14342491362");
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
@@ -135,7 +139,7 @@ INSERT into calendar (uid_day, uid_offering) values (2,5);
 INSERT into calendar (uid_day, uid_offering) values (2,6);
 INSERT into calendar (uid_day, uid_offering) values (2,7);
 INSERT into calendar (uid_day, uid_offering) values (2,8);
-
+ */
 
 
 -- INSERT into choices (uid_day, uid_student) values (1,1);
