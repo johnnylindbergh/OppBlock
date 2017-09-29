@@ -1,4 +1,3 @@
-
 var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
@@ -8,9 +7,8 @@ var app = express();
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
-var accountSid = 'AC390563e2e73718ab901a3f42d0ee7cae';
-var authToken = '63f3451da39445dbf8ed9d8c36a472a6'; 
-var client = new twilio(accountSid, authToken);
+var credentials = require("./credentials.js");
+var client = new twilio(credentials.accountSid, credentials.authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.engine('mustache', mustacheExpress());
@@ -18,16 +16,15 @@ app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
 var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth;
-var CLIENT_ID = '827038446996-lrrntro5hskmu9aj1jc55nrmv9090jr0.apps.googleusercontent.com';
-var client = new auth.OAuth2(CLIENT_ID);
+var client = new auth.OAuth2(credentials.CLIENT_ID);
 var https = require('https');
 
 
 
 var con = mysql.createConnection({
 	host: 'localhost',
-	user: 'root',
-	password: 'root',
+	user: credentials.MySQL_username,
+	password: credentials.MySQL_password,
 	database: 'opp_block'
 });
 
