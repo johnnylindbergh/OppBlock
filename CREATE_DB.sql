@@ -31,10 +31,15 @@ CREATE TABLE IF NOT EXISTS teachers (
 
 CREATE TABLE IF NOT EXISTS students (
     uid_student INT NOT NULL AUTO_INCREMENT,
-    student_info VARCHAR(32),
+    student_firstname VARCHAR(32),
+    student_lastname VARCHAR(32),
+    student_grade INT,
+    student_sport VARCHAR,
+    student_advisor VARCHAR(32),
+    student_gender VARCHAR(10),
+    student_email VARCHAR,
     arrived TINYINT(1),
     PRIMARY KEY (uid_student)
-
 );
 
 CREATE TABLE IF NOT EXISTS student_groups (
@@ -71,6 +76,7 @@ CREATE TABLE IF NOT EXISTS choices (
 
 );
 
+/*
 INSERT into opp_block_day (day) values ('1999-08-20');
 INSERT into opp_block_day (day) values ('2017-09-20');
 
@@ -81,8 +87,8 @@ INSERT into groups (group_info) values ('the cool group');
 
 INSERT into excluded_groups (uid_day, uid_group) values (1,1);
 
-INSERT into students (student_info) values ('Johnny');
-INSERT into students (student_info) values ('Derp');
+INSERT into students (student_info) values ('Abbott,Olivia,Grade 9,JVFieldHockey,"Shoup, Jon",Female,oabbott21@students.stab.org');
+INSERT into students (student_info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
 INSERT into student_groups (uid_student, uid_group) values (1,2);
 INSERT into student_groups (uid_student, uid_group) values (2,1);
@@ -102,3 +108,18 @@ INSERT into choices (uid_day, uid_student, uid_offering) values (2,2,NULL);
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
 UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
 
+/*
+CREATE FUNCTION students.create_student (@student_name VARCHAR(32))
+    RETURN VARCHAR(32)
+    BEGIN
+    INSERT INTO students(uid_student, student_info, arrived)
+    VALUES ('0', @student_name, '0')
+    END create_student;
+
+CREATE FUNCTION teachers.create_teacher (@teacher_name VARCHAR(32))
+    RETURN VARCHAR(32)
+    BEGIN
+    INSERT INTO teachers(uid_teacher, teacher_info)
+    VALUES ('0', @teacher_name)
+    END create_teacher;
+*/
