@@ -204,3 +204,25 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
     }
   })
 }
+
+app.post('/student/:day/offerings/?'/*WTH THO????*/, function(request, response) {
+  saveOffering(request.params.day, request.body.student, request.body.offering, function() {
+    response.render(/*SOME SUCCESSFULLY SAVED OFFERING MESSAGE*/);
+  });
+})
+
+app.get('/student/:day/offerings', function(request, response) {
+  getOfferingsForStudent(request.body.student, request.params.day, function(offerList) {
+    if(offerList != null) {
+      response.render('studOfferings.html', {student: request.body.student, day: request.params.day, offerList: offerList})
+    } else {
+      //What do we display if there aren't offerings (of course we could display the page without the offerList, but don't we want a message as to why there are no offerings?)
+    }
+  })
+})
+
+app.get('/admin/:day/offerings', function(request, response) {
+  getOfferings(request.params.day, function(offerList) {
+    response.render('adminOfferings.html', {day: request.params.day, offerList: offerList})
+  })
+})
