@@ -644,6 +644,7 @@ var server = app.listen(80, function() {
 function getchoices(uidDay, uid_student, callback) {
 	con.query('SELECT uid_offering FROM choices WHERE uid_day = ? AND uid_student = ?;',[uidDay, uidStudent], function(err, res) { 
 		callback(res);
+		console.log("yo");
 	});
 }
 
