@@ -2,18 +2,10 @@ var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
-<<<<<<< HEAD
 var app = express();
 var parse = require('csv-parse'); //parse csv file, turn into javascript array
 require('should'); //test library
 var bb = require('express-busboy'); //take in file from user (in temp folder)
-
-bb.extend(app, {
-  upload: true,
-  path: '/path/to/save/files', //need to designate a path in OppBlock Folder -- possibly use html to upload file in website
-  allowedPath: /./
-});
-=======
 var mustacheExpress = require('mustache-express');
 var app = express(); 
 var Levenshtein = require("levenshtein");
@@ -31,9 +23,11 @@ var auth = new GoogleAuth;
 var client = new auth.OAuth2(credentials.CLIENT_ID);
 var https = require('https');
 
-
-
->>>>>>> 36449069f229fc269560a7f3d3eb7f636178c360
+bb.extend(app, {
+  upload: true,
+  path: '/path/to/save/files', //need to designate a path in OppBlock Folder -- possibly use html to upload file in website
+  allowedPath: /./
+});
 
 var con = mysql.createConnection({
 	host: 'localhost',
@@ -44,11 +38,8 @@ var con = mysql.createConnection({
 
 con.connect();
 
-<<<<<<< HEAD
 //add CSV file of students to database
-=======
 
->>>>>>> 36449069f229fc269560a7f3d3eb7f636178c360
 function createStudentCSV() {
   //use input if exists
   if req.files != null {
