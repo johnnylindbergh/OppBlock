@@ -49,7 +49,7 @@ con.connect();
 =======
 
 >>>>>>> 36449069f229fc269560a7f3d3eb7f636178c360
-function createStudentCSV(studentList) {
+function createStudentCSV() {
   //use input if exists
   if req.files != null {
     req.files[0] = input;
