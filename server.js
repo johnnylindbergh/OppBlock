@@ -216,6 +216,12 @@ app.post("/sms", function (request, response) {
 });
 
 
+
+app.get('/login',function(request,response){
+	response.send('Test login');
+});
+
+
 app.post('/voice', function(request, response){
   const twiml = new VoiceResponse();
   twiml.say('Hello. Please state Opp Block choice after the beep.');
@@ -253,14 +259,6 @@ app.post('/transcribe', function(req,res){
 });
 
 
-// app.get('/',function(req,res){
-	
-// });
-
-}
-function compareLevenshteinDistance(compareTo, baseItem) {
-  return new Levenshtein(compareTo, baseItem).distance;
-}
 
 
 function getClosestOppBlock(input, callback){
@@ -325,6 +323,10 @@ function sendOfferingText(uidDay, callback){
 	});
 }
 
+function authenticationCheck(){
+	return false;
+}
+
 // addStudentsToChoiceTable(1);
 //sendOfferingText(1, function(res){
 //	console.log(res);
@@ -338,6 +340,6 @@ function sendOfferingText(uidDay, callback){
 
 //sendMessage(1,"Hi");
 
-var server = app.listen(80, function() {
+var server = app.listen(9900, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 });
