@@ -1,7 +1,5 @@
 var mysql = require('mysql');
 var moment = require('moment');
-var MomentRange = require('moment-range');
-var moment = MomentRange.extendMoment(Moment);
 var getClosest = require("get-closest");
 var express = require('express');
 var mustacheExpress = require('mustache-express');
@@ -35,7 +33,7 @@ con.connect();
 
 
 function createStudentCSV(studentList) {
-  var input = //input
+  var input = 0;//input
 
 }
 
@@ -47,7 +45,9 @@ function createStudent(studentlastName, studentFirstName, studentGrade, studentS
       con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
       callback(result);
       });
-
+  	}
+  });
+}
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
 		getUidFromValue('teachers', teacherName, function(uidTeacher){
@@ -377,14 +377,16 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 //Function outputs boolean of whether or not an oppblock is in progress (whether it is the right day and in between 2 and 4 pm)
 function isOppblockInProgress(callback) {
+	console.log(moment().hour());
 	con.query('SELECT day FROM opp_block_day', function(err, data) {
 		if(!err){
+			var x = false;
 			for(var i=0; i<data.length; i++) {
-				if(moment(data[i]).format("MMM Do YY") == moment().format("MMM Do YY") && moment().hour() >= 14 && moment().hour() <= 16) {
-					callback(true);
+				if(moment(data[i].day).format("MMM Do YY") == moment().format("MMM Do YY") && moment().hour() >= 14 && moment().hour() <= 19) {
+					x = true;
 				}
 			}
-			callback(false); 
+			callback(x); 
 		} else {
 			console.log("isOppblockInProgress Done Errored! ");
 			console.log(err);
@@ -655,11 +657,14 @@ app.post('/auth', function(req,res){
 
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
-
+	
 });
 
 //TESTS
 /*
+isOppblockInProgress(function(x) {	
+	console.log(x);
+});
 saveOffering(1, 1, 1, function() {
   isOfferingFull(1, 1, function(response){
     console.log("Hiiiiii!");
@@ -689,3 +694,4 @@ con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
     }
   });
 }
+*/
