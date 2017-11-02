@@ -1,5 +1,7 @@
 var mysql = require('mysql');
 var moment = require('moment');
+var MomentRange = require('moment-range');
+var moment = MomentRange.extendMoment(Moment);
 var getClosest = require("get-closest");
 var express = require('express');
 var mustacheExpress = require('mustache-express');
@@ -373,7 +375,22 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 //sendMessage(null, "+14342491362","Hi");
 
-
+//Function outputs boolean of whether or not an oppblock is in progress (whether it is the right day and in between 2 and 4 pm)
+function isOppblockInProgress(callback) {
+	con.query('SELECT day FROM opp_block_day', function(err, data) {
+		if(!err){
+			for(var i=0; i<data.length; i++) {
+				if(moment(data[i]).format("MMM Do YY") == moment().format("MMM Do YY") && moment().hour() >= 14 && moment().hour() <= 16) {
+					callback(true);
+				}
+			}
+			callback(false); 
+		} else {
+			console.log("isOppblockInProgress Done Errored! ");
+			console.log(err);
+		}
+	})
+}
 //Function numStudents checks number of students in an offering and maybe gets their info
 //takes in an offering uid, a day uid, and a boolean getStudentInfo, telling it whether to just sum the students or whether to return their information as well
 //Returns
