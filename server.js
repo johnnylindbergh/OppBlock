@@ -353,12 +353,14 @@ function sendOfferingText(uidDay, callback){
 function removeOppBlock(offeringid, dayid ){
 	if (dayid!=null){
 	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;', function(err, results) {
-		console.log(results);   
+		console.log(results); 
+		callback(results);
 	});
 	};
 	if(dayid==null){
 		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;', function(err, results){
 		console.log(results);
+		callback(results);
 		});
 	};
 }
@@ -368,17 +370,19 @@ function editStudent (studentid,newname,newphone){
 if(newname&& newphone ){
 	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
 		console.log(results);
+		callback(results);
 	});
 	};
 if(newname == null && newphone ){
 	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
 		console.log(results);
+		callback(results);
 	});
 };
 if(newname&& newphone == null){
 	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
 	console.log(results);		
-	
+	callback(results);
 	});
 	};
 }
@@ -386,8 +390,9 @@ if(newname&& newphone == null){
 
 //find a way to fill in old infor here
 function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newrecur){
-	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', function(err,results){
+	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', [uid_offering],function(err,results){
 		console.log(results);
+		callback(results);
 	});
 }
 function getTeacherFromNumber(teacherid){
@@ -404,28 +409,30 @@ function getOfferingFromNumber(offeringid){
 }
 
 function getTeacherFromNumber(teacherid){
-	con.query('SELECT * FROM teachers where uid_teacher=teacherid', function(err,results){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', [uid_teacher],function(err,results){
 		callback(results);
 		return(results);
 });
 }
 function getOfferingFromNumber(offeringid){
-	con.query('SELECT * FROM offerings where uid_offering=offeringid', function(err,results){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid',[uid_offering], function(err,results){
 		callback(results);
 		return(results);
 });
 }
 
 function updateStudentAttendance(studentid, attendance){
-	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',, function(err,results){
+	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',[uid_student], function(err,results){
 		
 		console.log(results);
+		callback(results);
 	}
 }
 
 function addStudentPhone(studentid, phonenum){
-	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',, function(err,results){
+	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',[uid_student], function(err,results){
 	 	console.log(results);
+		 callback(results);
 }
 
 app.post('/student/edit/', function(request,reponse){
