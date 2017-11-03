@@ -403,6 +403,19 @@ function getOfferingFromNumber(offeringid){
 });
 }
 
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+
 function updateStudentAttendance(studentid, attendance){
 	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',, function(err,results){
 		
@@ -776,3 +789,35 @@ var server = app.listen(80, function() {
 
 });
 
+<<<<<<< HEAD
+=======
+//TESTS
+/*
+saveOffering(1, 1, 1, function() {
+  isOfferingFull(1, 1, function(response){
+    console.log("Hiiiiii!");
+    console.log(response);
+  });
+  numStudents(1, 1, true, function(numStudents, infoList) {
+    console.log("number of students: " + numStudents);
+    console.log("The first name: " + infoList[0]);
+  });
+}) 
+getOfferings(1, function(response){
+  console.log(response);
+});
+con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
+ if (!err){
+    
+    console.log('\nOppBlock days:')
+    for (var i in rows) {
+      var day = rows[i]["day"];
+      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+    }
+
+  }
+  else{
+    console.log('Error, are you sure you ran CREATE_DB.sql?');
+  }
+});
+>>>>>>> Update server.js
