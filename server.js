@@ -390,7 +390,72 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 		console.log(results);
 	});
 }
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
 
+function updateStudentAttendance(studentid, attendance){
+	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',, function(err,results){
+		
+		console.log(results);
+	}
+}
+
+function addStudentPhone(studentid, phonenum){
+	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',, function(err,results){
+	 	console.log(results);
+}
+
+app.post('/student/edit/', function(request,reponse){
+	editStudent(request.body.uid_student, request.body.newname,request.body.newphone, function(){
+
+		response.send("student edited");
+
+});
+});
+
+app.get('/studentInfo',function(request,reponse){
+	getStudentFromNumber(request.body.uid_student, function(){
+		response.render(/*info*/);
+	});
+});
+
+app.post('/editOffering',function(request,reponse){
+	editOffering(request.body.uid_offering,request.body.newname, request.body.newsize,request.body.newinfo,request.body.newteacherid,request.body.newnrecur,function(){
+		reponse.response("new info");
+	});
+});
+
+
+app.post('/removeOffering', function(request, reponse){
+	removeOppBlock (request.body.uid_offering, request.body.uid_day, function(){
+		response.end();
+	
+});
+}};
+app.get('/offeringInfo', function(request, reponse){
+	getOfferingFromNumber (request.body.uid_offering, function(){
+		response.render(/*shows offering info and ablitity to change*/);
+	
+});
+}};
+app.get('/', function(request,response){
+	response.render(/*login page'*/);
+
+});
+app.get('/homepage', function(request,response){
+
+	response.render(/*profilepage/optionspage*/);
+});
 
 
 
