@@ -6,9 +6,22 @@ var app = express();
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
 var twilio = require('twilio');
+var passport = require('passport'),OAuthStrategy = require('passport-oauth').OAuthStrategy;
 //var client = new twilio(accountSid, authToken);
 var bodyParser = require('body-parser');
 var firebase = require('firebase');
+var id_token = googleUser.getAuthResponse();
+var credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+var user = firebase.auth().currentUser;
+var name, email, photoUrl, uid, emailVerified;
+if (user != null){
+	name = user.displayName;
+	email = user.email;	
+	photoUrl = user.photoURL;
+	emailVerified = user.emailVerified;
+	uid = user.uid;	
+}
+
 
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -218,7 +231,7 @@ app.post("/sms", function (request, response) {
 
 
 app.get('/login',function(request,response){
-	response.send('Test login');
+	response.render('login_page/index.html')
 });
 
 
@@ -323,9 +336,14 @@ function sendOfferingText(uidDay, callback){
 	});
 }
 
-function authenticationCheck(){
-	return false;
-}
+
+app.post('/login',
+  passport.authenticate('local'),
+  function(req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    res.redirect('/users/' + req.user.username);
+});
 
 // addStudentsToChoiceTable(1);
 //sendOfferingText(1, function(res){

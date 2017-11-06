@@ -21,6 +21,7 @@
     "express": "^4.15.4",
     "firebase": "^4.6.0",
     "get-closest": "0.0.4",
+    "hogan": "^1.0.2",
     "levenshtein": "^1.0.5",
     "moment": "^2.18.1",
     "node-mysql": "^0.4.2",
