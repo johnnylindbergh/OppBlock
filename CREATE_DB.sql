@@ -90,9 +90,8 @@ CREATE TABLE choices (
 ## Test Data
  INSERT into opp_block_day (day) values ('1999-08-20');
 INSERT into opp_block_day (day) values ('2017-09-20');
-
+INSERT into opp_block_day (day) values ('2017-11-02');
 INSERT into opp_block_day (day) values ('2017-09-19');
-INSERT into opp_block_day (day) values ('2017-09-22');
 
 
 
