@@ -33,18 +33,27 @@ var con = mysql.createConnection({
 con.connect();
 
 
+
 session = new NodeSession({secret: 'GTFOHACKERS'});
+
+function createStudentCSV(studentList) {
+  var input = 0;//input
+
 
 
 //create student if nothing exists in database, update student_info if something does
-// function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
-//   con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
-//     if(results[0] == undefined) {
-//       //if nothing is found in database, create new student
-//       con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
-//       callback(result);
-//       });
-//    }
+
+
+function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
+  con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
+    if(results[0] == undefined) {
+      //if nothing is found in database, create new student
+      con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
+      callback(result);
+      });
+  	}
+  });
+}
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
@@ -373,7 +382,24 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 //sendMessage(null, "+14342491362","Hi");
 
-
+//Function outputs boolean of whether or not an oppblock is in progress (whether it is the right day and in between 2 and 4 pm)
+function isOppblockInProgress(callback) {
+	console.log(moment().hour());
+	con.query('SELECT day FROM opp_block_day', function(err, data) {
+		if(!err){
+			var x = false;
+			for(var i=0; i<data.length; i++) {
+				if(moment(data[i].day).format("MMM Do YY") == moment().format("MMM Do YY") && moment().hour() >= 14 && moment().hour() <= 19) {
+					x = true;
+				}
+			}
+			callback(x); 
+		} else {
+			console.log("isOppblockInProgress Done Errored! ");
+			console.log(err);
+		}
+	})
+}
 //Function numStudents checks number of students in an offering and maybe gets their info
 //takes in an offering uid, a day uid, and a boolean getStudentInfo, telling it whether to just sum the students or whether to return their information as well
 //Returns
@@ -777,6 +803,43 @@ app.get('/add/:id', function(req,res){
 
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
-
+	
 });
+
+
+//TESTS
+/*
+isOppblockInProgress(function(x) {	
+	console.log(x);
+});
+saveOffering(1, 1, 1, function() {
+  isOfferingFull(1, 1, function(response){
+    console.log("Hiiiiii!");
+    console.log(response);
+  });
+  numStudents(1, 1, true, function(numStudents, infoList) {
+    console.log("number of students: " + numStudents);
+    console.log("The first name: " + infoList[0]);
+  });
+}) 
+getOfferings(1, function(response){
+  console.log(response);
+});
+con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
+ if (!err){
+    
+    console.log('\nOppBlock days:')
+    for (var i in rows) {
+      var day = rows[i]["day"];
+      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+    }
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+      callback(result);
+      });
+    }
+  });
+}
+*/
 
