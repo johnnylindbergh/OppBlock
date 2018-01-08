@@ -638,55 +638,104 @@ app.post('/auth', function(req,res){
 // 	console.log("get auth");
 // });
 
-function Offering(uid, name, description, maxSize, recurring, teacher) {
-    this.uid = uid;
-    this.name = name;
-    this.description = description;
-    this.maxSize = maxSize;
-    this.recur = recurring;
-    this.teacher = teacher;
-  }
 
-function Teacher(uid, prefix, fullname, teacher_info) {
-    this.uid = uid;
-    this.prefix = prefix;
-    this.fullname = fullname;
-    this.teacher_info = teacher_info;
-    // this.offerings = new Offering(null,null,null,null,null,uid); 
-    this.offerings = [];
-  }
 
 
 app.get('/teacher/:id', function(req,res){
-	res.render('teacher.html', {data:req.params.id});
-});
-app.get('/teacherObject/:id', function(req,res){
-	var myId = req.params.id;
-	var teacher;
-	con.query('select * from teachers where uid_teacher = ?;', [myId],function(err, resultsTeacher) {
-		if (resultsTeacher != undefined){
-			resultsTeacher = resultsTeacher[0];
-			teacher = new Teacher(myId, resultsTeacher.prefix,resultsTeacher.fullname,resultsTeacher.teacher_info);
-			con.query('select * from offerings where uid_teacher = ?;', [myId],function(err, resultsOffering) {
-				if (resultsOffering != undefined){
-					for(var o=0; o<resultsOffering.length; o++) {
-						//console.log(resultsOffering[o].name);
-						offering = new Offering(resultsOffering[o].uid_offering,resultsOffering[o].name,resultsOffering[o].description,resultsOffering[o].max_size,resultsOffering[o].recurring,resultsOffering[o].uid_teacher);
-						teacher.offerings.push(offering)
-					}
-					res.send(teacher);
-				}else{
-
-				}
-			});
-
-		
+	var teacher_uid = req.params.id;
+	con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;',[teacher_uid],function(err, resultsTeacher) {
+		if (resultsTeacher.length != 0){
+			res.render('teacher.html', {data:resultsTeacher, teacherName:resultsTeacher[0].prefix+" "+resultsTeacher[0].teacherName, teacherId:teacher_uid });
 		}else{
-			res.send("not valid teacher id!")
+			res.send("not valid teacher id!");
 		}
 	});
 });
 
+app.get('/editOffering/:id', function(req,res){
+	var offering_uid = req.params.id;
+	con.query('select * from offerings where uid_offering = ?;',[offering_uid],function(err, offeringInfo) {
+			if (offeringInfo.length != 0){
+				res.render('offeringEdit.html', {data:offeringInfo,offeringId:offering_uid});
+			}else{
+				res.send("not valid offering id!");
+			}
+		});
+	
+});
+
+app.get('/delete/:id', function(req,res){
+	var offering_uid = req.params.id;
+	con.query('delete from offerings where uid_offering = ?',[offering_uid],function(err) {
+					if (err){
+						console.log(err);
+					}else{
+						res.send("deleted");
+					}
+				});
+});
+//
+
+app.post('/updateOffering/:offering_id', function(req,res){
+	var offering_id = parseInt(req.params.offering_id);
+	var name = req.body.name;
+	var description = req.body.description;
+	var max_size = parseInt(req.body.max_size);
+	var teacherId;
+	var recurring = req.body.recurring == 'on' ? 1 : 0;
+	console.log(recurring);
+	
+		con.query('select uid_teacher from offerings WHERE uid_offering = ?;',[offering_id],function(err, uid_teacher) {
+						if (!err){
+							teacherId = uid_teacher[0].uid_teacher;
+							if (recurring == 1){
+								con.query('UPDATE offerings SET recurring = 0  WHERE recurring = 1 and  uid_teacher = ? and uid_offering !=? ;',[uid_teacher[0].uid_teacher,offering_id],function(err) {
+											if (err){
+												console.log(err);
+											}
+										
+								});
+							}
+							
+							con.query('UPDATE offerings SET name = ?, description = ?, max_size = ?, recurring = ? WHERE uid_offering = ?;',[name, description, max_size, recurring, offering_id],function(err) {
+											if (err){
+												console.log(err);
+											}else{
+												res.redirect("/teacher/"+teacherId);
+											}
+										});
+
+						}
+					
+			});
+						
+		
+		
+	
+	
+});
+//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
+//
+app.get('/add/:id', function(req,res){
+	var teacher_uid = req.params.id;
+	con.query('INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("", 0, ?, 0, "");',[teacher_uid ],function(err) {
+			if (!err){
+				con.query('select * from offerings where uid_offering = last_insert_id();',function(err, offeringInfo) {
+						if (!err){
+							var offering_uid = offeringInfo[0].uid_offering;
+								res.render('offeringEdit.html', {data:offeringInfo,offeringId:offering_uid});
+							}else{
+								res.send("Oh shit!");
+							}
+						});
+				
+			}else{
+				res.send("not valid offering id!");
+			}
+		});
+	
+});
+//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
 
 // con.query('SELECT * FROM offerings, teachers WHERE offerings.uid_teacher = teachers.uid_teacher AND teachers.uid_teacher = ?;', [myId],function(err, results) {

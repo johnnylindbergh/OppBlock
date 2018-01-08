@@ -27,7 +27,7 @@ CREATE TABLE excluded_groups (
 CREATE TABLE teachers (
     uid_teacher INT NOT NULL AUTO_INCREMENT,
     prefix VARCHAR(4),
-    fullname VARCHAR(32),
+    name VARCHAR(32),
     teacher_info TEXT,
  	PRIMARY KEY (uid_teacher)
 );
@@ -96,14 +96,14 @@ INSERT into opp_block_day (day) values ('2017-09-22');
 
 
 
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Zack Minster', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Bob Clark', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Adam Columbo', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
-INSERT into teachers (prefix, fullname, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zach Minster', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Bob Clark', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Adam Columbo', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
+INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
 
 
 INSERT into groups (group_info) values ('the lame group');
@@ -121,15 +121,15 @@ INSERT into groups (group_info) values ('the cool group');
 -- INSERT into calender (uid_day, uid_offering) values (1,1);
 -- INSERT into calender (uid_day, uid_offering) values (2,1);
 
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("CS Studio", 10, 1, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Mr. Minster's 2nd Offering", 15, 1, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("SAT or ACT Math", 10, 2, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("One on One thinking games", 10, 3, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Stab Yoga", 10, 4, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Stab Investment Group", 10, 5, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Open Clinic Treatments for students", 10, 6, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Hispanic culture trivia competition", 10, 7, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Art History", 10, 8, 0);
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("CS Studio", 10, 1, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Yoga", 10, 4, 1, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Investment Group", 10, 5, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Open Clinic Treatments for students", 10, 6, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Hispanic culture trivia competition", 10, 7, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Art History", 10, 8, 1, "This OppBlock is...");
 
 
 -- INSERT into calendar (uid_day, uid_offering) values (1,1);
