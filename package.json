@@ -29,6 +29,7 @@
     "moment": "^2.18.1",
     "mustache-express": "^1.2.5",
     "node-mysql": "^0.4.2",
+    "node-session": "^1.2.1",
     "passport-google-oauth": "^1.0.0",
     "public-ip": "^2.3.5",
     "twilio": "^3.6.7"

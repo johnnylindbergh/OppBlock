@@ -7,6 +7,7 @@ var parse = require('csv-parse'); //parse csv file, turn into javascript array
 require('should'); //test library
 var bb = require('express-busboy'); //take in file from user (in temp folder)
 var mustacheExpress = require('mustache-express');
+
 var app = express(); 
 var Levenshtein = require("levenshtein");
 var VoiceResponse = require('twilio').twiml.VoiceResponse;
@@ -15,12 +16,9 @@ var credentials = require("./credentials.js");
 var client = new twilio(credentials.accountSid, credentials.authToken);
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
-app.engine('mustache', mustacheExpress());
-app.set('view engine', 'mustache');
+app.engine('html', mustacheExpress());
+//app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
-var GoogleAuth = require('google-auth-library');
-var auth = new GoogleAuth;
-var client = new auth.OAuth2(credentials.CLIENT_ID);
 var https = require('https');
 
 bb.extend(app, {
@@ -253,7 +251,7 @@ app.post("/sms", function (request, response) {
 	getStudentFromNumber(request.body.From, function(res){
 		if (res != undefined){
 			console.log(res[0].name + " says " +request.body.Body);
-			getClosestOppBlock(equest.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
+			getClosestOppBlock(request.body.Body, function(input, c, OppBlockName, OppBlocks, confidence){
 				console.log("You chose: "+ OppBlockName);
 				response.send("<Response><Message>You chose: " + OppBlockName + "</Message></Response>");
 			});
@@ -397,19 +395,7 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 
 
-// getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
-// 	console.log(request+" -----> " + OppBlockName);
-	
 
-// 	console.log("Confidence: "+confidence+"%");
-// })
-
-//sendMessage(null, "+14342491362","Hi");
-
-
-//Function numStudents checks number of students in an offering and maybe gets their info
-//takes in an offering uid, a day uid, and a boolean getStudentInfo, telling it whether to just sum the students or whether to return their information as well
-//Returns
 function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
 	var numStud = 0;
 	var studList = [];
@@ -446,13 +432,12 @@ function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
     } else {
       console.log("IT DONE ERRD");
     }
-<<<<<<< HEAD
+
     else {
       //if something is found, update student info
       con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
         callback(result);
       });
-=======
   })
 }
 //Function takes in an offering, returns true or false whether its full or not
@@ -471,6 +456,7 @@ function isOfferingFull(uid_day, uid_offering, callback) {
     }
   })
 }
+
 //Function gets Offerings and their teachers on a certain day from database;
 //Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
 function getOfferings(uid_day, callback) {
@@ -529,7 +515,6 @@ function saveOffering(day, student, offering, callback) {
     } else {
       console.log("We're sorry. saveOffering() produced an error.");
       console.log(err);
->>>>>>> 36449069f229fc269560a7f3d3eb7f636178c360
     }
   });
 }
@@ -580,140 +565,149 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
 
 
 app.get('/', function(req,res){
-	console.log(req);
-	res.render('login');
-
+	//session.startSession(req, res);
+	// req.session.put('info', 'myInfo', function(req,res){
+		console.log(req.body.idtoken);
+	 	res.render('login.html');
+	// });
 });
 
-<<<<<<< HEAD
-//example student
-=======
-app.get('/newlogin', function(req,res){
-
-	res.send('New User!');
-
+app.get('/teacher/:id', function(req,res){
+	var teacher_uid = req.params.id;
+	con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;',[teacher_uid],function(err, resultsTeacher) {
+		if (resultsTeacher.length != 0){
+			res.render('teacher.html', {data:resultsTeacher, teacherName:resultsTeacher[0].prefix+" "+resultsTeacher[0].teacherName, teacherId:teacher_uid });
+		}else{
+			res.send("not valid teacher id!");
+		}
+	});
 });
 
-app.get('/landingpage', function(req,res){
-
-	console.log(req);
-	res.send("profile");
-});
->>>>>>> 36449069f229fc269560a7f3d3eb7f636178c360
-
-
-function authenticate(req,res, callback){
-	var token = req.body.idtoken;
-
-	client.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-
-    function(e, login) {
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-      callback(payload, userid,token);
-
-    });
-}
-
-
-function isLoggedIn(req,res){
-	var token = req.body.idtoken;
-	
-	client.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-    function(e, login) {
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-
-		con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
-			if (result.length != 0){
-				if (result[0].authToken == userid){
-					return callback();
-				}else{
-					res.redirect('/newlogin');
-				}
+app.get('/editOffering/:id', function(req,res){
+	var offering_uid = req.params.id;
+	con.query('select * from offerings where uid_offering = ?;',[offering_uid],function(err, offeringInfo) {
+			if (offeringInfo.length != 0){
+				res.render('offeringEdit.html', {data:offeringInfo,offeringId:offering_uid});
+			}else{
+				res.send("not valid offering id!");
 			}
-			res.redirect('/');
-			
-  					
 		});
-	});
-}
+	
+});
+
+app.get('/delete/:id', function(req,res){
+	var offering_uid = req.params.id;
+	con.query('delete from offerings where uid_offering = ?',[offering_uid],function(err) {
+					if (err){
+						console.log(err);
+					}else{
+						res.send("deleted");
+					}
+				});
+});
+//
+
+app.post('/updateOffering/:offering_id', function(req,res){
+	var offering_id = parseInt(req.params.offering_id);
+	var name = req.body.name;
+	var description = req.body.description;
+	var max_size = parseInt(req.body.max_size);
+	var teacherId;
+	var recurring = req.body.recurring == 'on' ? 1 : 0;
+	console.log(recurring);
+	
+		con.query('select uid_teacher from offerings WHERE uid_offering = ?;',[offering_id],function(err, uid_teacher) {
+						if (!err){
+							teacherId = uid_teacher[0].uid_teacher;
+							if (recurring == 1){
+								con.query('UPDATE offerings SET recurring = 0  WHERE recurring = 1 and  uid_teacher = ? and uid_offering !=? ;',[uid_teacher[0].uid_teacher,offering_id],function(err) {
+											if (err){
+												console.log(err);
+											}
+										
+								});
+							}
+							
+							con.query('UPDATE offerings SET name = ?, description = ?, max_size = ?, recurring = ? WHERE uid_offering = ?;',[name, description, max_size, recurring, offering_id],function(err) {
+											if (err){
+												console.log(err);
+											}else{
+												res.redirect("/teacher/"+teacherId);
+											}
+										});
+
+						}
+					
+			});
+						
+		
+		
+	
+	
+});
+//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
+//
+app.get('/add/:id', function(req,res){
+	var teacher_uid = req.params.id;
+	con.query('INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("", 0, ?, 0, "");',[teacher_uid ],function(err) {
+			if (!err){
+				con.query('select * from offerings where uid_offering = last_insert_id();',function(err, offeringInfo) {
+						if (!err){
+							var offering_uid = offeringInfo[0].uid_offering;
+								res.render('offeringEdit.html', {data:offeringInfo,offeringId:offering_uid});
+							}else{
+								res.send("Oh shit!");
+							}
+						});
+				
+			}else{
+				res.send("not valid offering id!");
+			}
+		});
+	
+});
+//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
 
-app.post('/auth', function(req,res){
-	var token = req.body.idtoken;
+// con.query('SELECT * FROM offerings, teachers WHERE offerings.uid_teacher = teachers.uid_teacher AND teachers.uid_teacher = ?;', [myId],function(err, results) {
+// 					if (results != undefined){
+// 						console.log(results);
+// 						console.log(myId);
+	
+// 						res.render('teacher.html',{myName: JSON.stringify(results[0]), myId: myId, myOfferings: results[0].name, myOfferingsId: results[0].uid_offering});
+// 					}else{
+// 						console.log(results);
+// 						console.log(myId);
+// 						res.send("not a valid teacher id");
+// 					}
+// });
 
-	client.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-    function(e, login) {
-    	console.log(login);
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-      res.send(payload['name']);
-       
-
-
-		// con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
-		// 	if (result.length != 0){
-		// 		if (result[0].authToken == userid){
-		// 			console.log("a");
-		// 		}else{
-		// 			console.log("b")
-		// 		}
-		// 	}
-		// 		console.log("c");
-
-  					
-		// });
-	});
 	
 
-});
-// app.get('/auth', function(req,res){
-// 	console.log("get auth");
-// });
+	// con.query('SELECT name, uid_offering FROM offerings WHERE uid_teacher = ?;',[myId], function(err, results) {
+	// 	if (results != undefined){
+	// 		for(var i=0; i<results.length; i++){
+	// 				myOfferings.push(results[i].name);
+	// 				myOfferingsId.push(results[i].uid_offering);
+	// 		}
+
+	// 		con.query('SELECT uid_student FROM choices WHERE uid_offering in (?);',[myId], function(err, results) {
+	// 			con.query('SELECT prefix, name FROM teachers WHERE uid_teacher = ?;',[myId], function(err, results) {
+	// 				if (results != undefined){
+	// 					//myName = results[0].name;
+	// 				}
+	// 				res.render('teacher.html',{myName: myName, myId: myId, myOfferings: myOfferings, myOfferingsId: myOfferingsId});
+	// 			});
+	// 		});
+	// 	}
+	// });
+
+
+
+
 
 var server = app.listen(80, function() {
 	console.log('OppBlock server listening on port %s', server.address().port);
 
 });
 
-//TESTS
-/*
-saveOffering(1, 1, 1, function() {
-  isOfferingFull(1, 1, function(response){
-    console.log("Hiiiiii!");
-    console.log(response);
-  });
-  numStudents(1, 1, true, function(numStudents, infoList) {
-    console.log("number of students: " + numStudents);
-    console.log("The first name: " + infoList[0]);
-  });
-}) 
-getOfferings(1, function(response){
-  console.log(response);
-});
-con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
- if (!err){
-    
-    console.log('\nOppBlock days:')
-    for (var i in rows) {
-      var day = rows[i]["day"];
-      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
-    }
-    else {
-      //if something is found, update student info
-      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
-      callback(result);
-      });
-    }
-  });
-}
