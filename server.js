@@ -116,7 +116,7 @@ function getUidFromValue(tableType, value, callback) {
 	}
 
 	if (tableType == "students"){
-		con.query('SELECT uid_student FROM students WHERE name = ?', [value], function(err, results) {
+		con.query('SELECT uid_student FROM students WHERE firstname = ?', [value], function(err, results) {
 			if (results.length > 0){
 				callback(results[0].uid_student);
 			}else{
