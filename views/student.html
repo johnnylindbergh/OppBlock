@@ -1,8 +1,29 @@
 
 <html>
 <head>
+{{Student}}'s Oppblock Status
 </head>
 <body>
-  This is the student page!
+	<h1 style=""> {{Student}} </h1>
+	<h2 style=""> {{Choice}} </h2>
+	<table style="">
+		<tr>
+		    <th>Name</th>
+		    <th>Description</th>
+		    <th>Location</th>
+		    <th>Maximum Size</th>
+		    <th>Edit Choice</th>
+  		</tr>	
+  		{{#data}}
+  		<tr>
+  			<td>{{offeringName}}</td> 
+  			<td>{{description}}</td> 
+  			<td>{{location}}</td>  <!-- Does location exist in our current db structure? -->
+  			<td>{{max_size}}</td> 
+  			<td><input type="radio" name="Choice"></td> 
+  		</tr>
+  		{{/data}}
+	</table>
+	<button>Save New Choice</button>
 </body>
 </html>
