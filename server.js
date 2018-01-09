@@ -3,9 +3,7 @@ var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
 var app = express();
-var parse = require('csv-parse'); //parse csv file, turn into javascript array
-require('should'); //test library
-var bb = require('express-busboy'); //take in file from user (in temp folder)
+var parse = require('csv-parse');
 var mustacheExpress = require('mustache-express');
 
 var app = express(); 
@@ -21,12 +19,6 @@ app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 var https = require('https');
 
-bb.extend(app, {
-  upload: true,
-  path: '/path/to/save/files', //need to designate a path in OppBlock Folder -- possibly use html to upload file in website
-  allowedPath: /./
-});
-
 var con = mysql.createConnection({
 	host: 'localhost',
 	user: credentials.MySQL_username,
@@ -39,18 +31,8 @@ con.connect();
 //add CSV file of students to database
 
 function createStudentCSV() {
-  //use input if exists
-  if req.files != null {
-    req.files[0] = input;
-  }
-  else {
-    println("File was not read properly");
-    return;
-  }
-  //parse CSV using callback API
-  parse(input, function(err, output){
-    //use output.should.eql() to test parser
-  });
+  //string split
+  //keep this
   //add values in array to database
   for (var i = 0; i < output.length; i + 7) {
     conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
@@ -607,7 +589,7 @@ app.get('/delete/:id', function(req,res){
 });
 //
 
-app.post('/updateOffering/:offering_id', function(req,res){
+app.post('/updateOffering/:offering_id',  function(req,res){
 	var offering_id = parseInt(req.params.offering_id);
 	var name = req.body.name;
 	var description = req.body.description;
