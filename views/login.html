@@ -1,43 +1,23 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-  <meta name="google-signin-client_id" content="827038446996-lrrntro5hskmu9aj1jc55nrmv9090jr0.apps.googleusercontent.com">
-</head>
-<body>
-  <div class="g-signin2" data-onsuccess="onSuccess"></div>
-  <script>
-    function onSuccess(googleUser) {
-    	  var profile = googleUser.getBasicProfile();
-    	console.log('ID: ' + profile.getId());
-    	var id_token = googleUser.getAuthResponse().id_token;
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'http://localhost/');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.onload = function() {
- 			console.log('Signed in as: ' + xhr.responseText);
-			sessionStorage.setItem('id_token', id_token);
-			 		//	window.location.href = '/teacher/1';
+  <head>
+  	<title>Oppblock Sign Up</title>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
+  <body>
+    <h1 id = "test">Oppblock Sign Up</h1>
 
-		};
-		xhr.send('idtoken=' + id_token); 
 
- 	}
-    function onFailure(error) {
-      console.log(error);
-    }
-    function renderButton() {
-      gapi.signin2.render('my-signin2', {
-        'scope': 'profile email',
-        'width': 240,
-        'height': 50,
-        'longtitle': true,
-        'theme': 'dark',
-        'onsuccess': onSuccess,
-        'onfailure': onFailure
-      });
-    }
-  </script>
 
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
-</body>
+    <div id = "centralBox"> <!--- The content box located in center -->
+      <h1 id = "titleText">Sign In</h1>
+      <input id = "emailInput" type = "email" placeholder=" E-mail"/>
+      <input id = "passwordInput" type = "password" placeholder=" Password"/>
+      <button id = "submit" onclick="submit();"> Forget Password </button>
+      <button id = "googleSign" onclick="signIn();"> Next</button>
+    </div> 
+
+  </body>
 </html>
