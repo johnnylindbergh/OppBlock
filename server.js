@@ -353,12 +353,14 @@ function sendOfferingText(uidDay, callback){
 function removeOppBlock(offeringid, dayid ){
 	if (dayid!=null){
 	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;', function(err, results) {
-		console.log(results);   
+		console.log(results); 
+		callback(results);
 	});
 	};
 	if(dayid==null){
 		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;', function(err, results){
 		console.log(results);
+		callback(results);
 		});
 	};
 }
@@ -368,17 +370,19 @@ function editStudent (studentid,newname,newphone){
 if(newname&& newphone ){
 	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
 		console.log(results);
+		callback(results);
 	});
 	};
 if(newname == null && newphone ){
 	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
 		console.log(results);
+		callback(results);
 	});
 };
 if(newname&& newphone == null){
 	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
 	console.log(results);		
-	
+	callback(results);
 	});
 	};
 }
@@ -386,11 +390,92 @@ if(newname&& newphone == null){
 
 //find a way to fill in old infor here
 function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newrecur){
-	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', function(err,results){
+	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', [uid_offering],function(err,results){
 		console.log(results);
+		callback(results);
 	});
 }
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
 
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', [uid_teacher],function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid',[uid_offering], function(err,results){
+		callback(results);
+		return(results);
+});
+}
+
+function updateStudentAttendance(studentid, attendance){
+	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',[uid_student], function(err,results){
+		
+		console.log(results);
+		callback(results);
+	}
+}
+
+function addStudentPhone(studentid, phonenum){
+	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',[uid_student], function(err,results){
+	 	console.log(results);
+		 callback(results);
+}
+
+app.post('/student/edit/', function(request,reponse){
+	editStudent(request.body.uid_student, request.body.newname,request.body.newphone, function(){
+
+		response.send("student edited");
+
+});
+});
+
+app.get('/studentInfo',function(request,reponse){
+	getStudentFromNumber(request.body.uid_student, function(){
+		response.render(/*info*/);
+	});
+});
+
+app.post('/editOffering',function(request,reponse){
+	editOffering(request.body.uid_offering,request.body.newname, request.body.newsize,request.body.newinfo,request.body.newteacherid,request.body.newnrecur,function(){
+		reponse.response("new info");
+	});
+});
+
+
+app.post('/removeOffering', function(request, reponse){
+	removeOppBlock (request.body.uid_offering, request.body.uid_day, function(){
+		response.end();
+	
+});
+}};
+app.get('/offeringInfo', function(request, reponse){
+	getOfferingFromNumber (request.body.uid_offering, function(){
+		response.render(/*shows offering info and ablitity to change*/);
+	
+});
+}};
+app.get('/', function(request,response){
+	response.render(/*login page'*/);
+
+});
+app.get('/homepage', function(request,response){
+
+	response.render(/*profilepage/optionspage*/);
+});
 
 
 
@@ -711,3 +796,35 @@ var server = app.listen(80, function() {
 
 });
 
+<<<<<<< HEAD
+=======
+//TESTS
+/*
+saveOffering(1, 1, 1, function() {
+  isOfferingFull(1, 1, function(response){
+    console.log("Hiiiiii!");
+    console.log(response);
+  });
+  numStudents(1, 1, true, function(numStudents, infoList) {
+    console.log("number of students: " + numStudents);
+    console.log("The first name: " + infoList[0]);
+  });
+}) 
+getOfferings(1, function(response){
+  console.log(response);
+});
+con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
+ if (!err){
+    
+    console.log('\nOppBlock days:')
+    for (var i in rows) {
+      var day = rows[i]["day"];
+      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+    }
+
+  }
+  else{
+    console.log('Error, are you sure you ran CREATE_DB.sql?');
+  }
+});
+>>>>>>> Update server.js
