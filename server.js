@@ -69,6 +69,15 @@ function createStudent(studentlastName, studentFirstName, studentGrade, studentS
       con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
         callback(result);
       });
+    }
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+        callback(result);
+      });
+    }
+  });
+}
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
