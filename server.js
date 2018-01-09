@@ -2,6 +2,10 @@ var mysql = require('mysql');
 var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
+var app = express();
+var parse = require('csv-parse'); //parse csv file, turn into javascript array
+require('should'); //test library
+var bb = require('express-busboy'); //take in file from user (in temp folder)
 var mustacheExpress = require('mustache-express');
 
 var app = express(); 
@@ -17,8 +21,11 @@ app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 var https = require('https');
 
-
-
+bb.extend(app, {
+  upload: true,
+  path: '/path/to/save/files', //need to designate a path in OppBlock Folder -- possibly use html to upload file in website
+  allowedPath: /./
+});
 
 var con = mysql.createConnection({
 	host: 'localhost',
@@ -29,10 +36,46 @@ var con = mysql.createConnection({
 
 con.connect();
 
+//add CSV file of students to database
 
+function createStudentCSV() {
+  //use input if exists
+  if req.files != null {
+    req.files[0] = input;
+  }
+  else {
+    println("File was not read properly");
+    return;
+  }
+  //parse CSV using callback API
+  parse(input, function(err, output){
+    //use output.should.eql() to test parser
+  });
+  //add values in array to database
+  for (var i = 0; i < output.length; i + 7) {
+    conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
+      callback(result);
+    });
+  }
+}
 
-
-
+//create student if nothing exists in database, update student_info if something does
+function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
+  con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
+    if(results[0] == undefined) {
+      //if nothing is found in database, create new student
+      con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
+        callback(result);
+      });
+    }
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+        callback(result);
+      });
+    }
+  });
+}
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
@@ -389,6 +432,12 @@ function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
     } else {
       console.log("IT DONE ERRD");
     }
+
+    else {
+      //if something is found, update student info
+      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+        callback(result);
+      });
   })
 }
 //Function takes in an offering, returns true or false whether its full or not
@@ -522,7 +571,6 @@ app.get('/', function(req,res){
 	 	res.render('login.html');
 	// });
 });
-
 
 app.get('/teacher/:id', function(req,res){
 	var teacher_uid = req.params.id;
