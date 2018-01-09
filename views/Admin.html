@@ -2,9 +2,30 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Admin</title>
+<title>Admin Page</title>
 </head>
 
+
+<!--Things to do: set new oppblock, view all stuff, edit all stuff-->
 <body>
+	<h1>Administrator Portal</h1>
+	<h3>Insert Name Here</h3>
+	<table style="">
+		<tr>
+			<th>Edit</th>
+            <th>Date</th>
+            <th>Day of the Week</th>
+        </tr>
+        {{#data}}
+        <tr>
+            <td><a href="/Day/{{uid_day}}">Edit</a></td>
+            <td>{{date}}</td>
+            <td>{{dayoftheweek}}</td>
+        </tr>
+        {{/data}}
+    </table>
+        
+
+
 </body>
 </html>
