@@ -3,7 +3,6 @@ var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
 var mustacheExpress = require('mustache-express');
-var NodeSession = require('node-session');
 
 var app = express(); 
 var Levenshtein = require("levenshtein");
@@ -16,10 +15,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.engine('html', mustacheExpress());
 //app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
-var GoogleAuth = require('google-auth-library');
-var auth = new GoogleAuth;
-var clientGoogle = new auth.OAuth2(credentials.CLIENT_ID);
 var https = require('https');
+
 
 
 
@@ -33,18 +30,9 @@ var con = mysql.createConnection({
 con.connect();
 
 
-session = new NodeSession({secret: 'GTFOHACKERS'});
 
 
-//create student if nothing exists in database, update student_info if something does
-// function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
-//   con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
-//     if(results[0] == undefined) {
-//       //if nothing is found in database, create new student
-//       con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail], function(result) {
-//       callback(result);
-//       });
-//    }
+
 
 function createOffering(name, maxSize,  description, recurring, teacherName, uidTeacher, DayArray) {
 	if (uidTeacher == null) {
@@ -364,19 +352,7 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 
 
-// getClosestOppBlock("I don't Know how this works", function(request, result, OppBlockName, OppBlocks,confidence){
-// 	console.log(request+" -----> " + OppBlockName);
-	
 
-// 	console.log("Confidence: "+confidence+"%");
-// })
-
-//sendMessage(null, "+14342491362","Hi");
-
-
-//Function numStudents checks number of students in an offering and maybe gets their info
-//takes in an offering uid, a day uid, and a boolean getStudentInfo, telling it whether to just sum the students or whether to return their information as well
-//Returns
 function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
 	var numStud = 0;
 	var studList = [];
@@ -431,6 +407,7 @@ function isOfferingFull(uid_day, uid_offering, callback) {
     }
   })
 }
+
 //Function gets Offerings and their teachers on a certain day from database;
 //Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
 function getOfferings(uid_day, callback) {
@@ -545,100 +522,6 @@ app.get('/', function(req,res){
 	 	res.render('login.html');
 	// });
 });
-
-app.get('/newlogin', function(req,res){
-
-	res.send('New User!');
-
-});
-
-app.get('/landingpage', function(req,res){
-
-	//console.log(req);
-	res.send("profile");
-});
-
-
-function authenticate(req,res, callback){
-	var token = req.body.idtoken;
-
-	clientGoogle.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-
-    function(e, login) {
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-      callback(payload, userid,token);
-
-    });
-}
-
-
-function isLoggedIn(req,res){
-	var token = req.body.idtoken;
-	
-	client.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-    function(e, login) {
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-
-		con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
-			if (result.length != 0){
-				if (result[0].authToken == userid){
-					return callback();
-				}else{
-					res.redirect('/newlogin');
-				}
-			}
-			res.redirect('/');
-			
-  					
-		});
-	});
-}
-
-
-app.post('/auth', function(req,res){
-	var token = req.body.idtoken;
-
-	clientGoogle.verifyIdToken(
-    token,
-    CLIENT_ID,
-
-    function(e, login) {
-    	console.log(login);
-      var payload = login.getPayload();
-      var userid = payload['sub'];
-      res.send(payload['name']);
-       
-
-
-		// con.query('SELECT * FROM students WHERE name = ?',[payload['name']], function(err, result) { 
-		// 	if (result.length != 0){
-		// 		if (result[0].authToken == userid){
-		// 			console.log("a");
-		// 		}else{
-		// 			console.log("b")
-		// 		}
-		// 	}
-		// 		console.log("c");
-
-  					
-		// });
-	});
-	
-
-});
-// app.get('/auth', function(req,res){
-// 	console.log("get auth");
-// });
-
-
 
 
 app.get('/teacher/:id', function(req,res){

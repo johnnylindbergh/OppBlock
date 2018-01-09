@@ -16,7 +16,7 @@
 		xhr.onload = function() {
  			console.log('Signed in as: ' + xhr.responseText);
 			sessionStorage.setItem('id_token', id_token);
-			 			window.location.href = '/landingpage';
+			 		//	window.location.href = '/teacher/1';
 
 		};
 		xhr.send('idtoken=' + id_token); 

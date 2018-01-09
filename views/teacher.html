@@ -1,16 +1,54 @@
 
 <html>
 <head>
+    <script>
+        var auth2;
+
+/**
+ * Initializes the Sign-In client.
+ */
+var initClient = function() {
+    gapi.load('auth2', function(){
+        /**
+         * Retrieve the singleton for the GoogleAuth library and set up the
+         * client.
+         */
+        auth2 = gapi.auth2.init({
+            client_id: '827038446996-lrrntro5hskmu9aj1jc55nrmv9090jr0.apps.googleusercontent.com'
+        });
+
+        // Attach the click handler to the sign-in button
+        auth2.attachClickHandler('signin-button', {}, onSuccess, onFailure);
+    });
+};
+
+/**
+ * Handle successful sign-ins.
+ */
+var onSuccess = function(user) {
+    console.log('Signed in as ' + user.getBasicProfile().getName());
+ };
+
+/**
+ * Handle sign-in failures.
+ */
+var onFailure = function(error) {
+    console.log(error);
+};
+    </script>
 	<style>
+    body {
+        background-color: lightblue;
+    }
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 th, td {
-    padding: 3px;
+    padding: 4px;
 }
 th {
-    text-align: left;
+    text-align: center;
 }
 </style>
 
