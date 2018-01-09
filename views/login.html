@@ -11,12 +11,12 @@
     	console.log('ID: ' + profile.getId());
     	var id_token = googleUser.getAuthResponse().id_token;
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'http://localhost/auth');
+		xhr.open('POST', 'http://localhost/');
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.onload = function() {
  			console.log('Signed in as: ' + xhr.responseText);
 			sessionStorage.setItem('id_token', id_token);
-			 			window.location.href = '/landingpage';
+			 		//	window.location.href = '/teacher/1';
 
 		};
 		xhr.send('idtoken=' + id_token); 
