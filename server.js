@@ -38,14 +38,13 @@ con.connect();
 
 //add CSV file of students to database
 
-function createStudentCSV() {
+function createStudentCSV(req,res) {
   //use input if exists
-  if req.files != null {
+  if (req.files != null) {
     req.files[0] = input;
-  }
+  } 
   else {
     println("File was not read properly");
-    return;
   }
   //parse CSV using callback API
   parse(input, function(err, output){
@@ -54,7 +53,7 @@ function createStudentCSV() {
   //add values in array to database
   for (var i = 0; i < output.length; i + 7) {
     conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
-      callback(result);
+      //callback(result);
     });
   }
 }
@@ -395,51 +394,49 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 
 
 
-
-function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
-	var numStud = 0;
-	var studList = [];
-	con.query('SELECT * FROM choices', function(err, row) {
-    if(!err) {
-      for(var i=0; i<row.length; i++) {
-        if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
-          numStud += 1;
-          if(getStudentInfo) {
-            studList.push(row[i].uid_student);
-          };
-        };  
-      }
-      if(getStudentInfo) {
-        var infoList = [];    
-        con.query('SELECT * FROM students', function(err, row) {
-          if(!err) {
-            for(var i=0; i<row.length; i++) {
-              for(var j=0; j<studList.length; j++) {
-                if(row[i].uid_student == studList[j]) {
-                  infoList.push(row[i].student_info);
-                }
-              }
-            }
-            callback(numStud, infoList)
-          } else {
-            console.log("SELECT FROM CHOICES DONE ERRD");
-            console.log(err);
-          }
-        })
-      } else {
-        callback(numStud, null);
-      }
-    } else {
-      console.log("IT DONE ERRD");
-    }
-
-    else {
-      //if something is found, update student info
-      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
-        callback(result);
-      });
-  })
-}
+//numStudents has a bug 
+// function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
+// 	var numStud = 0;
+// 	var studList = [];
+// 	con.query('SELECT * FROM choices', function(err, row) {
+//     if(!err) {
+//       for(var i=0; i<row.length; i++) {
+//         if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
+//           numStud += 1;
+//           if(getStudentInfo) {
+//             studList.push(row[i].uid_student);
+//           };
+//         };  
+//       }
+//       if(getStudentInfo) {
+//         var infoList = [];    
+//         con.query('SELECT * FROM students', function(err, row) {
+//           if(!err) {
+//             for(var i=0; i<row.length; i++) {
+//               for(var j=0; j<studList.length; j++) {
+//                 if(row[i].uid_student == studList[j]) {
+//                   infoList.push(row[i].student_info);
+//                 }
+//               }
+//             }
+//             callback(numStud, infoList)
+//           } else {
+//             console.log("SELECT FROM CHOICES DONE ERRD");
+//             console.log(err);
+//           }
+//         })
+//       } else {
+//         callback(numStud, null);
+//       } else {
+//       console.log("IT DONE ERRD");
+//     } else {
+//       //if something is found, update student info
+//       con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+//         callback(result);
+//       });
+//   		}
+// 	}
+// }
 //Function takes in an offering, returns true or false whether its full or not
 function isOfferingFull(uid_day, uid_offering, callback) {
   con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
