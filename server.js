@@ -392,10 +392,6 @@ function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newr
 }
 
 
-
-
-
-
 function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
 	var numStud = 0;
 	var studList = [];
@@ -561,6 +557,13 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
     }
   })
 }
+//Takes in nothing, since moment.js can give the current time and date always
+//Returns two values:
+//A uid_day of the coming oppblock (if there is one that the students can choose offerings for) AND
+//A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
+function getSoonestOppblockDay(callback) {
+	callback(uid_day, cutOff);
+}
 
 
 
@@ -598,12 +601,12 @@ app.get('/editOffering/:id', function(req,res){
 app.get('/delete/:id', function(req,res){
 	var offering_uid = req.params.id;
 	con.query('delete from offerings where uid_offering = ?',[offering_uid],function(err) {
-					if (err){
-						console.log(err);
-					}else{
-						res.send("deleted");
-					}
-				});
+		if (err){
+			console.log(err);
+		}else{
+			res.send("deleted");
+		}
+	});
 });
 //
 
@@ -638,12 +641,7 @@ app.post('/updateOffering/:offering_id', function(req,res){
 
 						}
 					
-			});
-						
-		
-		
-	
-	
+			});	
 });
 //UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
 //
@@ -666,8 +664,56 @@ app.get('/add/:id', function(req,res){
 		});
 	
 });
-//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
+app.get('/student/:id', function(req, res){
+	//Gets Student's id from url
+	var uid_student = req.params.id; 
+	//This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
+	con.query('SELECT firstname FROM students WHERE uid_student = ?', [uid_student], function(err, student_firstname) {
+		if(!err) {
+			//This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
+			getSoonestOppblockDay(function(uid_day, cutOff) {
+				//Checks whether it is time for students to choose yet
+				if (uid_day == null) { 
+					res.render('student.html', {Student:uid_student, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true});
+				} else {
+					//Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
+					con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) {
+						if(!err) {
+							//Checks to see if it is past the cutoff time for the students to choose
+							if (cutOff) {
+								//Renders the page only with the user's current choice
+								res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"The time for changing choices has passed. At 2:45, head to your current choice!", oppTime:true});
+							} else {
+								//Gets all offerings for the user, while checking whether they are excluded from that oppblock day
+								getOfferingsForStudent(uid_student, uid_day, function(offerings) {
+									if(offerings == null) {
+										//Renders the page without any choices, since the student is excluded
+										res.render('student.html', {Student:uid_student, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Come back later or contact an administrator if this is a mistake", oppTime:true});
+									}else{
+										//At last, renders the page with the current choice, and the choices table
+										//Should the student's current Choice appear in the choice table (at the moment it does)?
+										res.render('studnet.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", data:offerings});
+									}
+								});
+							}
+						} else {
+							res.send("An Err done occured.");
+						}
+					});	
+				}
+			});
+		} else {
+			res.send("We're sorry. That wasn't a student id!");
+		}
+	});
+})
+//res.render('teacher.html', {data:resultsTeacher, teacherName:resultsTeacher[0].prefix+" "+resultsTeacher[0].teacherName, teacherId:teacher_uid });
+		//}else{
+		//	res.send("We're Sorry. That wasn't a valid student id!");
+
+
+//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
 // con.query('SELECT * FROM offerings, teachers WHERE offerings.uid_teacher = teachers.uid_teacher AND teachers.uid_teacher = ?;', [myId],function(err, results) {
 // 					if (results != undefined){
