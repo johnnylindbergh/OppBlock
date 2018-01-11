@@ -419,45 +419,6 @@ function getOfferingFromNumber(offeringid){
 		return(results);
 });
 }
-
-<<<<<<< HEAD
-function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
-	var numStud = 0;
-	var studList = [];
-	con.query('SELECT * FROM choices', function(err, row) {
-    if(!err) {
-      for(var i=0; i<row.length; i++) {
-        if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
-          numStud += 1;
-          if(getStudentInfo) {
-            studList.push(row[i].uid_student);
-          };
-        };  
-      }
-      if(getStudentInfo) {
-        var infoList = [];    
-        con.query('SELECT * FROM students', function(err, row) {
-          if(!err) {
-            for(var i=0; i<row.length; i++) {
-              for(var j=0; j<studList.length; j++) {
-                if(row[i].uid_student == studList[j]) {
-                  infoList.push(row[i].student_info);
-                }
-              }
-            }
-            callback(numStud, infoList)
-          } else {
-            console.log("SELECT FROM CHOICES DONE ERRD");
-            console.log(err);
-          }
-        })
-      } else {
-        callback(numStud, null);
-      }
-    } else {
-      console.log("IT DONE ERRD");
-    }
-=======
 function updateStudentAttendance(studentid, attendance){
 	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',[uid_student], function(err,results){
 		
@@ -479,7 +440,6 @@ app.post('/student/edit/', function(request,reponse){
 
 });
 });
->>>>>>> 1c916fe3a84d78b37682d6d345e34d170e90eef7
 
 app.get('/studentInfo',function(request,reponse){
 	getStudentFromNumber(request.body.uid_student, function(){
@@ -514,8 +474,6 @@ app.get('/homepage', function(request,response){
 
 	response.render(/*profilepage/optionspage*/);
 });
-
-
 
 
 //numStudents has a bug 
@@ -882,8 +840,6 @@ var server = app.listen(80, function() {
 
 });
 
-<<<<<<< HEAD
-=======
 //TESTS
 /*
 saveOffering(1, 1, 1, function() {
@@ -913,4 +869,3 @@ con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
     console.log('Error, are you sure you ran CREATE_DB.sql?');
   }
 });
->>>>>>> Update server.js
