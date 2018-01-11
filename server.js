@@ -642,10 +642,43 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
 }
 //Takes in nothing, since moment.js can give the current time and date always
 //Returns two values:
-//A uid_day of the coming oppblock (if there is one that the students can choose offerings for) AND
+//A uid_day of the coming oppblock (null if the students can't yet choose) AND
 //A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
 function getSoonestOppblockDay(callback) {
-	callback(uid_day, cutOff);
+	con.query('SELECT * FROM opp_block_day', function(err, results){
+		//Gets all Oppblock days
+		if(!err){
+			var uid_day = null;
+			var closest = moment().add(1, y);
+			for (var i=0; i<results.length; i++) {
+				//Loops to find soonest Oppblock
+				var curr = moment(results[i].day, 'YYYY-MM-DD');
+				if(curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
+					closest = curr;	
+					uid_day = results[i].uid_day;				
+				}
+			} 
+			//Specficies the oppblock to 2:45 on that specific date
+			closest.add({hours:14, minutes:45}); 
+			//Creates Cutoff time variables relative to closest oppblock 
+			var studentCutoff = closest.subtract(2, h); //12:45
+			var teacherCutoff = closest.subtract({days:2, hours:14, minutes:45}); //Midnight on 2 days before current oppblock
+			if (moment().isSameOrAfter(teacherCutoff)) {
+				if (moment().isSameOrAfter(studentCutoff)) {
+					callback(uid_day, true);
+				} else {
+					callback(uid_day, false);
+				}
+			} else {
+				callback(null, null);
+			}
+		} else {
+			console.log("Error in finding the upcoming oppblock");
+		}
+
+		
+	});
+	
 }
 
 
@@ -776,7 +809,7 @@ app.get('/student/:id', function(req, res){
 									}else{
 										//At last, renders the page with the current choice, and the choices table
 										//Should the student's current Choice appear in the choice table (at the moment it does)?
-										res.render('studnet.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", data:offerings});
+										res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", data:offerings});
 									}
 								});
 							}
