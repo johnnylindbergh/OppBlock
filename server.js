@@ -29,12 +29,13 @@ var con = mysql.createConnection({
 con.connect();
 
 //add CSV file of students to database
-
-function createStudentCSV() {
-  //string split
-  //keep this
+function createStudentCSV(csvfile) {
+	csvfile = studentdata;
+	studentdata.split("\n");
+	studentdata.split("");
   //add values in array to database
-  for (var i = 0; i < output.length; i + 7) {
+  for 
+  for (var i = 0; i < 2100 i + 7) {
     conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
       callback(result);
     });
