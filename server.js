@@ -283,6 +283,8 @@ app.post('/transcribe', function(req,res){
 
 });
 
+
+
 function compareLevenshteinDistance(compareTo, baseItem) {
   return new Levenshtein(compareTo, baseItem).distance;
 }
@@ -424,13 +426,14 @@ function updateStudentAttendance(studentid, attendance){
 		
 		console.log(results);
 		callback(results);
-	}
+	});
 }
 
 function addStudentPhone(studentid, phonenum){
 	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',[uid_student], function(err,results){
 	 	console.log(results);
 		 callback(results);
+	});
 }
 
 app.post('/student/edit/', function(request,reponse){
@@ -447,6 +450,9 @@ app.get('/studentInfo',function(request,reponse){
 	});
 });
 
+
+app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }));
+
 app.post('/editOffering',function(request,reponse){
 	editOffering(request.body.uid_offering,request.body.newname, request.body.newsize,request.body.newinfo,request.body.newteacherid,request.body.newnrecur,function(){
 		reponse.response("new info");
@@ -459,13 +465,13 @@ app.post('/removeOffering', function(request, reponse){
 		response.end();
 	
 });
-}};
+});
 app.get('/offeringInfo', function(request, reponse){
 	getOfferingFromNumber (request.body.uid_offering, function(){
 		response.render(/*shows offering info and ablitity to change*/);
 	
 });
-}};
+});
 app.get('/', function(request,response){
 	response.render(/*login page'*/);
 
@@ -841,31 +847,31 @@ var server = app.listen(80, function() {
 });
 
 //TESTS
-/*
-saveOffering(1, 1, 1, function() {
-  isOfferingFull(1, 1, function(response){
-    console.log("Hiiiiii!");
-    console.log(response);
-  });
-  numStudents(1, 1, true, function(numStudents, infoList) {
-    console.log("number of students: " + numStudents);
-    console.log("The first name: " + infoList[0]);
-  });
-}) 
-getOfferings(1, function(response){
-  console.log(response);
-});
-con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
- if (!err){
-    
-    console.log('\nOppBlock days:')
-    for (var i in rows) {
-      var day = rows[i]["day"];
-      console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
-    }
 
-  }
-  else{
-    console.log('Error, are you sure you ran CREATE_DB.sql?');
-  }
-});
+// saveOffering(1, 1, 1, function() {
+//   isOfferingFull(1, 1, function(response){
+//     console.log("Hiiiiii!");
+//     console.log(response);
+//   });
+//   numStudents(1, 1, true, function(numStudents, infoList) {
+//     console.log("number of students: " + numStudents);
+//     console.log("The first name: " + infoList[0]);
+//   });
+// }) 
+// getOfferings(1, function(response){
+//   console.log(response);
+// });
+// con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
+//  if (!err){
+    
+//     console.log('\nOppBlock days:')
+//     for (var i in rows) {
+//       var day = rows[i]["day"];
+//       console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+//     }
+
+//   }
+//   else{
+//     console.log('Error, are you sure you ran CREATE_DB.sql?');
+//   }
+// });
