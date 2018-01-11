@@ -28,7 +28,11 @@ th {
   <input type="text" name="max_size" value="{{max_size}}">
  <br>{{^recurring}}  <br> set to current:{{/recurring}}
   <input {{#recurring}}type = "hidden"{{/recurring}}  type="checkbox" name="recurring" >
-   
+</br>
+   {{#dayData}}
+   {{day}}
+   <input type="checkbox" name="{{uid_day}}" {{#set}}checked{{/set}}>
+   {{/dayData}}
   </br>
   <input type="submit" value="Submit">
     {{/data}}

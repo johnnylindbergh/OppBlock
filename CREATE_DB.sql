@@ -95,6 +95,8 @@ INSERT into opp_block_day (day) values ('2017-09-19');
 
 
 
+
+
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zach Minster', "Teacher info here");
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
@@ -131,9 +133,11 @@ INSERT into offerings (name, max_size, uid_teacher, recurring, description) valu
 INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Art History", 10, 8, 1, "This OppBlock is...");
 
 
--- INSERT into calendar (uid_day, uid_offering) values (1,1);
--- INSERT into calendar (uid_day, uid_offering) values (1,2);
--- INSERT into calendar (uid_day, uid_offering) values (1,3);
+
+
+ INSERT into calendar (uid_day, uid_offering) values (1,1);
+ INSERT into calendar (uid_day, uid_offering) values (2,1);
+ INSERT into calendar (uid_day, uid_offering) values (4,2);
 -- INSERT into calendar (uid_day, uid_offering) values (1,4);
 
 -- INSERT into calendar (uid_day, uid_offering) values (2,5);
