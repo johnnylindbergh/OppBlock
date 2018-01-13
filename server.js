@@ -815,7 +815,7 @@ app.get('/student/:id', function(req, res){
 									}else{
 										//At last, renders the page with the current choice, and the choices table
 										//Should the student's current Choice appear in the choice table (at the moment it does)?
-										res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", data:offerings});
+										res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:"12:45"});
 									}
 								});
 							}
