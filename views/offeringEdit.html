@@ -31,7 +31,7 @@ th {
 </br>
    {{#dayData}}
    {{day}}
-   <input type="checkbox" name="{{uid_day}}" {{#set}}checked{{/set}}>
+   <input type="checkbox" value ="{{uid_day}}" name="days[{{uid_day}}]" {{#set}}checked{{/set}}>
    {{/dayData}}
   </br>
   <input type="submit" value="Submit">

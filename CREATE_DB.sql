@@ -88,10 +88,11 @@ CREATE TABLE choices (
 );
 
 ## Test Data
- INSERT into opp_block_day (day) values ('1999-08-20');
-INSERT into opp_block_day (day) values ('2017-09-20');
-INSERT into opp_block_day (day) values ('2017-11-02');
-INSERT into opp_block_day (day) values ('2017-09-19');
+ INSERT into opp_block_day (day) values ('2018-01-16');
+INSERT into opp_block_day (day) values ('2018-01-19');
+INSERT into opp_block_day (day) values ('2018-01-23');
+INSERT into opp_block_day (day) values ('2018-01-26');
+INSERT into opp_block_day (day) values ('2018-01-30');
 
 
 
@@ -115,8 +116,8 @@ INSERT into groups (group_info) values ('the cool group');
 ##INSERT into students (info) values ('Abbott,Olivia,Grade 9,JVFieldHockey,"Shoup, Jon",Female,oabbott21@students.stab.org');
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
--- INSERT into student_groups (uid_student, uid_group) values (1,2);
--- INSERT into student_groups (uid_student, uid_group) values (2,1);
+INSERT into student_groups (uid_student, uid_group) values (1,2);
+INSERT into student_groups (uid_student, uid_group) values (2,1);
 
 ##INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
 -- INSERT into calender (uid_day, uid_offering) values (1,1);
