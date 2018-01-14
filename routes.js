@@ -129,7 +129,6 @@ module.exports = function(app) {
             }
         });
     });
-}
 
     //CSV Post
 
@@ -138,3 +137,5 @@ module.exports = function(app) {
             CreateStudentCsv(req.body.Rad);
         }
     });
+}
+
