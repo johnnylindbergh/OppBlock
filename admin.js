@@ -17,10 +17,6 @@ module.exports =  {
 			var keys = Object.keys(req.body);
 			for(var i = 0; i < keys.length; i++) {
 				// update settings object
-				console.log("KEY:\n");
-				console.log(settings[keys[i]]);
-				console.log("\nVALUE:\n");
-				console.log(req.body[keys[i]]);
 				settings[keys[i]].value_int = parseInt(req.body[keys[i]]);
 				// update database
 				con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [req.body[keys[i]], settings[keys[i]].sid] );
