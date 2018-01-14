@@ -1,9 +1,39 @@
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
-
 DROP DATABASE IF EXISTS opp_block;
 CREATE DATABASE opp_block;
 
 USE opp_block;
+
+-- system_settings
+--  stores master system settings as-needed
+-- 
+--  system_settings(name, value_int)
+CREATE TABLE system_settings (
+    `sid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `value_int` INT,
+        PRIMARY KEY (`sid`),
+    UNIQUE INDEX `setting_name_UNIQUE` (`name`)
+);
+
+-- default settings
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_student", 12);
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_teacher", -24);
+INSERT INTO system_settings (name, value_int) VALUES ("opp_days", 18);
+-- opp_days uses an unsigned binary integer representation, e.g.:
+-- S/M/T/W/Th/F/Sa correspond to a 7 bit binary number
+-- opp blocks on Tuesdays and Fridays means we put a 1 in those date positions
+-- i.e. 0010010
+-- then that gets converted to integer representation 18
+-- later on when we are trying to figure out which days have opp block:
+-- there is only one way to get the number 18 starting from highest
+-- 18 / 64 => 0, so no Sunday opp block
+-- 18 / 32 => 0, so no Monday opp block
+-- 18 / 16 => 1, so there's Tuesday opp block
+-- 2 / 8 => 0, so there's no Wednesday opp block
+-- 2 / 4 => 0, so there's no Thursday opp block
+-- 2 / 2 => 1, so there's Friday opp block
+-- 0 / 1 => 0, so there's no Saturday opp block
+
 
 CREATE TABLE  opp_block_day (
     uid_day INT NOT NULL AUTO_INCREMENT,
@@ -117,8 +147,10 @@ INSERT into groups (group_info) values ('the cool group');
 ##INSERT into students (info) values ('Abbott,Olivia,Grade 9,JVFieldHockey,"Shoup, Jon",Female,oabbott21@students.stab.org');
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
+
 -- INSERT into student_groups (uid_student, uid_group) values (1,2);
 -- INSERT into student_groups (uid_student, uid_group) values (2,1);
+
 
 ##INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
 -- INSERT into calender (uid_day, uid_offering) values (1,1);
