@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var mustacheExpress = require('mustache-express');
+var bodyParser = require('body-parser');
 var credentials = require("./credentials.js");
 var con = require('./database.js').connection;
 var moment = require('moment');
@@ -9,7 +10,6 @@ var parse = require('csv-parse'); //parse csv file, turn into javascript array
 var bb = require('express-busboy'); //take in file from user (in temp folder)
 var Levenshtein = require("levenshtein");
 var https = require('https');
-var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
     extended: false
 }));

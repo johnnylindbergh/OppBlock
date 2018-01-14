@@ -30,8 +30,9 @@ th {
   <input {{#recurring}}type = "hidden"{{/recurring}}  type="checkbox" name="recurring" >
 </br>
    {{#dayData}}
+    {{#canEdit}}
    {{day}}
-   <input type="checkbox" value ="{{uid_day}}" name="days[{{uid_day}}]" {{#set}}checked{{/set}}>
+  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}>{{/canEdit}}
    {{/dayData}}
   </br>
   <input type="submit" value="Submit">
