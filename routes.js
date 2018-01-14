@@ -29,10 +29,17 @@ module.exports = function(app) {
         var offering_uid = req.params.id;
         con.query('select * from offerings where uid_offering = ?;', [offering_uid], function(err, offeringInfo) {
             if (!err) {
-                con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ?;', [offering_uid], function(err, dayResults) {
+                con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ? order by opp_block_day.day;', [offering_uid], function(err, dayResults) {
                     if (!err) {
                         for (var i = 0; i < dayResults.length; i++) {
-                            dayResults[i].day = moment(dayResults[i].day).format('MM-DD');
+                        	
+                        	if (moment(dayResults[i].day).subtract(1,'days').isBefore()){
+                 				dayResults[i]['canEdit'] = false;
+    							
+    						}else{
+    							dayResults[i]['canEdit'] = true;
+    						}
+    						dayResults[i].day = moment(dayResults[i].day).format('MM-DD');
                             dayResults[i].set = dayResults[i].set == offering_uid ? 1 : 0;
                         }
                         res.render('offeringEdit.html', {
@@ -58,7 +65,7 @@ module.exports = function(app) {
             }
         });
     });
-    
+
     app.post('/updateOffering/:offering_id', function(req, res) {
         var offering_id = parseInt(req.params.offering_id);
         var name = req.body.name;
@@ -66,6 +73,7 @@ module.exports = function(app) {
         var max_size = parseInt(req.body.max_size);
         var teacherId;
         var days = req.body.days;
+        //console.log(req);
         var recurring = req.body.recurring == 'on' ? 1 : 0;
         con.query('select uid_teacher from offerings WHERE uid_offering = ?;', [offering_id], function(err, uid_teacher) {
             if (!err) {
@@ -86,23 +94,19 @@ module.exports = function(app) {
                 });
             }
         });
+
         if (days != undefined) {
-            con.query('select * from calendar where uid_offering = ?;', [offering_id], function(err, count) {
-                var count = count.length;
-                console.log("count " + count);
-                con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err) {
-                    count -= 1;
-                    console.log("counter " + count);
-                    if (count < 1) {
+                con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
+                	console.log(result.affectedRows);
+                   
                         for (var i = 0; i < days.length; i++) {
                             con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [parseInt(days[i]), offering_id], function(err) {
                                 console.log("i: " + i);
                                 console.log("days[i]: " + days[i]);
                             });
-                        }
+                        
                     }
                 });
-            });
         } else {
             con.query('delete from calendar where uid_offering = ?;', [offering_id]);
         }
