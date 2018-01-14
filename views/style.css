@@ -1,0 +1,66 @@
+body{
+	background-color:#FFA3A3;
+}
+
+#centralBox{
+	background-color: rgba(50, 0, 0, 0.3);
+	border-style:solid;
+	border:5px;
+	border-color:blue;
+	width:600px;
+	height:400px;
+	margin:auto;
+	text-align: center;
+	padding-left:20px;
+	margin-top:50px;
+
+}
+
+#titleText{
+	margin:auto;
+	padding-top:100px;
+	text-align:left;
+	color:white;
+}
+
+#emailInput, #passwordInput{
+	display:block;
+	width:300px;
+	font-size:20px;
+	background-color:#FFD8D8;
+	height:30px;
+	border-style:solid;
+	border-width:2px;
+	border-color:#FFA3A3;
+	margin-top:10px;
+}
+
+button{
+	width:150.5px;
+	font-size:15px;
+	display:inline-block;
+	text-align:left;
+	cursor:pointer;
+	color:white;
+	border:none;
+	height:34px;
+	background-color:#FFA3A3;
+	margin-top:10px;
+	margin-right:5px;
+	float:left;
+}
+
+button:hover{
+	background-color:rgb(50,0,0);
+}
+
+#test{
+	display:block;
+	text-align:center;
+	margin-top:0px;
+	background-color:rgb(50,0,0);
+	color:white;
+	font-size:20px;
+	padding-top:10px;
+	padding-bottom:10px;
+}
