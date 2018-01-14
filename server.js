@@ -3,7 +3,6 @@ var moment = require('moment');
 var getClosest = require("get-closest");
 var express = require('express');
 var app = express();
-var parse = require('csv-parse');
 var mustacheExpress = require('mustache-express');
 
 var app = express(); 
@@ -30,13 +29,13 @@ con.connect();
 
 //add CSV file of students to database
 function createStudentCSV(csvfile) {
+	//convert giant string into array
 	csvfile = studentdata;
 	studentdata.split("\n");
 	studentdata.split("");
   //add values in array to database
-  for 
-  for (var i = 0; i < 2100 i + 7) {
-    conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
+  for (var i = 0; i < studentdata.length; i + 7) {
+    conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
       callback(result);
     });
   }
@@ -421,7 +420,7 @@ function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
       con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
         callback(result);
       });
-  })
+  }
 }
 //Function takes in an offering, returns true or false whether its full or not
 function isOfferingFull(uid_day, uid_offering, callback) {
@@ -588,7 +587,12 @@ app.get('/delete/:id', function(req,res){
 					}
 				});
 });
-//
+
+app.post('/csvinput', function(req,res){
+	if (res != undefined){
+		CreateStudentCsv(req.body.Rad);
+	}
+});
 
 app.post('/updateOffering/:offering_id',  function(req,res){
 	var offering_id = parseInt(req.params.offering_id);
