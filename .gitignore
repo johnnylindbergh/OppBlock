@@ -59,3 +59,6 @@ typings/
 
 # Credentials file
 /credentials.js
+
+# stupid mac os files
+.DS_Store
