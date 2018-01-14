@@ -1,21 +1,19 @@
-var mysql = require('mysql');
-var moment = require('moment');
-var getClosest = require("get-closest");
 var express = require('express');
 var app = express();
 var mustacheExpress = require('mustache-express');
-
-var app = express(); 
-var Levenshtein = require("levenshtein");
-var VoiceResponse = require('twilio').twiml.VoiceResponse;
-var twilio = require('twilio');
 var credentials = require("./credentials.js");
-var client = new twilio(credentials.accountSid, credentials.authToken);
+var con = require('./database.js').connection;
+var moment = require('moment');
+var getClosest = require("get-closest");
+var Levenshtein = require("levenshtein");
+var https = require('https');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.engine('html', mustacheExpress());
-//app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
+<<<<<<< HEAD
 var https = require('https');
 
 var con = mysql.createConnection({
@@ -691,10 +689,14 @@ app.get('/add/:id', function(req,res){
 
 
 
+=======
+>>>>>>> origin
 
 
-var server = app.listen(80, function() {
-	console.log('OppBlock server listening on port %s', server.address().port);
+var routes = require('./routes.js')(app);
+var student = require("./student.js");
 
+var server = app.listen(8080, function() {
+    console.log('OppBlock server listening on port %s', server.address().port);
 });
 
