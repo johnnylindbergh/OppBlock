@@ -130,3 +130,11 @@ module.exports = function(app) {
         });
     });
 }
+
+    //CSV Post
+
+    app.post('/csvinput', function(req,res) {
+        if (res != undefined){
+            CreateStudentCsv(req.body.Rad);
+        }
+    });

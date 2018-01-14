@@ -3,24 +3,17 @@ module.exports =  {
 	
 	//add CSV file of students to database
 
-	createStudentCSV: function (req,res) {
-		//use input if exists
-		if (req.files != null) {
-			req.files[0] = input;
-		} 
-		else {
-			println("File was not read properly");
-		}
-		//parse CSV using callback API
-		parse(input, function(err, output){
-			//use output.should.eql() to test parser
-		});
-		//add values in array to database
-		for (var i = 0; i < output.length; i + 7) {
-			conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [output[i], output[i+1], output[i+2], output[i+3], output[i+4], output[i+5], output[i+6]], function(result) {
-				//callback(result);
-			});
-		}
+	createStudentCSV: function(csvfile) {
+		//convert giant string into array
+		csvfile = studentdata;
+		studentdata.split("\n");
+		studentdata.split("");
+  		//add values in array to database
+  		for (var i = 0; i < studentdata.length; i + 7) {
+    		conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
+      			callback(result);
+    		});
+  		}
 	}
 
 	//create student if nothing exists in database, update student_info if something does
