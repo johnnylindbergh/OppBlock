@@ -27,7 +27,6 @@ var con = mysql.createConnection({
 
 con.connect();
 
-//add CSV file of students to database
 function createStudentCSV(csvfile) {
 	//convert giant string into array
 	csvfile = studentdata;
@@ -37,10 +36,7 @@ function createStudentCSV(csvfile) {
   for (var i = 0; i < studentdata.length; i + 7) {
     conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
       callback(result);
-    });
-  }
-}
-
+      
 //create student if nothing exists in database, update student_info if something does
 function createStudent(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
   con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {
@@ -98,7 +94,7 @@ function getUidFromValue(tableType, value, callback) {
 	}
 
 	if (tableType == "students"){
-		con.query('SELECT uid_student FROM students WHERE name = ?', [value], function(err, results) {
+		con.query('SELECT uid_student FROM students WHERE firstname = ?', [value], function(err, results) {
 			if (results.length > 0){
 				callback(results[0].uid_student);
 			}else{
@@ -266,6 +262,8 @@ app.post('/transcribe', function(req,res){
 
 });
 
+
+
 function compareLevenshteinDistance(compareTo, baseItem) {
   return new Levenshtein(compareTo, baseItem).distance;
 }
@@ -335,12 +333,14 @@ function sendOfferingText(uidDay, callback){
 function removeOppBlock(offeringid, dayid ){
 	if (dayid!=null){
 	con.query('DELETE * FROM calender WHERE uid_offering=offeringid AND uid_day=dayid;', function(err, results) {
-		console.log(results);   
+		console.log(results); 
+		callback(results);
 	});
 	};
 	if(dayid==null){
 		con.query ('DELETE * FROM offerings WHERE uid_offering=offeringid;', function(err, results){
 		console.log(results);
+		callback(results);
 		});
 	};
 }
@@ -350,17 +350,19 @@ function editStudent (studentid,newname,newphone){
 if(newname&& newphone ){
 	con.query('UPDATE students SET name=newname, phone=newphone WHERE uid_student=studentid;', function(err, results){
 		console.log(results);
+		callback(results);
 	});
 	};
 if(newname == null && newphone ){
 	con.query('UPDATE students SET  phone=newphone WHERE uid_student=studentid;', function(err,results){
 		console.log(results);
+		callback(results);
 	});
 };
 if(newname&& newphone == null){
 	con.query('UPDATE students SET name=newname WHERE uid_student=studentid;', function(err,results){
 	console.log(results);		
-	
+	callback(results);
 	});
 	};
 }
@@ -368,60 +370,140 @@ if(newname&& newphone == null){
 
 //find a way to fill in old infor here
 function editOffering (offeringid, newname, newsize, newinfo, newteacherid, newrecur){
-	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', function(err,results){
+	con.query('UPDATE offerings SET name=newname, max_size=newsize, description=newinfo, uid_teacher=newteacherid, recurring=newrecur WHERE uid_offering=offeringid;', [uid_offering],function(err,results){
 		console.log(results);
+		callback(results);
+	});
+}
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid', function(err,results){
+		callback(results);
+		return(results);
+});
+}
+
+function getTeacherFromNumber(teacherid){
+	con.query('SELECT * FROM teachers where uid_teacher=teacherid', [uid_teacher],function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function getOfferingFromNumber(offeringid){
+	con.query('SELECT * FROM offerings where uid_offering=offeringid',[uid_offering], function(err,results){
+		callback(results);
+		return(results);
+});
+}
+function updateStudentAttendance(studentid, attendance){
+	con.query('UPDATE students set arrived=attendance WHERE uid_student=studentid;',[uid_student], function(err,results){
+		
+		console.log(results);
+		callback(results);
 	});
 }
 
-
-
-
-
-
-function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
-	var numStud = 0;
-	var studList = [];
-	con.query('SELECT * FROM choices', function(err, row) {
-    if(!err) {
-      for(var i=0; i<row.length; i++) {
-        if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
-          numStud += 1;
-          if(getStudentInfo) {
-            studList.push(row[i].uid_student);
-          };
-        };  
-      }
-      if(getStudentInfo) {
-        var infoList = [];    
-        con.query('SELECT * FROM students', function(err, row) {
-          if(!err) {
-            for(var i=0; i<row.length; i++) {
-              for(var j=0; j<studList.length; j++) {
-                if(row[i].uid_student == studList[j]) {
-                  infoList.push(row[i].student_info);
-                }
-              }
-            }
-            callback(numStud, infoList)
-          } else {
-            console.log("SELECT FROM CHOICES DONE ERRD");
-            console.log(err);
-          }
-        })
-      } else {
-        callback(numStud, null);
-      }
-    } else {
-      console.log("IT DONE ERRD");
-    }
-
-    else {
-      //if something is found, update student info
-      con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
-        callback(result);
-      });
-  }
+function addStudentPhone(studentid, phonenum){
+	 con.query('UPDATE students set phone=phonenum WHERE uid_student=studentid;',[uid_student], function(err,results){
+	 	console.log(results);
+		 callback(results);
+	});
 }
+
+app.post('/student/edit/', function(request,reponse){
+	editStudent(request.body.uid_student, request.body.newname,request.body.newphone, function(){
+
+		response.send("student edited");
+
+});
+});
+
+app.get('/studentInfo',function(request,reponse){
+	getStudentFromNumber(request.body.uid_student, function(){
+		response.render(/*info*/);
+	});
+});
+
+app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }));
+
+app.post('/editOffering',function(request,reponse){
+	editOffering(request.body.uid_offering,request.body.newname, request.body.newsize,request.body.newinfo,request.body.newteacherid,request.body.newnrecur,function(){
+		reponse.response("new info");
+	});
+});
+
+
+app.post('/removeOffering', function(request, reponse){
+	removeOppBlock (request.body.uid_offering, request.body.uid_day, function(){
+		response.end();
+	
+});
+});
+app.get('/offeringInfo', function(request, reponse){
+	getOfferingFromNumber (request.body.uid_offering, function(){
+		response.render(/*shows offering info and ablitity to change*/);
+	
+});
+});
+app.get('/', function(request,response){
+	response.render(/*login page'*/);
+
+});
+app.get('/homepage', function(request,response){
+
+	response.render(/*profilepage/optionspage*/);
+});
+
+
+//numStudents has a bug 
+// function numStudents(uid_day, uid_offering, getStudentInfo, callback) {
+// 	var numStud = 0;
+// 	var studList = [];
+// 	con.query('SELECT * FROM choices', function(err, row) {
+//     if(!err) {
+//       for(var i=0; i<row.length; i++) {
+//         if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
+//           numStud += 1;
+//           if(getStudentInfo) {
+//             studList.push(row[i].uid_student);
+//           };
+//         };  
+//       }
+//       if(getStudentInfo) {
+//         var infoList = [];    
+//         con.query('SELECT * FROM students', function(err, row) {
+//           if(!err) {
+//             for(var i=0; i<row.length; i++) {
+//               for(var j=0; j<studList.length; j++) {
+//                 if(row[i].uid_student == studList[j]) {
+//                   infoList.push(row[i].student_info);
+//                 }
+//               }
+//             }
+//             callback(numStud, infoList)
+//           } else {
+//             console.log("SELECT FROM CHOICES DONE ERRD");
+//             console.log(err);
+//           }
+//         })
+//       } else {
+//         callback(numStud, null);
+//       } else {
+//       console.log("IT DONE ERRD");
+//     } else {
+//       //if something is found, update student info
+//       con.query('UPDATE students SET student_lastname = ? , student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) WHERE student (uid_student = ?);', [studentLastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, results[0].uid_student], function(result) {
+//         callback(result);
+//       });
+//   		}
+// 	}
+// }
+      
 //Function takes in an offering, returns true or false whether its full or not
 function isOfferingFull(uid_day, uid_offering, callback) {
   con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
@@ -543,6 +625,46 @@ function getOfferingsForStudent(uid_student, uid_day, callback) {
     }
   })
 }
+//Takes in nothing, since moment.js can give the current time and date always
+//Returns two values:
+//A uid_day of the coming oppblock (null if the students can't yet choose) AND
+//A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
+function getSoonestOppblockDay(callback) {
+	con.query('SELECT * FROM opp_block_day', function(err, results){
+		//Gets all Oppblock days
+		if(!err){
+			var uid_day = null;
+			var closest = moment().add(1, y);
+			for (var i=0; i<results.length; i++) {
+				//Loops to find soonest Oppblock
+				var curr = moment(results[i].day, 'YYYY-MM-DD');
+				if(curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
+					closest = curr;	
+					uid_day = results[i].uid_day;				
+				}
+			} 
+			//Specficies the oppblock to 2:45 on that specific date
+			closest.add({hours:14, minutes:45}); 
+			//Creates Cutoff time variables relative to closest oppblock 
+			var studentCutoff = closest.subtract(2, h); //12:45
+			var teacherCutoff = closest.subtract({days:2, hours:14, minutes:45}); //Midnight on 2 days before current oppblock
+			if (moment().isSameOrAfter(teacherCutoff)) {
+				if (moment().isSameOrAfter(studentCutoff)) {
+					callback(uid_day, true);
+				} else {
+					callback(uid_day, false);
+				}
+			} else {
+				callback(null, null);
+			}
+		} else {
+			console.log("Error in finding the upcoming oppblock");
+		}
+
+		
+	});
+	
+}
 
 
 
@@ -580,12 +702,12 @@ app.get('/editOffering/:id', function(req,res){
 app.get('/delete/:id', function(req,res){
 	var offering_uid = req.params.id;
 	con.query('delete from offerings where uid_offering = ?',[offering_uid],function(err) {
-					if (err){
-						console.log(err);
-					}else{
-						res.send("deleted");
-					}
-				});
+		if (err){
+			console.log(err);
+		}else{
+			res.send("deleted");
+		}
+	});
 });
 
 app.post('/csvinput', function(req,res){
@@ -625,12 +747,7 @@ app.post('/updateOffering/:offering_id',  function(req,res){
 
 						}
 					
-			});
-						
-		
-		
-	
-	
+			});	
 });
 //UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
 //
@@ -653,8 +770,56 @@ app.get('/add/:id', function(req,res){
 		});
 	
 });
-//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
+app.get('/student/:id', function(req, res){
+	//Gets Student's id from url
+	var uid_student = req.params.id; 
+	//This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
+	con.query('SELECT firstname FROM students WHERE uid_student = ?', [uid_student], function(err, student_firstname) {
+		if(!err) {
+			//This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
+			getSoonestOppblockDay(function(uid_day, cutOff) {
+				//Checks whether it is time for students to choose yet
+				if (uid_day == null) { 
+					res.render('student.html', {Student:uid_student, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true});
+				} else {
+					//Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
+					con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) {
+						if(!err) {
+							//Checks to see if it is past the cutoff time for the students to choose
+							if (cutOff) {
+								//Renders the page only with the user's current choice
+								res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"The time for changing choices has passed. At 2:45, head to your current choice!", oppTime:true});
+							} else {
+								//Gets all offerings for the user, while checking whether they are excluded from that oppblock day
+								getOfferingsForStudent(uid_student, uid_day, function(offerings) {
+									if(offerings == null) {
+										//Renders the page without any choices, since the student is excluded
+										res.render('student.html', {Student:uid_student, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Come back later or contact an administrator if this is a mistake", oppTime:true});
+									}else{
+										//At last, renders the page with the current choice, and the choices table
+										//Should the student's current Choice appear in the choice table (at the moment it does)?
+										res.render('student.html', {Student:uid_student, Choice:currentChoice, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:"12:45"});
+									}
+								});
+							}
+						} else {
+							res.send("An Err done occured.");
+						}
+					});	
+				}
+			});
+		} else {
+			res.send("We're sorry. That wasn't a student id!");
+		}
+	});
+})
+//res.render('teacher.html', {data:resultsTeacher, teacherName:resultsTeacher[0].prefix+" "+resultsTeacher[0].teacherName, teacherId:teacher_uid });
+		//}else{
+		//	res.send("We're Sorry. That wasn't a valid student id!");
+
+
+//SELECT teachers.uid, teachers.prefix, teachers. FROM table_A  INNER JOIN table_B ON table_A.A=table_B.A;
 
 // con.query('SELECT * FROM offerings, teachers WHERE offerings.uid_teacher = teachers.uid_teacher AND teachers.uid_teacher = ?;', [myId],function(err, results) {
 // 					if (results != undefined){
@@ -698,3 +863,32 @@ var server = app.listen(80, function() {
 
 });
 
+//TESTS
+
+// saveOffering(1, 1, 1, function() {
+//   isOfferingFull(1, 1, function(response){
+//     console.log("Hiiiiii!");
+//     console.log(response);
+//   });
+//   numStudents(1, 1, true, function(numStudents, infoList) {
+//     console.log("number of students: " + numStudents);
+//     console.log("The first name: " + infoList[0]);
+//   });
+// }) 
+// getOfferings(1, function(response){
+//   console.log(response);
+// });
+// con.query('SELECT day FROM opp_block_day', function(err, rows, fields) {
+//  if (!err){
+    
+//     console.log('\nOppBlock days:')
+//     for (var i in rows) {
+//       var day = rows[i]["day"];
+//       console.log('\t'+moment(day).format('dddd MMMM Do, YYYY [at] h:mm'));
+//     }
+
+//   }
+//   else{
+//     console.log('Error, are you sure you ran CREATE_DB.sql?');
+//   }
+// });
