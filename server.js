@@ -15,10 +15,10 @@ app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 
 con.init();	//initialize system settings
-
+var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
 var student = require("./student.js");
-var admin = require("./admin.js").init(app);
+
 
 var server = app.listen(8080, function() {
     console.log('OppBlock server listening on port %s', server.address().port);
