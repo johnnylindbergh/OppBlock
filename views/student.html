@@ -19,9 +19,9 @@
 	  		{{#data}}
 	  		<tr>
 	  			<td> <input type="radio" name="choice" value="{{uid}}">{{name}}</td>  <!-- uid/name = offering's uid/name-->
-	  			<td>{{description}}</td> 
+	  			<td>{{description}}</td> <!--NEEDS TO FIT BIIIIIG DESCRIPTION-->
 	  			<td>{{teacher}}</td>
-	  			<td>{{max_size}}</td> 
+	  			<td>{{maxSize}}</td> 
 	  		</tr>
 	  		{{/data}}
 		</table>
@@ -29,6 +29,11 @@
 		<h3 style="">Make Sure You Choose an Amazing Oppblock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</h3>
 	</form>
 	{{/oppTime}}
+	{{^notExcluded}}
+	<form method="post">
+		<input type="submit" style="" value="Override">
+	</form>
+	{{/notExcluded}}
 </body>
 </html>
 
