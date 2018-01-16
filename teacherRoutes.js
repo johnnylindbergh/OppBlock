@@ -45,6 +45,7 @@ module.exports = function(app) {
 							}else{
 								dayResults[i]['canEdit'] = true;
 							}
+							
 							dayResults[i].day = moment(dayResults[i].day).format('MM-DD');
 							dayResults[i].set = dayResults[i].set == offering_uid ? 1 : 0;
 						}
@@ -104,8 +105,7 @@ module.exports = function(app) {
 		con.query('select uid_offering from offerings where uid_teacher = ?;', [teacherId], function(err,offerings) {
 			for (var d = 0; d < days.length; d++) {	
 				for (var o = 0; o < offerings.length; o++) {
-					console.log(offerings[o].uid_day);
-					console.log(days[d]);
+	
 					con.query('delete from calendar where uid_offering = ? and uid_day = ?;', [offerings[o], days[d]], function(err,result) {
 						if(err){
 							console.log(err);
@@ -115,20 +115,15 @@ module.exports = function(app) {
 					});
 				}
 				con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
-				
-						console.log(result);
+					if (err){
+						console.log(err);
+					}
 					
 				});
 
 			}
 
 		});
-
-
-
-			
-		
-
 
 
 		
