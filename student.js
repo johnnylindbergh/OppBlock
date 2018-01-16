@@ -1,132 +1,253 @@
 var con = require('./database.js').connection;
-module.exports  = {
-	
-// 	chooseOffering: function(uid_day, uid_student, uid_offering, callback){
-// 		con.query('UPDATE choices SET uid_offering = ? WHERE uid_day = ? AND uid_student = ?;', [uid_offering, uid_day, uid_student], function(err, results) {
-// 			callback(results);   
-// 		});
-// 	}
+module.exports = {
+ 
+ getStudentsThatNeedToChooseOffering: function(uidDay, callback){
+	con.query('SELECT uid_student FROM choices WHERE uid_day = ? AND uid_offering is NULL;',[uidDay], function(err, res) { 
+		callback(res);
+	});
+ }
 
-// 	isOfferingFull: function (uid_day, uid_offering, callback) {
-//   con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
-//     if(!err) {
-//       numStudents(uid_day, uid_offering, false, function(num, infoList){
-//         if(num == data[0].max_size) {
-//           callback(true);
-//         } else {
-//           callback(false);
-//         }    
-//       })
-//     } else {
-//       console.log("The function produced an error.");
-//     }
-//   })
-// }
+ //Gets the number of student in an offering on a day
+ numStudents: function(uid_day, uid_offering, getStudentInfo, callback)	{
+ 	var numStud = 0;
+ 	var studList = [];
+ 	con.query('SELECT * FROM choices', function(err, row) {
+    	if(!err) {
+	    	for(var i=0; i<row.length; i++) {
+	         	if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
+		           	numStud += 1;
+		           	if(getStudentInfo) {
+		             	studList.push(row[i].uid_student);
+		           	}
+	         	}  
+	       	}
+	       	if(getStudentInfo) {
+	         	var infoList = [];    
+	         	con.query('SELECT * FROM students', function(err, row) {
+		           	if(!err) {
+		            	for(var i=0; i<row.length; i++) {
+		               		for(var j=0; j<studList.length; j++) {
+			                 	if(row[i].uid_student == studList[j]) {
+			                		infoList.push(row[i].firstname + " " + row[i].lastname);
+			                 	}
+		               		}
+		            	} 
+		            	callback(numStud, infoList);
+		            } else {
+		            	console.log("SELECT FROM STUDENTS DONE ERRD");
+	             		console.log(err);
+		            }
+	         	});
+	       	} else {
+	         callback(numStud, null);
+	     	}
+       	} else {
+       		console.log("SELECT FROM CHOICES DONE ERRD");
+       		console.log(err);
+ 		}
+ 	});
+ }
 
-// //Function gets Offerings and their teachers on a certain day from database;
-// //Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
-// getOfferings: function (uid_day, callback) {
-//   function Offering(uid, name, description, maxSize, recurring, teacher) {
-//     this.uid = uid;
-//     this.name = name;
-//     this.description = description;
-//     this.maxSize = maxSize;
-//     this.recur = recurring;
-//     this.teacher = teacher;
-//   }
-//   var offerList = [];
-//   var trueOffers = [];
-//   con.query('SELECT * FROM calender', function(err, dayList){
-//     for(var i=0; i<dayList.length; i++) {
-//       if(dayList[i].uid_day == uid_day) {
-//         trueOffers.push(dayList[i].uid_offering);
-//       }
-//     }
-//     con.query('SELECT * FROM offerings', function(err, rowList) {
-//       if(!err) {
-//         for(var i=0; i<rowList.length; i++) {
-//           for(var j=0; j<trueOffers.length; j++) {
-//             if(rowList[i].uid_offering == trueOffers[j]) {
-//               var offering = new Offering(rowList[i].uid_offering, rowList[i].name, rowList[i].description, rowList[i].max_size, rowList[i].recurring, rowList[i].uid_teacher);
-//               offerList.push(offering);
-//             }
-//           }
-//         }
-//         con.query('SELECT * FROM teachers', function(err, row) {
-//           if(!err) {
-//             for(var j=0; j<row.length; j++) {
-//               for(var i=0; i<offerList.length; i++) {
-//                 if(row[j].uid_teacher == offerList[i].teacher) {
-//                   offerList[i].teacher = row[j].teacher_info;
-//                 };
-//               };
-//             };
-//             callback(offerList);
-//           } else {
-//             console.log("We're sorry. getOfferings() produced an error.");
-//           }
-//         })
-//       } else {
-//         console.log("We're sorry. getOfferings() produced an error.");
-//       } 
-//     }) 
-//   })
-// }
-// //takes in the student uid, offering uid and day uid
-// //FIX THIS ERRR
-// saveOffering: function (day, student, offering, callback) {
-//   con.query('UPDATE choices SET uid_offering = ? WHERE uid_day = ? AND uid_student = ?', [offering, day, student], function(err) {
-//     if(!err) {
-//       callback();
-//     } else {
-//       console.log("We're sorry. saveOffering() produced an error.");
-//       console.log(err);
-//     }
-//   });
-// }
-// //Takes in student and day
-// //returns True or False whether or not student is in excluded groups
-// studentInExcludedGroups: function (uid_student, uid_day, callback) {
-//   getExcludedStudentsOnDay(uid_day, function(students) {
-//     var truth = false;
-//     for(var i=0; i<students.length; i++){
-//       if(uid_student == students[i]) {
-//         truth = true;
-//       }
-//     }
-//     callback(truth);
-//   })
-// }
+ isOfferingFull: function (uid_day, uid_offering, callback) {
+   con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
+    if(!err) {
+      numStudents(uid_day, uid_offering, false, function(num, infoList){
+        if(num <= data[0].max_size) {
+          callback(true);
+        } else {
+          callback(false);
+        }    
+      });
+    } else {
+      console.log("The function produced an error.");
+    }
+  });
+ }
 
+ //Function gets Offerings and their teachers on a certain day from database;
+ //Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
+ getOfferings: function (uid_day, callback) {
+   function Offering(uid, name, description, maxSize, recurring, teacher) {
+    this.uid = uid;
+    this.name = name;
+    this.description = description;
+    this.maxSize = maxSize;
+    this.recur = recurring;
+    this.teacher = teacher;
+  }
+  var offerList = [];
+  var trueOffers = [];
+  //Gets all offerings associated with that day
+  con.query('SELECT * FROM calendar', function(err, dayList){
+    for(var i=0; i<dayList.length; i++) {
+      if(dayList[i].uid_day == uid_day) {
+        trueOffers.push(dayList[i].uid_offering);
+      }
+    }
+    //Gets the info associated with those offerings
+    con.query('SELECT * FROM offerings', function(err, rowList) {
+      if(!err) {
+        for(var i=0; i<rowList.length; i++) {
+          for(var j=0; j<trueOffers.length; j++) {
+            if(rowList[i].uid_offering == trueOffers[j]) {
+              var offering = new Offering(rowList[i].uid_offering, rowList[i].name, rowList[i].description, rowList[i].max_size, rowList[i].recurring, rowList[i].uid_teacher);
+              offerList.push(offering);
+            }
+          }
+        }
+        //Gets the teacher's names rather than their uids
+        con.query('SELECT * FROM teachers', function(err, row) {
+          if(!err) {
+            for(var j=0; j<row.length; j++) {
+              for(var i=0; i<offerList.length; i++) {
+                if(row[j].uid_teacher == offerList[i].teacher) {
+                  offerList[i].teacher = row[j].teacher_info;
+                };
+              };
+            };
+            callback(offerList);
+          } else {
+            console.log("We're sorry. getOfferings() produced an error.");
+          }
+        });
+      } else {
+        console.log("We're sorry. getOfferings() produced an error.");
+      } 
+    }); 
+  });
+ }
 
-// //Function takes in an Oppblock day
-// //Returns a list of unfilled Offering Objects for that day
-// getAvailableOfferings: function (uid_day, callback) {
-//   var availableList = []
-//   getOfferings(uid_day, function(response) {
-//     for(var i=0; i<response.length; i++) {
-//       isOfferingFull(uid_day, response[i].uid, function(truth){
-//         if(truth) {
-//           availableList.push(response[i]);
-//         }
-//       })
-//     }
-//     callback(availableList);
-//   })
-// }
-// //    ;) <3
-// //Function takes in a student and a day
-// //Function returns a list of offerings for that specfic Student, or Null if the student is excluded
-// getOfferingsForStudent : function (uid_student, uid_day, callback) {
-//   studentInExcludedGroups(uid_student, uid_day, function(response){
-//     if(response) {
-//       callback(null);
-//     } else {
-//       getAvailableOfferings(uid_day, function(response){
-//         callback(response);
-//       })
-//     }
-//   })
-// }
+//Function takes in an Oppblock day
+//Returns a list of unfilled Offering Objects for that day
+ getAvailableOfferings: function (uid_day, callback) {
+  var availableList = []
+  getOfferings(uid_day, function(response) {
+    var j = 0;
+    for(var i = 0; i <response.length; i++) {
+      isOfferingFull(uid_day, response[i].uid, function(truth){
+        if(truth) {
+          availableList.push(response[j]);
+        }
+        j+=1;
+        if(j==response.length) {
+      		callback(availableList);
+      	}
+      });
+    }
+  });
+ }
 
+//Takes in nothing, since moment.js can give the current time and date always
+//Returns two values:
+//A uid_day of the coming oppblock (null if the students can't yet choose) AND
+//A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
+ getSoonestOppblockDay: function(callback) {
+	con.query('SELECT * FROM opp_block_day', function(err, results){
+		//Gets all Oppblock days
+		if(!err){
+			var uid_day = null;
+			var closest = moment().add(1, 'y');
+			for (var i=0; i<results.length; i++) {
+				//Loops to find soonest Oppblock
+				var curr = moment(results[i].day, 'YYYY-MM-DD');
+				if(curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
+					closest = curr;	
+					uid_day = results[i].uid_day;				
+				}
+			} 
+			//Specficies the oppblock to 2:45 on that specific date
+			closest = closest.add({hours:14, minutes:45}); 
+			//Creates Cutoff time variables relative to closest oppblock 
+			var studentCutoff = moment(closest.subtract({hours:2})); //12:45
+			var teacherCutoff = moment(closest.subtract({days:12, hours:14, minutes:45})); //Midnight on 2 days before current oppblock
+			if (moment().isSameOrAfter(teacherCutoff)) {
+				if (moment().isSameOrAfter(studentCutoff)) {
+					callback(uid_day, true);
+				} else {
+					callback(uid_day, false);
+				}
+			} else {
+				callback(null, null);
+			}
+		} else {
+			console.log("Error in finding the upcoming oppblock");
+		}
+	});
+ }
+ init: function(app) {
+	app.get('/student/:id', function(req, res){
+		//Gets Student's id from url
+		var uid_student = req.params.id; 
+		//This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
+		con.query('SELECT firstname FROM students WHERE uid_student = ?', [uid_student], function(err, student) {
+			if(!err) {
+				if(student.length != 0) {
+					//This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
+					getSoonestOppblockDay(function(uid_day, cutOff) {
+						//Checks whether it is time for students to choose yet
+						if (uid_day == null) { 
+							res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
+						} else {
+							//Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
+							con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) {//only gets the uid not the name
+								console.log(currentChoice);
+								if(!err) {
+									//Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
+									if(currentChoice.length != 0) {
+										con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
+											if(!err) {
+												//Checks to see if it is past the cutoff time for the students to choose
+												if (cutOff) {
+													//Renders the page only with the user's current choice
+													res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice!", oppTime:true, notExcluded:true});
+												} else {
+													//Gets all offerings for the user, while checking whether they are excluded from that oppblock day
+													getAvailableOfferings(uid_day, function(offerings) {
+														//At last, renders the page with the current choice, and the choices table
+														//Should the student's current Choice appear in the choice table (at the moment it does)?
+														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:"12:45", notExcluded:true});
+													});
+												}
+											} else {
+												res.send("An Err done occured.");
+											}
+										});
+									} else {
+										//Renders the page without any choices, since the student is excluded
+										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", oppTime:true});
+									}
+								} else {
+									res.send("An Err done occured.");
+								}
+							});	
+						}
+					});
+				} else {
+					res.send("We're Sorry. You don't exist in our database!");
+				}
+			} else {
+				res.send("We're sorry. That wasn't a student id!");
+			}
+		});
+	});
+
+	app.post('/student/:id', function(req, response) {
+		//checks if post request comes from an override or a choice
+		if(req.body.choice != undefined) {
+			//Updates Choice
+			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, req.params.id, req.body.uid_day], function(err, results) {
+				response.redirect('/student/' + req.params.id);
+				response.end();
+			});
+		} else {
+			//Overrides excluded group by adding student into choice table
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [1, req.params.id, req.body.uid_day], function(err) {
+				console.log("GOT HERE");
+				response.redirect('/student/' + req.params.id);
+				response.end();
+			});
+		}
+	});
+	return this;
+ }
 }
