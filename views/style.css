@@ -2,6 +2,13 @@ body{
 	background-color:#FFA3A3;
 }
 
+#logo{
+	width: 7%;
+	height: 7%;
+	display: flex;
+	justify-content: center;
+}
+
 #centralBox{
 	background-color: rgba(50, 0, 0, 0.3);
 	border-style:solid;
