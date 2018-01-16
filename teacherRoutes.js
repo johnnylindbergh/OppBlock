@@ -21,11 +21,19 @@ module.exports = function(app) {
 		con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [teacher_uid], function(err, resultsTeacher) {
 			if (resultsTeacher.length != 0) {
 				res.render('teacher.html', {
+					teacherId:teacher_uid,
 					data: resultsTeacher,
 					teacherName: resultsTeacher[0].prefix + " " + resultsTeacher[0].teacherName,
 				});
 			} else {
-				res.send("not valid teacher id!");
+				con.query('select * from teachers where uid_teacher = ?;', [teacher_uid], function(err, resultsTeacher) {
+					console.log(resultsTeacher);
+					 res.render('teacher.html', {
+					 	teacherId:teacher_uid,
+					 	
+					 	teacherName: resultsTeacher[0].prefix + " " + resultsTeacher[0].teacherName,
+					 });
+				});
 			}
 		});
 	});
@@ -51,6 +59,8 @@ module.exports = function(app) {
 						}
 						res.render('offeringEdit.html', {
 							data: offeringInfo,
+							teacherIdDelete: teacher_uid,
+							offeringIdUpdate: offering_uid,
 							offeringId: offering_uid,
 							teacherId:teacher_uid,
 							dayData: dayResults
@@ -63,14 +73,18 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get('/delete/:id', function(req, res) {
+	app.get('/delete/:id/:teacher_uid', function(req, res) {
 		var offering_uid = req.params.id;
-		con.query('delete from offerings where uid_offering = ?', [offering_uid], function(err) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.render("/");
-			}
+		var teacher_uid = req.params.teacher_uid;
+		con.query('delete from calendar where uid_offering = ?;', [offering_uid], function(err,result) {
+			con.query('delete from offerings where uid_offering = ?', [offering_uid], function(err) {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log(teacher_uid);
+					res.redirect("/teacher/" + teacher_uid);
+				}
+			});
 		});
 	});
 
@@ -101,29 +115,14 @@ module.exports = function(app) {
 				res.redirect("/teacher/" + teacherId);
 			}
 		});
-
-		con.query('select uid_offering from offerings where uid_teacher = ?;', [teacherId], function(err,offerings) {
-			for (var d = 0; d < days.length; d++) {	
-				for (var o = 0; o < offerings.length; o++) {
-	
-					con.query('delete from calendar where uid_offering = ? and uid_day = ?;', [offerings[o], days[d]], function(err,result) {
-						if(err){
-							console.log(err);
-						}
-						
-						
-					});
-				}
+		for (var d = 0; d < days.length; d++) {	
 				con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
 					if (err){
 						console.log(err);
-					}
-					
-				});
+					}				
+			});
+		}
 
-			}
-
-		});
 
 
 		
@@ -135,15 +134,7 @@ module.exports = function(app) {
 		con.query('INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("", 0, ?, 0, "");', [teacher_uid], function(err) {
 			if (!err) {
 				con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
-					if (!err) {
-						var offering_uid = offeringInfo[0].uid_offering;
-						res.render('offeringEdit.html', {
-							data: offeringInfo,
-							offeringId: offering_uid
-						});
-					} else {
-						res.send("Oh shit!");
-					}
+					res.redirect('/editOffering/'+offeringInfo[0].uid_offering+'/'+teacher_uid);
 				});
 			} else {
 				res.send("not valid offering id!");
