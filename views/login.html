@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>Oppblock Sign Up</title>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
+  <body>
+    <h1 id = "test">Oppblock Sign Up</h1>
+
+
+
+    <div id = "centralBox"> <!--- The content box located in center -->
+      <h1 id = "titleText">Sign In</h1>
+      <input id = "emailInput" type = "email" placeholder=" E-mail"/>
+      <input id = "passwordInput" type = "password" placeholder=" Password"/>
+      <button id = "submit" onclick="submit();"> Forget Password </button>
+      <button id = "googleSign" onclick="signIn();"> Next</button>
+    </div> 
+
+    <script>
+      function signIn(){
+        window.open("/views/student.html")
+      }
+    </script>
+
+  </body>
+</html>

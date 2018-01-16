@@ -1,0 +1,45 @@
+
+<html>
+<head>
+	<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 3px;
+}
+th {
+    text-align: left;
+}
+</style>
+
+	<h1>Teacher Page</h1>
+</head>
+<body>
+	<form action="/updateOffering/{{offeringId}}/{{teacherId}}" method="post">
+        {{#data}}
+    Name:<br>
+  <input type="text" name="name" value="{{name}}">
+  <br>
+  Description:<br>
+  <input type="text" name="description" value="{{description}}">
+   <br>Max Size:<br>
+  <input type="text" name="max_size" value="{{max_size}}">
+ <br>{{^recurring}}  <br> set to current:{{/recurring}}
+  <input {{#recurring}}type = "hidden"{{/recurring}}  type="checkbox" name="recurring" >
+</br>
+   {{#dayData}}
+    {{#canEdit}}
+   {{day}}
+  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}>{{/canEdit}}
+   {{/dayData}}
+  </br>
+  <input type="submit" value="Submit">
+    {{/data}}
+
+</form> 
+
+ <a href="/delete/{{offeringId}}">Delete</a>
+</body>
+</html>

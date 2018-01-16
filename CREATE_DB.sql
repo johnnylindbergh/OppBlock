@@ -1,9 +1,39 @@
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
-
 DROP DATABASE IF EXISTS opp_block;
 CREATE DATABASE opp_block;
 
 USE opp_block;
+
+-- system_settings
+--  stores master system settings as-needed
+-- 
+--  system_settings(name, value_int)
+CREATE TABLE system_settings (
+    `sid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `value_int` INT,
+        PRIMARY KEY (`sid`),
+    UNIQUE INDEX `setting_name_UNIQUE` (`name`)
+);
+
+-- default settings
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_student", 12);
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_teacher", -24);
+INSERT INTO system_settings (name, value_int) VALUES ("opp_days", 18);
+-- opp_days uses an unsigned binary integer representation, e.g.:
+-- S/M/T/W/Th/F/Sa correspond to a 7 bit binary number
+-- opp blocks on Tuesdays and Fridays means we put a 1 in those date positions
+-- i.e. 0010010
+-- then that gets converted to integer representation 18
+-- later on when we are trying to figure out which days have opp block:
+-- there is only one way to get the number 18 starting from highest
+-- 18 / 64 => 0, so no Sunday opp block
+-- 18 / 32 => 0, so no Monday opp block
+-- 18 / 16 => 1, so there's Tuesday opp block
+-- 2 / 8 => 0, so there's no Wednesday opp block
+-- 2 / 4 => 0, so there's no Thursday opp block
+-- 2 / 2 => 1, so there's Friday opp block
+-- 0 / 1 => 0, so there's no Saturday opp block
+
 
 CREATE TABLE  opp_block_day (
     uid_day INT NOT NULL AUTO_INCREMENT,
@@ -34,8 +64,14 @@ CREATE TABLE teachers (
 
 CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
-    authToken int,
-    name VARCHAR(32),
+    firstname VARCHAR(32),
+    lastname VARCHAR(32),
+    grade INT(1),
+    sport VARCHAR(32),
+    advisor VARCHAR(32),
+    gender VARCHAR(10),
+    email VARCHAR(32),
+    authToken INT(1),
     phone VARCHAR(12),
     arrived TINYINT(1) DEFAULT 0,
     PRIMARY KEY (uid_student)
@@ -55,7 +91,7 @@ CREATE TABLE student_groups (
 
 CREATE TABLE offerings (
     uid_offering INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(32),
+    name VARCHAR(64),
     description TEXT,
     max_size INT,
     uid_teacher INT,
@@ -80,16 +116,20 @@ CREATE TABLE choices (
     FOREIGN KEY (uid_offering) REFERENCES offerings(uid_offering)
 
 );
+
 ## Test Data
-/* INSERT into opp_block_day (day) values ('1999-08-20');
-INSERT into opp_block_day (day) values ('2017-09-20');
+INSERT into opp_block_day (day) values ('2018-01-13');
+INSERT into opp_block_day (day) values ('2018-01-16');
+INSERT into opp_block_day (day) values ('2018-01-19');
+INSERT into opp_block_day (day) values ('2018-01-23');
+INSERT into opp_block_day (day) values ('2018-01-26');
+INSERT into opp_block_day (day) values ('2018-01-30');
 
-INSERT into opp_block_day (day) values ('2017-09-19');
-INSERT into opp_block_day (day) values ('2017-09-22');
 
 
 
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zack Minster', "Teacher info here");
+
+INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zach Minster', "Teacher info here");
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
 INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Bob Clark', "Teacher info here");
@@ -104,43 +144,41 @@ INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
 
-INSERT into students (name) values ('Johnny');
-INSERT into students (name) values ('William');
-INSERT into students (name) values ('Derp');
+##INSERT into students (info) values ('Abbott,Olivia,Grade 9,JVFieldHockey,"Shoup, Jon",Female,oabbott21@students.stab.org');
+##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
+
+
+-- INSERT into student_groups (uid_student, uid_group) values (1,2);
+-- INSERT into student_groups (uid_student, uid_group) values (2,1);
+
+
+##INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
+-- INSERT into calender (uid_day, uid_offering) values (1,1);
+-- INSERT into calender (uid_day, uid_offering) values (2,1);
+
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("CS Studio", 10, 1, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Yoga", 10, 4, 1, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Investment Group", 10, 5, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Open Clinic Treatments for students", 10, 6, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Hispanic culture trivia competition", 10, 7, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Art History", 10, 8, 1, "This OppBlock is...");
 
 
 
-INSERT into students (name, phone) values ('Johnny', "+14342491362");
-INSERT into students (name, phone) values ('Derp', "+14342491362");
 
-INSERT into student_groups (uid_student, uid_group) values (1,2);
-INSERT into student_groups (uid_student, uid_group) values (2,1);
+ INSERT into calendar (uid_day, uid_offering) values (1,1);
+ INSERT into calendar (uid_day, uid_offering) values (2,1);
+ INSERT into calendar (uid_day, uid_offering) values (4,2);
+-- INSERT into calendar (uid_day, uid_offering) values (1,4);
 
-INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
-INSERT into calender (uid_day, uid_offering) values (1,1);
-INSERT into calender (uid_day, uid_offering) values (2,1);
-
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("CS Studio", 10, 1, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("SAT or ACT Math", 10, 2, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("One on One thinking games", 10, 3, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Stab Yoga", 10, 4, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Stab Investment Group", 10, 5, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Open Clinic Treatments for students", 10, 6, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Hispanic culture trivia competition", 10, 7, 0);
-INSERT into offerings (name, max_size, uid_teacher, recurring) values ("Art History", 10, 8, 0);
-
-
-INSERT into calendar (uid_day, uid_offering) values (1,1);
-INSERT into calendar (uid_day, uid_offering) values (1,2);
-INSERT into calendar (uid_day, uid_offering) values (1,3);
-INSERT into calendar (uid_day, uid_offering) values (1,4);
-
-INSERT into calendar (uid_day, uid_offering) values (2,5);
-INSERT into calendar (uid_day, uid_offering) values (2,6);
-INSERT into calendar (uid_day, uid_offering) values (2,7);
-INSERT into calendar (uid_day, uid_offering) values (2,8);
- */
-
+-- INSERT into calendar (uid_day, uid_offering) values (2,5);
+-- INSERT into calendar (uid_day, uid_offering) values (2,6);
+-- INSERT into calendar (uid_day, uid_offering) values (2,7);
+-- INSERT into calendar (uid_day, uid_offering) values (2,8);
+ 
 
 -- INSERT into choices (uid_day, uid_student) values (1,1);
 -- INSERT into choices (uid_day, uid_student) values (1,2);
@@ -152,7 +190,3 @@ INSERT into calendar (uid_day, uid_offering) values (2,8);
 
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 1;
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 2 AND uid_student = 2;
-
-
-
-

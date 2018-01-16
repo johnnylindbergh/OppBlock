@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{Date}} Offerings</title>
+</head>
+
+<body>
+<h2>{{Date}}</h2>
+<h3>{{Dayoftheweek}}</h3>
+<table>
+<tr>
+    <th>Edit</th>
+    <th>Teacher</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Maximum Size</th>
+    <th>Current</th>
+  </tr>
+  
+  {{#data}}
+  <tr>
+    <td><a href="/editOffering/{{uid_offering}}">Edit</a></td> 
+    <td>{{Teacher}}</td>
+    <td>{{offeringName}}</td>
+    <td>{{description}}</td> 
+    <td>{{max_size}}</td> 
+    <td>{{recurring}}</td>
+  </tr>
+  </table>  
+    
+</body>
+</html>
