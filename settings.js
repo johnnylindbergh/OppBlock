@@ -50,9 +50,9 @@ module.exports = {
 	},
 	update: function(setting, value, cb) {
 		// update settings object
-		settings[setting].value_int = parseInt(value);
+		system_settings[setting].value_int = parseInt(value)
 		// update database, then callback
-		con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [value, settings[setting].sid], function(error, results, fields) {
+		con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [value, system_settings[setting].sid], function(error, results, fields) {
 			cb(error);
 		});
 	},

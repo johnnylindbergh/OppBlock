@@ -15,15 +15,16 @@ module.exports =  {
 		});
 		app.post("/settings", function(req, res) {
 			var keys = Object.keys(req.body);
-			var key_count = keys.length;
+			var key_count = keys.length;	// counts the number of remaining keys to update in DB
 			for(var i = 0; i < keys.length; i++) {
 				settings.update(keys[i], req.body[keys[i]], function(err) {
-					if (!err && key_count == 0)
-						res.redirect("/settings");
-					else if (key_count == 0)
+					if (!err) {
+						key_count--;
+						if (key_count == 0)
+							res.redirect("/settings");
+					} else {
 						res.end("Could not update settings -- reboot server.");
-					else
-						return;
+					}
 				});
 			}
 		});
