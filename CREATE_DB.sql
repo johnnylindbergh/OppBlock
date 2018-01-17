@@ -10,15 +10,26 @@ USE opp_block;
 CREATE TABLE system_settings (
     `sid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
+    `friendly_name` VARCHAR(255),
+    `description` TEXT,
     `value_int` INT,
         PRIMARY KEY (`sid`),
     UNIQUE INDEX `setting_name_UNIQUE` (`name`)
 );
 
 -- default settings
-INSERT INTO system_settings (name, value_int) VALUES ("hours_close_student", 12);
-INSERT INTO system_settings (name, value_int) VALUES ("hours_close_teacher", -24);
-INSERT INTO system_settings (name, value_int) VALUES ("opp_days", 18);
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_student",
+    "Student Registration Cutoff",
+    "Number of hours before/after midnight on Opp Block days that the system should disallow student registration.",
+    12);
+INSERT INTO system_settings (name, value_int) VALUES ("hours_close_teacher",
+    "Teacher Registration Cutoff",
+    "Number of hours before/after midnight on Opp Block days that the system should disallow teacher registration.",
+    -24);
+INSERT INTO system_settings (name, value_int) VALUES ("opp_days",
+    "Opp Block Days",
+    "Days of the week upon which Opp Block typically occurs.",
+    18);
 -- opp_days uses an unsigned binary integer representation, e.g.:
 -- S/M/T/W/Th/F/Sa correspond to a 7 bit binary number
 -- opp blocks on Tuesdays and Fridays means we put a 1 in those date positions

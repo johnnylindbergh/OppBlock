@@ -37,8 +37,6 @@ module.exports = {
 		var days = [];
 		var day_int = system_settings["opp_days"].value_int;
 		for (var i = 64; i > 0.5; i /= 2) {
-			console.log(i);
-			console.log(Math.floor(day_int / 2));
 			if (Math.floor(day_int / i) == 1){
 				day_int -= i;
 				days.push(true);
