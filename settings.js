@@ -2,6 +2,16 @@
 // - from anywhere in the system that includes database.js, you can access the system_settings object
 // - this contains key/value pairs for all master system settings, which should be editable by admin
 // - master system settings are currently created / documented in CREATE_DB.sql
+// ***************************************************************************************************
+// Special note: opp_days
+// opp_days allows you to determine the day(s) upon which opp blocks typically occur
+// if you call settings.opp_days(), the function returns a list of seven boolean (true/false) values
+// the array corresponds to [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+// EXAMPLE USAGE:
+//	var settings = require('./settings');
+//	settings.opp_days[1]					-> will be true if there's an opp block on Monday, false otherwise
+//	settings.opp_days[settings.days.MONDAY]	-> built-in constants allow easier day reference if needed
+// ***************************************************************************************************
 // TODO: improve documentation of available system settings
 // TODO: use system settings to control available views/flows as appropriate (e.g. shutting down opp block reg)
 var system_settings = {};
@@ -54,5 +64,6 @@ module.exports = {
 		THURSDAY: 4,
 		FRIDAY: 5,
 		SATURDAY: 6
-	}
+	},
+	system_settings: system_settings
 }

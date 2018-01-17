@@ -7,9 +7,9 @@ module.exports =  {
 	init: function(app) {
 		app.get("/settings", function(req, res) {
 			var data = [];
-			var keys = Object.keys(settings);
-			for (var i = 0; i < keys.length; i++) {	// loop through all settingsg
-				data.push(settings[keys[i]]);
+			var keys = Object.keys(settings.system_settings);
+			for (var i = 0; i < keys.length; i++) {	// loop through all settings
+				data.push(settings.system_settings[keys[i]]);
 			}
 			res.render("admin_settings.html", {settings: data});
 		});
