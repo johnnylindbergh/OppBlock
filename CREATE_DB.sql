@@ -18,15 +18,15 @@ CREATE TABLE system_settings (
 );
 
 -- default settings
-INSERT INTO system_settings (name, value_int) VALUES ("hours_close_student",
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("hours_close_student",
     "Student Registration Cutoff",
     "Number of hours before/after midnight on Opp Block days that the system should disallow student registration.",
     12);
-INSERT INTO system_settings (name, value_int) VALUES ("hours_close_teacher",
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("hours_close_teacher",
     "Teacher Registration Cutoff",
     "Number of hours before/after midnight on Opp Block days that the system should disallow teacher registration.",
     -24);
-INSERT INTO system_settings (name, value_int) VALUES ("opp_days",
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("opp_days",
     "Opp Block Days",
     "Days of the week upon which Opp Block typically occurs.",
     18);
