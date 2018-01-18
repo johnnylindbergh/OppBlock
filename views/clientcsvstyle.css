@@ -1,5 +1,8 @@
 body{
-	background-color: white;
+	background-image: url("/Users/cmackethan/OneDrive/School/Photography Intensive/12.12.16 (Sugar Hollow)/DSC_0203-2.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto;
 }
 
 #logo{
@@ -16,8 +19,8 @@ body{
 	border-style:solid;
 	border:5px;
 	border-color: black;
-	width:600px;
-	height:400px;
+	width:1200px;
+	height:600px;
 	margin:auto;
 	text-align: center;
 	padding-left:20px;
@@ -34,12 +37,9 @@ body{
 	font-size: 40px;
 }
 
-#emailInput, #passwordInput{
+textarea{
 	display:block;
-	width:300px;
-	font-size:20px;
 	background-color: white;
-	height:30px;
 	border-style:solid;
 	border-width:2px;
 	border-color: white;
@@ -64,4 +64,5 @@ button{
 
 button:hover{
 	background-color: black;
+	color: white;
 }
