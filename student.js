@@ -1,13 +1,8 @@
 var con = require('./database.js').connection;
+var moment = require('moment');
 module.exports = {
- 
- getStudentsThatNeedToChooseOffering: function(uidDay, callback){
-	con.query('SELECT uid_student FROM choices WHERE uid_day = ? AND uid_offering is NULL;',[uidDay], function(err, res) { 
-		callback(res);
-	});
- }
 
- //Gets the number of student in an offering on a day
+ //Gets the number of students in an offering on a day
  numStudents: function(uid_day, uid_offering, getStudentInfo, callback)	{
  	var numStud = 0;
  	var studList = [];
@@ -46,12 +41,12 @@ module.exports = {
        		console.log(err);
  		}
  	});
- }
+ },
 
  isOfferingFull: function (uid_day, uid_offering, callback) {
    con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
     if(!err) {
-      numStudents(uid_day, uid_offering, false, function(num, infoList){
+      module.exports.numStudents(uid_day, uid_offering, false, function(num, infoList){
         if(num <= data[0].max_size) {
           callback(true);
         } else {
@@ -62,7 +57,7 @@ module.exports = {
       console.log("The function produced an error.");
     }
   });
- }
+ },
 
  //Function gets Offerings and their teachers on a certain day from database;
  //Returns list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
@@ -115,16 +110,16 @@ module.exports = {
       } 
     }); 
   });
- }
+ },
 
 //Function takes in an Oppblock day
 //Returns a list of unfilled Offering Objects for that day
  getAvailableOfferings: function (uid_day, callback) {
   var availableList = []
-  getOfferings(uid_day, function(response) {
+  module.exports.getOfferings(uid_day, function(response) {
     var j = 0;
     for(var i = 0; i <response.length; i++) {
-      isOfferingFull(uid_day, response[i].uid, function(truth){
+      module.exports.isOfferingFull(uid_day, response[i].uid, function(truth){
         if(truth) {
           availableList.push(response[j]);
         }
@@ -135,7 +130,7 @@ module.exports = {
       });
     }
   });
- }
+ },
 
 //Takes in nothing, since moment.js can give the current time and date always
 //Returns two values:
@@ -155,11 +150,15 @@ module.exports = {
 					uid_day = results[i].uid_day;				
 				}
 			} 
+			
+			//	ALL THE BELOW VALUES NEED TO BE PARAMETERIZED
 			//Specficies the oppblock to 2:45 on that specific date
 			closest = closest.add({hours:14, minutes:45}); 
 			//Creates Cutoff time variables relative to closest oppblock 
 			var studentCutoff = moment(closest.subtract({hours:2})); //12:45
 			var teacherCutoff = moment(closest.subtract({days:12, hours:14, minutes:45})); //Midnight on 2 days before current oppblock
+			//	ALL THE ABOVE VALUES NEED TO BE PARAMETERIZED
+			
 			if (moment().isSameOrAfter(teacherCutoff)) {
 				if (moment().isSameOrAfter(studentCutoff)) {
 					callback(uid_day, true);
@@ -173,7 +172,7 @@ module.exports = {
 			console.log("Error in finding the upcoming oppblock");
 		}
 	});
- }
+ },
  init: function(app) {
 	app.get('/student/:id', function(req, res){
 		//Gets Student's id from url
@@ -183,14 +182,13 @@ module.exports = {
 			if(!err) {
 				if(student.length != 0) {
 					//This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
-					getSoonestOppblockDay(function(uid_day, cutOff) {
+					module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
 						//Checks whether it is time for students to choose yet
 						if (uid_day == null) { 
 							res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
 						} else {
 							//Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
 							con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) {//only gets the uid not the name
-								console.log(currentChoice);
 								if(!err) {
 									//Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
 									if(currentChoice.length != 0) {
@@ -199,12 +197,11 @@ module.exports = {
 												//Checks to see if it is past the cutoff time for the students to choose
 												if (cutOff) {
 													//Renders the page only with the user's current choice
-													res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice!", oppTime:true, notExcluded:true});
+													res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
 												} else {
 													//Gets all offerings for the user, while checking whether they are excluded from that oppblock day
-													getAvailableOfferings(uid_day, function(offerings) {
+													module.exports.getAvailableOfferings(uid_day, function(offerings) {
 														//At last, renders the page with the current choice, and the choices table
-														//Should the student's current Choice appear in the choice table (at the moment it does)?
 														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:"12:45", notExcluded:true});
 													});
 												}
@@ -214,7 +211,7 @@ module.exports = {
 										});
 									} else {
 										//Renders the page without any choices, since the student is excluded
-										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", oppTime:true});
+										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
 									}
 								} else {
 									res.send("An Err done occured.");
@@ -241,10 +238,13 @@ module.exports = {
 			});
 		} else {
 			//Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [1, req.params.id, req.body.uid_day], function(err) {
-				console.log("GOT HERE");
-				response.redirect('/student/' + req.params.id);
-				response.end();
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [2/*Default Oppblock*/, req.params.id, req.body.uid_day], function(err) {
+				if(!err) {
+					response.redirect('/student/' + req.params.id);
+					response.end();
+				} else {
+					res.send(err);
+				}
 			});
 		}
 	});
