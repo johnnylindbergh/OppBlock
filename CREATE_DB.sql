@@ -24,8 +24,16 @@ INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES
     12);
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("hours_close_teacher",
     "Teacher Registration Cutoff",
-    "Number of hours before/after midnight on Opp Block days that the system should disallow teacher registration.",
+    "Number of hours before/after midnight on Opp Block days that the system should disallow teacher registration of offerings.",
     -24);
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("hours_close_oppblock",
+    "Start Time for Opp Block (hours, 24hr time)",
+    "Number of hours after midnight on Opp Block days when the Opp Block begins, so that the system should give teachers the option to take attendance.",
+    14);
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("minutes_close_oppblock",
+    "Start Time for Opp Block (minutes)",
+    "Number of minutes after midnight on Opp Block days when the Opp Block begins, so that the system should give teachers the option to take attendance.",
+    45);
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("opp_days",
     "Opp Block Days",
     "Days of the week upon which Opp Block typically occurs.",

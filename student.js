@@ -1,5 +1,6 @@
 var con = require('./database.js').connection;
 var moment = require('moment');
+var settings = require('./settings').system_settings;
 module.exports = {
 
  // Gets the number of students in an offering on a day
@@ -150,15 +151,11 @@ module.exports = {
 					uid_day = results[i].uid_day;				
 				}
 			} 
-			
-			// 	ALL THE BELOW VALUES NEED TO BE PARAMETERIZED
-			// 	Specficies the oppblock to 2:45 on that specific date
-			// 	For parameterization, this should also be added into the settings table, as 2:45 won't always be the case
-			closest = closest.add({hours:14, minutes:45}); 
-			// 	Creates Cutoff time variables relative to closest oppblock 
-			var studentCutoff = moment(closest.subtract({hours:2})); // 12:45
-			var teacherCutoff = moment(closest.subtract({days:12, hours:14, minutes:45})); // Midnight on 2 days before current oppblock
-			// 	ALL THE ABOVE VALUES NEED TO BE PARAMETERIZED
+			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
+			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
+			var teacherCutoff = moment(closest.add({hours:settings["hours_close_teacher"].value_int}));
+			// 	Specficies the oppblock to a specific time on that specific date
+			closest = closest.add({hours:settings["hours_close_oppblock"].value_int, minutes:settings["minutes_close_oppblock"].value_int}); 
 			
 			if (moment().isSameOrAfter(teacherCutoff)) {
 				if (moment().isSameOrAfter(studentCutoff)) {
@@ -203,7 +200,7 @@ module.exports = {
 													// Gets all offerings for the user, while checking whether they are excluded from that oppblock day
 													module.exports.getAvailableOfferings(uid_day, function(offerings) {
 														// At last, renders the page with the current choice, and the choices table
-														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:"12:45", notExcluded:true});
+														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 													});
 												}
 											} else {
