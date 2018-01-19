@@ -1,5 +1,5 @@
 var con = require('./database.js').connection;
-var settings = require('./database.js').system_settings;
+var settings = require('./settings.js');
 module.exports =  {
 
 	// initialize routes for admin backend
@@ -7,21 +7,26 @@ module.exports =  {
 	init: function(app) {
 		app.get("/settings", function(req, res) {
 			var data = [];
-			var keys = Object.keys(settings);
-			for (var i = 0; i < keys.length; i++) {	// loop through all settingsg
-				data.push(settings[keys[i]]);
+			var keys = Object.keys(settings.system_settings);
+			for (var i = 0; i < keys.length; i++) {	// loop through all settings
+				data.push(settings.system_settings[keys[i]]);
 			}
 			res.render("admin_settings.html", {settings: data});
 		});
 		app.post("/settings", function(req, res) {
 			var keys = Object.keys(req.body);
+			var key_count = keys.length;	// counts the number of remaining keys to update in DB
 			for(var i = 0; i < keys.length; i++) {
-				// update settings object
-				settings[keys[i]].value_int = parseInt(req.body[keys[i]]);
-				// update database
-				con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [req.body[keys[i]], settings[keys[i]].sid] );
+				settings.update(keys[i], req.body[keys[i]], function(err) {
+					if (!err) {
+						key_count--;
+						if (key_count == 0)
+							res.redirect("/settings");
+					} else {
+						res.end("Could not update settings -- reboot server.");
+					}
+				});
 			}
-			res.redirect("/settings");
 		});
 
 		return this;

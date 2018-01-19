@@ -1,7 +1,7 @@
 var moment = require('moment');
 var db = require('./database.js');
 var con = db.connection;
-var settings = db.system_settings;
+var settings = require('./settings').system_settings;
 
 
 
@@ -39,7 +39,7 @@ module.exports = function(app) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
 							
-							if (moment(dayResults[i].day).subtract(settings.hours_close_teacher.value_int,'hours').isBefore()){
+							if (moment(dayResults[i].day).subtract(settings["hours_close_teacher"].value_int,'hours').isBefore()){
 								dayResults[i]['canEdit'] = false;
 								
 							}else{
