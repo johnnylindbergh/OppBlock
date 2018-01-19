@@ -155,7 +155,9 @@ INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
 
-##INSERT into students (info) values ('Abbott,Olivia,Grade 9,JVFieldHockey,"Shoup, Jon",Female,oabbott21@students.stab.org');
+INSERT into students (lastname, firstname, grade) values ("Last-Yuen", "Milo", 11);
+INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
+INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
 
@@ -182,7 +184,16 @@ INSERT into offerings (name, max_size, uid_teacher, recurring, description) valu
 
  INSERT into calendar (uid_day, uid_offering) values (1,1);
  INSERT into calendar (uid_day, uid_offering) values (2,1);
+ INSERT into calendar (uid_day, uid_offering) values (3,1);
+ INSERT into calendar (uid_day, uid_offering) values (4,1);
+ INSERT into calendar (uid_day, uid_offering) values (1,2);
+ INSERT into calendar (uid_day, uid_offering) values (2,2);
+ INSERT into calendar (uid_day, uid_offering) values (3,2);
  INSERT into calendar (uid_day, uid_offering) values (4,2);
+ INSERT into calendar (uid_day, uid_offering) values (1,3);
+ INSERT into calendar (uid_day, uid_offering) values (2,3);
+ INSERT into calendar (uid_day, uid_offering) values (3,3);
+ INSERT into calendar (uid_day, uid_offering) values (4,3);
 -- INSERT into calendar (uid_day, uid_offering) values (1,4);
 
 -- INSERT into calendar (uid_day, uid_offering) values (2,5);

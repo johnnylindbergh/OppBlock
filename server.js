@@ -17,7 +17,7 @@ app.set('views', __dirname + '/views');
 
 var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
-var student = require("./student.js");
+var student = require("./student.js").init(app);
 
 
 var server = app.listen(8080, function() {
