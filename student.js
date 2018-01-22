@@ -218,7 +218,7 @@ module.exports = {
 						}
 					});
 				} else {
-					res.send("We're Sorry. You don't exist in our database!");
+					res.send("We're Sorry. You don't exist!");
 				}
 			} else {
 				res.send("We're sorry. That wasn't a student id!");
@@ -236,7 +236,7 @@ module.exports = {
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [2/*Default Oppblock*/, req.params.id, req.body.uid_day], function(err) {
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, req.params.id, req.body.uid_day], function(err) {
 				if(!err) {
 					response.redirect('/student/' + req.params.id);
 					response.end();
