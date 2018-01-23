@@ -39,7 +39,7 @@ module.exports = function(app) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
 							
-							if (moment(dayResults[i].day).subtract(settings["hours_close_teacher"].value_int,'hours').isBefore()){
+							if (moment(dayResults[i].day).subtract(settings.hours_close_teacher.value_int,'hours').isBefore()){
 								dayResults[i]['canEdit'] = false;
 								
 							}else{
