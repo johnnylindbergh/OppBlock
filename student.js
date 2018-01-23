@@ -1,6 +1,12 @@
 var con = require('./database.js').connection;
 var moment = require('moment');
 var settings = require('./settings').system_settings;
+
+// A message to students who haven't signed up after the student cutoff time has passed
+// Can't be a system setting because it is text
+// Will reflect an administrator decision
+var message_students_notsignedup = "Since you forgot to sign up, you will be locked in Mr. Ware's Torture Chamber. Have fun!";
+
 module.exports = {
 
  // Gets the number of students in an offering on a day
@@ -146,7 +152,7 @@ module.exports = {
 			for (var i=0; i<results.length; i++) {
 				// Loops to find soonest Oppblock
 				var curr = moment(results[i].day, 'YYYY-MM-DD');
-				if(curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
+				if(curr.isBefore(closest) && (curr.isAfter(moment()) || curr.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) ){
 					closest = curr;	
 					uid_day = results[i].uid_day;				
 				}
@@ -154,9 +160,7 @@ module.exports = {
 			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
 			var teacherCutoff = moment(closest.add({hours:settings["hours_close_teacher"].value_int}));
-			// 	Specficies the oppblock to a specific time on that specific date
-			closest = closest.add({hours:settings["hours_close_oppblock"].value_int, minutes:settings["minutes_close_oppblock"].value_int}); 
-			
+			//	Checks to see whether the date is before or after the student and teacher cutoff times
 			if (moment().isSameOrAfter(teacherCutoff)) {
 				if (moment().isSameOrAfter(studentCutoff)) {
 					callback(uid_day, true);
@@ -190,38 +194,52 @@ module.exports = {
 								if(!err) {
 									// Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
 									if(currentChoice.length != 0) {
-										con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
-											if(!err) {
-												// Checks to see if it is past the cutoff time for the students to choose
-												if (cutOff) {
-													// Renders the page only with the user's current choice
-													res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
-												} else {
-													// Gets all offerings for the user, while checking whether they are excluded from that oppblock day
-													module.exports.getAvailableOfferings(uid_day, function(offerings) {
-														// At last, renders the page with the current choice, and the choices table
-														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
-													});
-												}
+										if (currentChoice[0].uid_offering == null) {
+											// Checks to see if it is past the cutoff time for the students to choose
+											if (cutOff) {
+												// Renders the page with an admin's message for the student, as they have neglected to sign up.
+												res.render('student.html', {Student:student[0].firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
 											} else {
-												res.send("An Err done occured.");
+												// Gets all unfilled offerings for the user to choose from
+												module.exports.getAvailableOfferings(uid_day, function(offerings) {
+													// At last, renders the page with the lack of choice, and the choices table
+													res.render('student.html', {Student:student[0].firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
+												});
 											}
-										});
+										} else {
+											con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
+												if(!err) {
+													// Checks to see if it is past the cutoff time for the students to choose
+													if (cutOff) {
+														// Renders the page only with the user's current choice
+														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
+													} else {
+														// Gets all unfilled offerings for the user to choose from
+														module.exports.getAvailableOfferings(uid_day, function(offerings) {
+															// At last, renders the page with the current choice, and the choices table
+															res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
+														});
+													}
+												} else {
+													res.render('error.html', {err:err});
+												}
+											});
+										}
 									} else {
 										// Renders the page without any choices, since the student is excluded
 										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
 									}
 								} else {
-									res.send("An Err done occured.");
+									res.render('error.html', {err:err});
 								}
 							});	
 						}
 					});
 				} else {
-					res.send("We're Sorry. You don't exist in our database!");
+					res.send('error.html', {err:"You don't exist!"});
 				}
 			} else {
-				res.send("We're sorry. That wasn't a student id!");
+				res.render('error.html', {err:err});
 			}
 		});
 	});
@@ -236,12 +254,12 @@ module.exports = {
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [2/*Default Oppblock*/, req.params.id, req.body.uid_day], function(err) {
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, req.params.id, req.body.uid_day], function(err) {
 				if(!err) {
 					response.redirect('/student/' + req.params.id);
 					response.end();
 				} else {
-					res.send(err);
+					res.render('error.html', {err:err});
 				}
 			});
 		}

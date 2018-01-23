@@ -28,7 +28,22 @@ module.exports =  {
 				});
 			}
 		});
+		//	Opp Block Creation Calendar Endpoints
+		/*
+		app.get('/calendar', function(req, res) { 
 
+
+			res.render('admin_calendar.html', {
+
+			});
+		});
+		app.post('/calendar', function(req, res) {
+			for (var i=0; i<; i++) {
+				con.query('UPDATE opp_block_day WHERE ', [], function() {
+					
+				});
+			}
+		});*/
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
