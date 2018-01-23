@@ -36,16 +36,16 @@ module.exports =  {
 	},
 	
 	//add CSV file of students to database
-	createStudentCSV: function(csvfile) {
+	createStudentCSV: function(studentdata) {
 		//convert giant string into array
-		csvfile = studentdata;
 		studentdata.split("\n");
-		studentdata.split("");
+		studentdata.split(",");
   		//add values in array to database
-  		for (var i = 0; i < studentdata.length; i + 7) {
-  			conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
-  				callback(result);
-  			});
+  		for (var i = 0; i < studentdata.length; i += 6) {
+  			console.log(studentdata);
+  			/*con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5]], function(err,result) {
+  				console.log(err);
+  			}); */
   		}
   	},
 
