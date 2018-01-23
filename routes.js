@@ -163,5 +163,58 @@ module.exports = function(app) {
 			CreateStudentCsv(req.body.Rad);
 		}
 	});
-}
+	
+	app.get('/Day/:id', function(req, res) {
+		con.query('select offerings.uid_teacher as Teacher, offerings.name as offeringName, offerings.description, offerings.max_size, offerings.recurring, calender.uid_day as Date = ?;',[uid_offering], function(err, resultsDay) {
+		if (!err) {			
+		res.render('Day.html', { 
+			data: resultsDay
+		});
+		}else{
+			res.render('Error.html');
+		}
+		});	
+	});
+	
+
+
+	app.get('/Admin', function(req, res){
+		con.query('select opp_block_day.day, opp_block_day.uid_day;', function(err, resultsAdmin){
+			if (!err) {
+			res.render('Admin.html',{
+				data:resultsAdmin
+				});
+		}else{
+			res.render('Error.html');
+		}
+			});
+		}
+	});
+
+	//need to join those uid students with student names
+	app.get('/Mopblock', function(req, res){
+		con.query('select absent.uid_student;', function(err, resultsMopblock){
+			if (!err) {
+			res.render('Mopblock.html',{
+				data:resultsMopblock
+			});
+			}else{
+			res.render('Error.html');
+		}
+		});
+	
+	});
+	//need to access stuff from choices table idk how
+	app.get('/Offeringstudents/:id', function(req, res){
+		con.query('select offerings.uid_teacher as Teacher, offerings.uid_offering as specific, inner join uid_student on choices.uid_offering=offerings.uid_offering where uid_offering=?;',[uid_offering], function(err, resultsO){
+			if (!err) {
+			res.render('Offeringstudents.html',{
+				data:resultsO
+			});
+			}else{
+			res.render('Error.html');
+		}
+		});
+	});
+
 
