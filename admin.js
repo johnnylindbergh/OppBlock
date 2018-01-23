@@ -28,7 +28,8 @@ module.exports =  {
 				});
 			}
 		});
-		//Opp Block Creation Calendar Endpoints
+		//	Opp Block Creation Calendar Endpoints
+		/*
 		app.get('/calendar', function(req, res) { 
 
 
@@ -42,7 +43,7 @@ module.exports =  {
 					
 				});
 			}
-		});
+		});*/
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
