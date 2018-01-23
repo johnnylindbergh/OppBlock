@@ -38,15 +38,16 @@ module.exports =  {
 	//add CSV file of students to database
 	createStudentCSV: function(studentdata) {
 		//convert giant string into array
-		studentdata.split("\n");
-		studentdata.split(",");
-  		//add values in array to database
-  		for (var i = 0; i < studentdata.length; i += 6) {
-  			console.log(studentdata);
-  			/*con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5]], function(err,result) {
-  				console.log(err);
-  			}); */
-  		}
+		var a = studentdata.split("\n");	// this is an array of every line
+		for (var i = 0; i < a.length; i++) {
+			var b = a[i].split(",");
+	  		//add values in array to database
+  			//console.log(studentdata);
+  			con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4], b[5]], function(err,result) {
+  				console.log(b);
+  			});
+		}	
+
   	},
 
 	//create student if nothing exists in database, update student_info if something does
