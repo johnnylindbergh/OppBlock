@@ -161,6 +161,7 @@ module.exports = function(app) {
 	app.post('/csvinput', function(req,res) {
 		if (res != undefined){
 			admin.createStudentCSV(req.body.Rad);
+			res.end();
 		}
 	});
 

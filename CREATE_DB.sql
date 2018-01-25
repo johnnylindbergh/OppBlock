@@ -85,7 +85,7 @@ CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
     firstname VARCHAR(32),
     lastname VARCHAR(32),
-    grade INT(1),
+    grade VARCHAR(32),
     sport VARCHAR(32),
     advisor VARCHAR(32),
     gender VARCHAR(10),

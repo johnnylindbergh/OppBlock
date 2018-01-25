@@ -41,10 +41,17 @@ module.exports =  {
 		var a = studentdata.split("\n");	// this is an array of every line
 		for (var i = 0; i < a.length; i++) {
 			var b = a[i].split(",");
+			b[4].trim();
 	  		//add values in array to database
   			//console.log(studentdata);
-  			con.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4], b[5]], function(err,result) {
-  				console.log(b);
+  			console.log("b[0]" + b[0]);
+  			console.log("b[1]" + b[1]);
+  			console.log("b[2]" + b[2]);
+  			console.log("b[3]" + b[3]);
+  			console.log("b[4]" + b[4]);
+  			con.query('INSERT INTO students(lastname, firstname, grade, gender, email) VALUES (?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4]], function(err, result) {
+  				if (err) throw err;
+  				console.log("1 record inserted");
   			});
 		}	
 

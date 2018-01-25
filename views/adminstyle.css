@@ -47,14 +47,13 @@ body{
 
 table{
 	border-collapse: collapse;
-	width: 100%;
 	margin-top: 50px;
 }
 
 th, td{
 	font-family: Lucida Grande;
 	font-weight: normal;
-	text-align: left;
+	text-align: center;
 	padding: 8px;
 }
 
