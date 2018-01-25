@@ -29,21 +29,36 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
-		/*
 		app.get('/calendar', function(req, res) { 
-
-
-			res.render('admin_calendar.html', {
-
+			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
+				if (!err) {
+					if(oppDays.length != 0) {
+						res.render('admin_calendar.html', {}); //FIgure out Correct mustache variables
+					} else {
+						res.render('admin_calendar.html', {});
+					}
+				} else {
+					res.render('error.html', {err:err});
+				}
 			});
 		});
 		app.post('/calendar', function(req, res) {
-			for (var i=0; i<; i++) {
-				con.query('UPDATE opp_block_day WHERE ', [], function() {
-					
+			var callback = 0;
+			for (var i=0; i<req.body.days.length; i++) {
+				con.query('UPDATE opp_block_day WHERE day = ?', [req.body.days[i]], function(err, result) { //Figure out correct Variable
+					if(!err) {
+						callback += 1;
+						console.log("Finished Query #" + callback);
+						if (callback == req.body.days.length) { //check if right number
+							res.redirect('/calendar');
+							res.end();
+						}
+					} else {
+						res.render('error.html', {err:err});
+					}
 				});
 			}
-		});*/
+		});
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
