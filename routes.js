@@ -1,7 +1,7 @@
 var moment = require('moment');
 var db = require('./database.js');
 var con = db.connection;
-var settings = db.system_settings;
+var settings = require('./settings').system_settings;
 
 
 
@@ -157,64 +157,79 @@ module.exports = function(app) {
 	});
 
 	//CSV Post
-
 	app.post('/csvinput', function(req,res) {
 		if (res != undefined){
 			CreateStudentCsv(req.body.Rad);
 		}
 	});
-	
+
+
 	app.get('/Day/:id', function(req, res) {
-		con.query('select offerings.uid_teacher as Teacher, offerings.name as offeringName, offerings.description, offerings.max_size, offerings.recurring, calender.uid_day as Date = ?;',[uid_offering], function(err, resultsDay) {
-		if (!err) {			
-		res.render('Day.html', { 
-			data: resultsDay
-		});
-		}else{
-			res.render('Error.html');
-		}
+		var day_uid = req.params.id;
+			con.query('select * from offerings;', function(err, resultsDay) {
+				var link=resultsDay[0].uid_teacher;
+				//console.log(link);
+				con.query('select name from teachers where uid_teacher=?;',[link], function(err, resultName){
+				
+				//console.log(resultsDay);
+				
+				res.render('Day.html', { 
+				data:resultsDay,
+				Teacher:resultName.name
+				
+				});
+			});
+			
+			
 		});	
 	});
 	
+	app.get('/Offeringstudents/:id', function(req, res){
+		var teacher_uid = req.params.id;
+		//console.log(teacher_uid);
+		con.query('select uid_offering from offerings where uid_teacher=?;',[teacher_uid], function(err, resultsO){
+			var off=resultsO[0].uid_offering;
+			//console.log(off);
+			con.query('select uid_student from choices where uid_offering=?;', [off], function(err, resultsS){
+				
+				var stud=resultsS[0].uid_student;
+				
+				con.query('select lastname from students where uid_student=?;',[stud], function(err, resultsZ){
+				con.query('select name from teachers where uid_teacher=?;', [teacher_uid], function(err, resultsN){
+				console.log(resultsN);
+				res.render('Offeringstudents.html',{
+				name:resultsN[0].name,
+				data:resultsZ
+				});
+			});
+			});
+		});
+	});
+	});
+
 
 
 	app.get('/Admin', function(req, res){
-		con.query('select opp_block_day.day, opp_block_day.uid_day;', function(err, resultsAdmin){
-			if (!err) {
-			res.render('Admin.html',{
+		con.query('select * from opp_block_day;', function(err, resultsAdmin){
+				console.log(resultsAdmin);
+				res.render('Admin.html',{
+				
 				data:resultsAdmin
 				});
-		}else{
-			res.render('Error.html');
-		}
-			});
-		}
+			
+		});
 	});
+	
 
 	//need to join those uid students with student names
 	app.get('/Mopblock', function(req, res){
-		con.query('select absent.uid_student;', function(err, resultsMopblock){
-			if (!err) {
-			res.render('Mopblock.html',{
+		con.query('select * from absent;', function(err, resultsMopblock){
+				console.log(resultsMopblock);
+				res.render('Mopblock.html',{
 				data:resultsMopblock
 			});
-			}else{
-			res.render('Error.html');
-		}
+			
 		});
-	
 	});
 	//need to access stuff from choices table idk how
-	app.get('/Offeringstudents/:id', function(req, res){
-		con.query('select offerings.uid_teacher as Teacher, offerings.uid_offering as specific, inner join uid_student on choices.uid_offering=offerings.uid_offering where uid_offering=?;',[uid_offering], function(err, resultsO){
-			if (!err) {
-			res.render('Offeringstudents.html',{
-				data:resultsO
-			});
-			}else{
-			res.render('Error.html');
-		}
-		});
-	});
-
-
+	}
