@@ -9,7 +9,14 @@ var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var server = require('http').createServer(app);
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+var GOOGLE_CLIENT_ID      = "905388552359-p7i0l15pvkefgfn59ch3t1gsqtfu1qdi.apps.googleusercontent.com"
+  , GOOGLE_CLIENT_SECRET  = "IVQF9031DSqYr6WSqOtdGXXH";
+
+
+
 app.set('view engine', 'ejs');
+
 
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
@@ -105,4 +112,12 @@ server.listen( 8080 );
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
+}
+
+module.exports = {
+	isLoggedIn:function(req,res,next){
+
+	}
+
+
 }
