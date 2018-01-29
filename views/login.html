@@ -1,92 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<title>Oppblock Sign Up</title>
-    <link rel="stylesheet" href="style.css" type="text/css"/>
-    
+  	<title>Craig Memorial OppBlock System</title>
+    <link rel="stylesheet" href="loginstyle.css" type="text/css"/>
     <style> body {padding: 0; margin: 0;} </style>
   </head>
   <body>
-    <h1 id = "test">Oppblock Sign Up</h1>
-
-
-	<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
-
-	<script>
-	  // Initialize Firebase
-	  var config = {
-	    apiKey: "AIzaSyCd7uOsM6o6J7MdaVkmfnQ6cvS8D7JUvWE",
-	    authDomain: "oppblockstab.firebaseapp.com",
-	    databaseURL: "https://oppblockstab.firebaseio.com",
-	    projectId: "oppblockstab",
-	    storageBucket: "oppblockstab.appspot.com",
-	    messagingSenderId: "996448122649"
-	  };
-	  firebase.initializeApp(config);
-
-	   var saveRef = firebase.database().ref().child("students");
-
-      var name = document.getElementById("nameInput");
-      
-
-      function signIn(){
-        var provider = new firebase.auth.GoogleAuthProvider();
-
-        firebase.auth().languageCode = 'en';
-
-        firebase.auth().signInWithPopup(provider).then(function(result) {
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
-          // The signed-in user info.
-          var user = result.user;
-
-          alert('Welcome ' + user.displayName + "!" + '\n' + 'Your E-mail is: '+ user.email);
-          console.log(user.val());
-          console.log(user.displayName);
-          // ...
-        }).catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // The email of the user's account used.
-          var email = error.email;
-          // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential;
-          // ...
-        });
-
-      }
-
-
-
-
-      // function submit(){
-      //   var submitValue = document.getElementById("nameInput").value;
-
-      //   var originalCV = firebase.database().ref().child('counter');
-
-
-      //   originalCV.once('value').then(function(snap){
-      //     var newCV = snap.val()+1;
-      //     originalCV.set(newCV);
-      //     firebase.database().ref().child('members/'+newCV.toString()).set(submitValue);
-      //     alert("Welcome " + submitValue);
-      //     document.getElementById("nameInput").value = "";
-      //   });
-
-      // }
-
-
-
-	</script>
+    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
 
     <div id = "centralBox"> <!--- The content box located in center -->
-      <h1 id = "titleText">Sign In</h1>
+      <p id = "titleText">Sign In</p>
       <input id = "emailInput" type = "email" placeholder=" E-mail"/>
       <input id = "passwordInput" type = "password" placeholder=" Password"/>
-      <button id = "submit" onclick="signIn();"> Forget Password </button>
+      <button id = "submit" onclick="submit();"> Forgot Password </button>
       <button id = "googleSign" onclick="signIn();"> Next</button>
-    </div> 
+    </div>
 
 
   </body>

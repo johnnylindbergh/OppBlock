@@ -5,12 +5,14 @@
 <title>Admin Page</title>
 </head>
 
-
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
 <body>
 	<h1>Administrator Portal</h1>
 	<h3>Insert Name Here</h3>
-	<table style="">
+	<a href="/AddStudents">Add Students</a>
+    <a href="/Mopblock">Students who didn't sign up</a>
+    <a href="/Groups">Student Groups</a>
+    <table style="">
 		<tr>
 			<th>Edit</th>
             <th>Date</th>
@@ -24,8 +26,12 @@
         </tr>
         {{/data}}
     </table>
-        
-
+    <p>Add New Day </p>
+    <input type="text" name="Date" value="{{Date}}">
+    <br>
+    <input type="text" name="Dayoftheweek" value="{{Dayoftheweek}}">
+    <br>
+    <input type="submit" value="Submit">
 
 </body>
 </html>
