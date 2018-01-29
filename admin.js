@@ -57,6 +57,21 @@ module.exports =  {
 
   	},
 
+  	createTeacherCSV: function(teacherdata) {
+  		//var a is giant string input
+  		var a = studentdata.split("\n");
+  		for (var i = 0; i < a.length; i++) {
+  			//var b is array of strings
+  			var b = a[i].split(",");
+
+  			//query
+  			con.query('INSERT INTO teachers(prefix, teacher_firstname, teacher_lastname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {
+  				if (err) throw err;
+  				console.log("1 record inserted");
+  			});
+  		}
+  	},
+
 	//create student if nothing exists in database, update student_info if something does
 	createStudent: function(studentlastName, studentFirstName, studentGrade, studentSport, studentAdvisor, studentGender, studentEmail, callback) {
 		con.query('SELECT uid_student FROM students WHERE student_email = ?;', [student_email], function(err, results) {

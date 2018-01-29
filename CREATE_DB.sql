@@ -76,7 +76,9 @@ CREATE TABLE excluded_groups (
 CREATE TABLE teachers (
     uid_teacher INT NOT NULL AUTO_INCREMENT,
     prefix VARCHAR(4),
-    name VARCHAR(32),
+    teacher_firstname VARCHAR(32),
+    teacher_lastname VARCHAR(32),
+    teacher_email VARCHAR(32),
     teacher_info TEXT,
  	PRIMARY KEY (uid_teacher)
 );
@@ -85,7 +87,7 @@ CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
     firstname VARCHAR(32),
     lastname VARCHAR(32),
-    grade VARCHAR(32),
+    grade INT(4),
     sport VARCHAR(32),
     advisor VARCHAR(32),
     gender VARCHAR(10),
@@ -148,24 +150,20 @@ INSERT into opp_block_day (day) values ('2018-01-30');
 
 
 
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zach Minster', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Bob Clark', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Adam Columbo', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Zach Minster', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Brian Bartholomew', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Andy Beardsley', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Bob Clark', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Adam Columbo', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
+##INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
 
 
 INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
-
-INSERT into students (lastname, firstname, grade) values ("Last-Yuen", "Milo", 11);
-INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
-INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
 
