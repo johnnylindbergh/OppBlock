@@ -81,6 +81,16 @@ CREATE TABLE teachers (
  	PRIMARY KEY (uid_teacher)
 );
 
+
+CREATE TABLE admins (
+    uid_admin INT NOT NULL AUTO_INCREMENT,
+    lastname VARCHAR(32),
+    firstname VARCHAR(32),
+    email VARCHAR(32),
+    PRIMARY KEY (uid_admin)
+);
+
+
 CREATE TABLE students (
     uid_student INT NOT NULL AUTO_INCREMENT,
     firstname VARCHAR(32),
@@ -135,6 +145,16 @@ CREATE TABLE choices (
     FOREIGN KEY (uid_offering) REFERENCES offerings(uid_offering)
 
 );
+
+
+#NOT TEST DATA, MANUALLY INSERTING ADMINS, DO NOT REMOVE
+INSERT into admins (lastname, firstname, email) values ('Ware', 'Blake','bware@stab.org' );
+INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', 'pquagliaroli@stab.org');
+INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
+
+
 
 ## Test Data
 INSERT into opp_block_day (day) values ('2018-01-13');
