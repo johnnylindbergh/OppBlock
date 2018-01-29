@@ -3,90 +3,106 @@ var express = require ('express');
 var app = express();
 var engines = require('consolidate');
 var firebase = require('firebase');
-app.engine('html', engines.hogan); 
+var util = require('util');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('cookie-session');
+var server = require('http').createServer(app);
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
+app.set('view engine', 'ejs');
+
 app.set('views', __dirname + '/views');
-app.use(express.static(__dirname + '/views'));
-require('firebase/auth');
-require('firebase/database');
+app.use(express.static(__dirname + '/public'));
+
 var passport = require('passport');
 
-app.post('/login',passport.authenticate('Google'),
-  function(req, res) {
-    // If this function gets called, authentication was successful.
-    // `req.user` contains the authenticated user.
-    res.redirect('/users/' + req.user.username);
+passport.serializeUser(function(user, done) {
+  done(null, user);
 });
-// var config = {
-//     apiKey: "AIzaSyCd7uOsM6o6J7MdaVkmfnQ6cvS8D7JUvWE",
-//     authDomain: "oppblockstab.firebaseapp.com",
-//     databaseURL: "https://oppblockstab.firebaseio.com",
-//     projectId: "oppblockstab",
-//     storageBucket: "oppblockstab.appspot.com",
-//     messagingSenderId: "996448122649"
-// };
 
-// firebase.initializeApp(config);
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 
+passport.use(new GoogleStrategy({
+    clientID:     GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:8080/auth/google/callback",
+    passReqToCallback: true
+  },
+  function(request, accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+      return done(null, profile);
+    });
+  }
+));
 
-// // function isAuthenticated(request,response,next) {
-// // 	var user = firebase.auth().currentUser;
-// // 	if (user ==! null){
-// // 		request.user = user;
-// // 		next();
-// // 	}else{
-// // 		var provider = new firebase.auth.GoogleAuthProvider();
-// // 		firebase.auth().languageCode = 'en';
-// // 		firebase.auth().signInWithPopup(provider).then(function(result){
-// // 			var token = result.credential.accessToken;
-// // 			var user = result.user;
-// // 			console.log(user.val());
-// // 			console.log(user.displayName);
-// // 		}).catch(function(error){
-// // 			var errorCode = error.code;
-// // 			var errorMessage = error.message;
-// // 			var credential = error.credential;
-// // 		});
-// // 	}
-// // }
+app.use( cookieParser()); 
+app.use( bodyParser.json());
+app.use( bodyParser.urlencoded({
+	extended: true
+}));
+app.use( session({ 
+	secret: 'S57uZ56o289GD02M383Ojb4PJlw64YWL',
+	name:   'session',
+  resave: true,
+  saveUninitialized: true
+}));
+app.use( passport.initialize());
+app.use( passport.session());
 
-// app.get('/login-user', function(req, res) {
-// 	var provider = new firebase.auth.GoogleAuthProvider();
+app.get('/', function(req, res){
+  res.render('index', { user: req.user });
+});
 
-// 	firebase.auth().signInWithPopup(provider).then(function(result){
-// 			var token = result.credential.accessToken;
-// 			var user = result.user;
-// 			console.log(user.val());
-// 			console.log(user.displayName);
-// 			res.redirect('/')
+app.get('/account', ensureAuthenticated, function(req, res){
+  console.log(req.user._raw);
+  res.render('account', { user: req.user });
+});
 
-// 		}).catch(function(error){
-// 			var errorCode = error.code;
-// 			var errorMessage = error.message;
-// 			var credential = error.credential;
-// 	});
-// 	 // firebase.auth().signInWithEmailAndPassword("test@students.stab.org", "testPassword").then(function(authData){
-// 	 //   	console.log('test',firebase.auth().currentUser);
-
-// 	 // }).catch(function(error) {
-// 	 //   console.log('mainError', error);
-// 	 //   console.log('error', error.code);
-// 	 //   console.log('message', error.message);
-// 	 // });
-// });
-
-// app.get('/',function(request,response){
-// 	response.render('teacher.html');
-// });
-
-// app.get('/info',function(request,response){
-// 	response.render('student.html');
-// });
-
-// app.get('/check',function(req,res){
-//     var user = firebase.auth().currentUser
-//     alert(user)
-// })
+app.get('/login', function(req, res){
+  res.render('login', { user: req.user });
+});
 
 
-app.listen(8088);
-console.log('Auth is running on port 8088');
+app.get('/auth/google', passport.authenticate('google', { scope: [
+       'https://www.googleapis.com/auth/userinfo.profile',
+       'https://www.googleapis.com/auth/userinfo.email'] 
+}));
+
+// GET /auth/google/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+app.get( '/auth/google/callback', 
+    	passport.authenticate( 'google', { 
+    		successRedirect: '/test',
+    		failureRedirect: '/failure'
+}));
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
+app.get('/test',function(req,res){
+	res.end('Logged in');
+});
+
+app.get('/secretpage', ensureAuthenticated, function(req, res) {
+  res.end("This page is secret.");
+})
+
+server.listen( 8080 );
+
+
+// Simple route middleware to ensure user is authenticated.
+//   Use this route middleware on any resource that needs to be protected.  If
+//   the request is authenticated (typically via a persistent login session),
+//   the request will proceed.  Otherwise, the user will be redirected to the
+//   login page.
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
+}
