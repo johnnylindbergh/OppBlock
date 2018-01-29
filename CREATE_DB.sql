@@ -91,7 +91,7 @@ CREATE TABLE students (
     sport VARCHAR(32),
     advisor VARCHAR(32),
     gender VARCHAR(10),
-    email VARCHAR(32),
+    email VARCHAR(50),
     authToken INT(1),
     phone VARCHAR(12),
     arrived TINYINT(1) DEFAULT 0,
@@ -139,12 +139,13 @@ CREATE TABLE choices (
 );
 
 ## Test Data
-INSERT into opp_block_day (day) values ('2018-01-13');
-INSERT into opp_block_day (day) values ('2018-01-16');
-INSERT into opp_block_day (day) values ('2018-01-19');
-INSERT into opp_block_day (day) values ('2018-01-23');
-INSERT into opp_block_day (day) values ('2018-01-26');
-INSERT into opp_block_day (day) values ('2018-01-30');
+
+##INSERT into opp_block_day (day) values ('2018-01-13');
+##INSERT into opp_block_day (day) values ('2018-01-16');
+##INSERT into opp_block_day (day) values ('2018-01-19');
+##INSERT into opp_block_day (day) values ('2018-01-23');
+##INSERT into opp_block_day (day) values ('2018-01-26');
+##INSERT into opp_block_day (day) values ('2018-01-30');
 
 
 
@@ -175,31 +176,31 @@ INSERT into groups (group_info) values ('the cool group');
 -- INSERT into calender (uid_day, uid_offering) values (1,1);
 -- INSERT into calender (uid_day, uid_offering) values (2,1);
 
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("CS Studio", 10, 1, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Yoga", 10, 4, 1, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Investment Group", 10, 5, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Open Clinic Treatments for students", 10, 6, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Hispanic culture trivia competition", 10, 7, 0, "This OppBlock is...");
-INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Art History", 10, 8, 1, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("CS Studio", 10, 1, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Yoga", 10, 4, 1, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Stab Investment Group", 10, 5, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Open Clinic Treatments for students", 10, 6, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Hispanic culture trivia competition", 10, 7, 0, "This OppBlock is...");
+##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Art History", 10, 8, 1, "This OppBlock is...");
 
 
 
 
- INSERT into calendar (uid_day, uid_offering) values (1,1);
- INSERT into calendar (uid_day, uid_offering) values (2,1);
- INSERT into calendar (uid_day, uid_offering) values (3,1);
- INSERT into calendar (uid_day, uid_offering) values (4,1);
- INSERT into calendar (uid_day, uid_offering) values (1,2);
- INSERT into calendar (uid_day, uid_offering) values (2,2);
- INSERT into calendar (uid_day, uid_offering) values (3,2);
- INSERT into calendar (uid_day, uid_offering) values (4,2);
- INSERT into calendar (uid_day, uid_offering) values (1,3);
- INSERT into calendar (uid_day, uid_offering) values (2,3);
- INSERT into calendar (uid_day, uid_offering) values (3,3);
- INSERT into calendar (uid_day, uid_offering) values (4,3);
+ ##INSERT into calendar (uid_day, uid_offering) values (1,1);
+ ##INSERT into calendar (uid_day, uid_offering) values (2,1);
+ ##INSERT into calendar (uid_day, uid_offering) values (3,1);
+ ##INSERT into calendar (uid_day, uid_offering) values (4,1);
+ ##INSERT into calendar (uid_day, uid_offering) values (1,2);
+ ##INSERT into calendar (uid_day, uid_offering) values (2,2);
+ ##INSERT into calendar (uid_day, uid_offering) values (3,2);
+ ##INSERT into calendar (uid_day, uid_offering) values (4,2);
+ ##INSERT into calendar (uid_day, uid_offering) values (1,3);
+ ##INSERT into calendar (uid_day, uid_offering) values (2,3);
+ ##INSERT into calendar (uid_day, uid_offering) values (3,3);
+ ##INSERT into calendar (uid_day, uid_offering) values (4,3);
 -- INSERT into calendar (uid_day, uid_offering) values (1,4);
 
 -- INSERT into calendar (uid_day, uid_offering) values (2,5);
