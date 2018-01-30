@@ -59,13 +59,13 @@ module.exports =  {
 
   	createTeacherCSV: function(teacherdata) {
   		//var a is giant string input
-  		var a = studentdata.split("\n");
+  		var a = teacherdata.split("\n");
   		for (var i = 0; i < a.length; i++) {
   			//var b is array of strings
   			var b = a[i].split(",");
 
   			//query
-  			con.query('INSERT INTO teachers(prefix, teacher_firstname, teacher_lastname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {
+  			con.query('INSERT INTO teachers(prefix, teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {
   				if (err) throw err;
   				console.log("1 record inserted");
   			});

@@ -158,10 +158,17 @@ module.exports = function(app) {
 	});
 
 	//CSV Post
-	app.post('/csvinput', function(req,res) {
+	app.post('/studentcsvinput', function(req,res) {
 		if (res != undefined){
 			admin.createStudentCSV(req.body.Rad);
-			res.end();
+			res.redirect('/admin');
+		}
+	});
+
+	app.post('/teachercsvinput', function(req, res) {
+		if (res != undefined){
+			admin.createTeacherCSV(req.body.Radical);
+			res.redirect('/admin');
 		}
 	});
 

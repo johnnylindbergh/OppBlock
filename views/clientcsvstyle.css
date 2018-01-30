@@ -39,6 +39,7 @@ body{
 
 textarea{
 	display:block;
+	float: left;
 	background-color: white;
 	border-style:solid;
 	border-width:2px;
@@ -49,7 +50,7 @@ textarea{
 input{
 	width:150.5px;
 	font-size:15px;
-	display:inline-block;
+	display: inline-block;
 	text-align:left;
 	cursor:pointer;
 	border:none;

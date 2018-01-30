@@ -10,10 +10,17 @@
 
   	<div id= "centralBox">
   	  <p id= "titleText">Database Management</p>
-  	  <form action="/csvinput" method="post">
-  	     <textarea rows="25" cols="165" name="Rad" placeholder="Paste CSV File"> </textarea>
+
+  	  <form action="/studentcsvinput" method="post">
+  	     <textarea rows="25" cols="80" name="Rad" placeholder="Paste Student CSV File"> </textarea>
   	     <input type="submit"></input>
   	  </form>
+
+      <form action="/teachercsvinput" method="post">
+         <textarea rows="25" cols="80" name="Radical" placeholder="Paste Teacher CSV File"> </textarea>
+         <input type="submit"></input>
+      </form>
+
   	</div>
 
   </body>
