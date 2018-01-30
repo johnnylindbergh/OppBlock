@@ -1,37 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Admin Page</title>
-</head>
-
+  <head>
+    <meta charset="utf-8">
+    <title>Oppblock System: Admin</title>
+      <link rel="stylesheet" href="adminstyle.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
-<body>
-	<h1>Administrator Portal</h1>
-	<h3>Insert Name Here</h3>
-	<a href="/AddStudents">Add Students</a>
-    <a href="/Mopblock">Students who didn't sign up</a>
-    <a href="/Groups">Student Groups</a>
-    <table style="">
-		<tr>
-			<th>Edit</th>
-            <th>Date</th>
-            <th>Day of the Week</th>
-        </tr>
-        {{#data}}
-        <tr>
-            <td><a href="/Day/{{uid_day}}">Edit</a></td>
-            <td>{{date}}</td>
-            <td>{{dayoftheweek}}</td>
-        </tr>
-        {{/data}}
-    </table>
-    <p>Add New Day </p>
-    <input type="text" name="Date" value="{{Date}}">
-    <br>
-    <input type="text" name="Dayoftheweek" value="{{Dayoftheweek}}">
-    <br>
-    <input type="submit" value="Submit">
+  <body>
+    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
 
-</body>
+    <div id= "centralBox">
+      <p id= "titleText">Administrator Portal</p>
+      <p id= "signedInAs">Signed in as {{Admin}}</p>
+
+    <button type="button" href="/clientcsv">Database</button>
+    <button type="button" href="/Mopblock">MopBlock</button>
+    <button type="button" href="/Groups">Groups</button>
+    <button type="button" href="/admin_settings">Settings</button>
+    <button type="button" href="/scheduler">Schedule</button>
+    
+    <table style="width:100%" align="center">
+      <tr>
+        <th>Date</th>
+        <th>Day of the Week</th>
+      </tr>
+      {{#data}}
+      <tr>
+        <td>{{date}}</td>
+        <td>{{dayoftheweek}}</td>
+      </tr>
+      {{/data}}
+    </table>
+    
+  </body>
 </html>

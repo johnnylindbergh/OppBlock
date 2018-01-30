@@ -51,15 +51,38 @@ module.exports =  {
 	},
 	
 	//add CSV file of students to database
-	createStudentCSV: function(csvfile) {
+	createStudentCSV: function(studentdata) {
 		//convert giant string into array
-		csvfile = studentdata;
-		studentdata.split("\n");
-		studentdata.split("");
-  		//add values in array to database
-  		for (var i = 0; i < studentdata.length; i + 7) {
-  			conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
-  				callback(result);
+		var a = studentdata.split("\n");	// this is an array of every line
+		for (var i = 0; i < a.length; i++) {
+			var b = a[i].split(",");
+			b[4].trim();
+	  		//add values in array to database
+  			//console.log(studentdata);
+  			console.log("b[0]" + b[0]);
+  			console.log("b[1]" + b[1]);
+  			console.log("b[2]" + b[2]);
+  			console.log("b[3]" + b[3]);
+  			console.log("b[4]" + b[4]);
+  			con.query('INSERT INTO students(lastname, firstname, grade, gender, email) VALUES (?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4]], function(err, result) {
+  				if (err) throw err;
+  				console.log("1 record inserted");
+  			});
+		}	
+
+  	},
+
+  	createTeacherCSV: function(teacherdata) {
+  		//var a is giant string input
+  		var a = teacherdata.split("\n");
+  		for (var i = 0; i < a.length; i++) {
+  			//var b is array of strings
+  			var b = a[i].split(",");
+
+  			//query
+  			con.query('INSERT INTO teachers(prefix, teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {
+  				if (err) throw err;
+  				console.log("1 record inserted");
   			});
   		}
   	},

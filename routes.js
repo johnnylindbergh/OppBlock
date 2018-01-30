@@ -2,6 +2,7 @@ var moment = require('moment');
 var db = require('./database.js');
 var con = db.connection;
 var settings = require('./settings').system_settings;
+var admin = require('./admin.js');
 
 
 
@@ -39,7 +40,7 @@ module.exports = function(app) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
 							
-							if (moment(dayResults[i].day).subtract(settings.hours_close_teacher.value_int,'hours').isBefore()){
+							if (moment(dayResults[i].day).subtract(settings["hours_close_teacher"].value_int,'hours').isBefore()){
 								dayResults[i]['canEdit'] = false;
 								
 							}else{
@@ -157,10 +158,23 @@ module.exports = function(app) {
 	});
 
 	//CSV Post
-	app.post('/csvinput', function(req,res) {
+	app.post('/studentcsvinput', function(req,res) {
 		if (res != undefined){
-			CreateStudentCsv(req.body.Rad);
+			admin.createStudentCSV(req.body.Rad);
+			res.redirect('/admin');
 		}
+	});
+
+	app.post('/teachercsvinput', function(req, res) {
+		if (res != undefined){
+			admin.createTeacherCSV(req.body.Radical);
+			res.redirect('/admin');
+		}
+	});
+
+	app.get('/csvinput', function(req,res) {
+		res.render('clientcsv.html', {
+		});
 	});
 }
 
