@@ -47,10 +47,9 @@ body{
 
 #offerings{
 	margin:auto;
-	padding-top:100px;
-	text-align:center;
+	text-align:left;
 	color:white;
-	font-family:Courier;
+	font-family:Lucida Grande;
 }
 
 table{
@@ -74,23 +73,5 @@ th{
 	color:white;
 }
 
-button{
-	width:150.5px;
-	font-size:15px;
-	display:inline-block;
-	text-align:left;
-	cursor:pointer;
-	border:none;
-	height:34px;
-	background-color:white;
-	border-color:white;
-	color:grey;
-	margin-top:10px;
-	margin-right:5px;
-	float:left;
-}
-
-button:hover{
-	background-color:black;
-	color:white;
-}
+a {color: black;}
+a:hover {color:blue;}
