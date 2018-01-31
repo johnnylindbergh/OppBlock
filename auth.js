@@ -140,7 +140,8 @@ module.exports = {
   }
 
   isStudent:function(req,res,next){
-    conn.query("SELECT * FROM students WHERE email=?",[req.user.email],
+    if (req.isAuthenticated()){
+      conn.query("SELECT * FROM students WHERE email=?",[req.user.email],
         function(error, res){
           if (error == null){
             return next();
@@ -148,13 +149,25 @@ module.exports = {
             res.redirect('/login')
           }
         }
-    );
-
+      );
+    }else{
+      res.redirect('/login');
+    }
   }
 
-  // isTeacher:function(req,res,next){
-
-  // }
+  isTeacher:function(req,res,next){
+    if (req.isAuthenticated()){
+      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email]),function(error,res){
+      if (error == null){
+        return next();
+      }else{
+        res.redirect('/login');
+      }
+    }else{
+      res.redirect('/login');
+    }
+    
+  }
 
 
 
