@@ -9,7 +9,7 @@ var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var server = require('http').createServer(app);
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
-var conn        = require('./database_ops').connection;
+var con  = require('./database').connection;
 
 var GOOGLE_CLIENT_ID      = "905388552359-p7i0l15pvkefgfn59ch3t1gsqtfu1qdi.apps.googleusercontent.com"
   , GOOGLE_CLIENT_SECRET  = "IVQF9031DSqYr6WSqOtdGXXH";
@@ -129,7 +129,7 @@ module.exports = {
 		}else{
       res.redirect('/login');
     }
-	}
+	},
 
   isAdmin:function(req,res,next){
     if (req.isAuthenticated()){
@@ -140,11 +140,11 @@ module.exports = {
       }
     }
 
-  }
+  },
 
   isStudent:function(req,res,next){
     if (req.isAuthenticated()){
-      conn.query("SELECT * FROM students WHERE email=?",[req.user.email],
+      con.query("SELECT * FROM students WHERE email=?",[req.user.email],
         function(error, res){
           if (res !== undefined){
             return next();
@@ -158,26 +158,24 @@ module.exports = {
     }else{
       res.redirect('/login');
     }
-  }
+  },
 
   isTeacher:function(req,res,next){
     if (req.isAuthenticated()){
-      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email]),function(error,res){
+      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,res){
         if (res !== undefined){
           return next();
          res.user.isTeacher = true;
         }else{
           res.user.isTeaher = false;
           res.redirect('/login');
-       }
-      }else{
-      res.redirect('/login');
-     }  
+        }
+      });
     }
   }
 
   // anotherfunc:function(req,res,next){
-    
+
   // }
 
 
