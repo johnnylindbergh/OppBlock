@@ -18,9 +18,16 @@ app.set('views', __dirname + '/views');
 var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
 var student = require("./student.js").init(app);
+var auth = require("./auth.js")(app);
+
+app.get('/testing', function(req, res){
+  res.end(JSON.stringify(req.user));
+});
 
 
 var server = app.listen(8080, function() {
     console.log('OppBlock server listening on port %s', server.address().port);
 });
+
+
 

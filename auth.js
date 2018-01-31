@@ -1,13 +1,9 @@
 // UNDER CONSTRUCTION
-var express = require ('express');
-var app = express();
-var engines = require('consolidate');
-var firebase = require('firebase');
+
 var util = require('util');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
-var server = require('http').createServer(app);
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
 var con  = require('./database').connection;
 
@@ -15,12 +11,9 @@ var GOOGLE_CLIENT_ID      = "905388552359-p7i0l15pvkefgfn59ch3t1gsqtfu1qdi.apps.
   , GOOGLE_CLIENT_SECRET  = "IVQF9031DSqYr6WSqOtdGXXH";
 
 
+module.exports = function(app){
 
 app.set('view engine', 'ejs');
-
-
-app.set('views', __dirname + '/views');
-app.use(express.static(__dirname + '/public'));
 
 var passport = require('passport');
 
@@ -104,9 +97,15 @@ app.get('/test',function(req,res){
 
 app.get('/secretpage', ensureAuthenticated, function(req, res) {
   res.end("This page is secret.");
-})
+});
 
-server.listen( 8080 );
+app.get('/testaccountinfo',function(req,res){
+   res.end(req.user.domain);
+});
+
+}
+
+//server.listen( 8080 );
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -119,65 +118,57 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-app.get('/testaccountinfo',function(req,res){
-   res.end(req.user.domain);
-});
+// module.exports = {
+// 	isLoggedIn:function(req,res,next){
+// 		if (req.isAuthenticated()){
+//       return next();
+// 		}else{
+//       res.redirect('/login');
+//     }
+// 	},
 
-module.exports = {
-	isLoggedIn:function(req,res,next){
-		if (req.isAuthenticated()){
-      return next();
-		}else{
-      res.redirect('/login');
-    }
-	},
+//   isAdmin:function(req,res,next){
+//     if (req.isAuthenticated()){
+//       if (req.user.email == "bware@stab.org"){
+//         return next();
+//       }else{
+//         res.redirect('/login');
+//       }
+//     }
 
-  isAdmin:function(req,res,next){
-    if (req.isAuthenticated()){
-      if (req.user.email == "bware@stab.org"){
-        return next();
-      }else{
-        res.redirect('/login');
-      }
-    }
+//   },
 
-  },
+//   isStudent:function(req,res,next){
+//     if (req.isAuthenticated()){
+//       con.query("SELECT * FROM students WHERE email=?",[req.user.email],
+//         function(error, res){
+//           if (res !== undefined){
+//             return next();
+//             res.user.isStudent = true;
+//           }else{
+//             res.user.isStudent = false;
+//             res.redirect('/login');
+//           }
+//         }
+//       );
+//     }else{
+//       res.redirect('/login');
+//     }
+//   },
 
-  isStudent:function(req,res,next){
-    if (req.isAuthenticated()){
-      con.query("SELECT * FROM students WHERE email=?",[req.user.email],
-        function(error, res){
-          if (res !== undefined){
-            return next();
-            res.user.isStudent = true;
-          }else{
-            res.user.isStudent = false;
-            res.redirect('/login');
-          }
-        }
-      );
-    }else{
-      res.redirect('/login');
-    }
-  },
-
-  isTeacher:function(req,res,next){
-    if (req.isAuthenticated()){
-      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,res){
-        if (res !== undefined){
-          return next();
-         res.user.isTeacher = true;
-        }else{
-          res.user.isTeaher = false;
-          res.redirect('/login');
-        }
-      });
-    }
-  }
-
-  // anotherfunc:function(req,res,next){
-
-  // }
+//   isTeacher:function(req,res,next){
+//     if (req.isAuthenticated()){
+//       con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,res){
+//         if (res !== undefined){
+//           return next();
+//          res.user.isTeacher = true;
+//         }else{
+//           res.user.isTeaher = false;
+//           res.redirect('/login');
+//         }
+//       });
+//     }
+//   }
 
 
-}
+// }
