@@ -32,6 +32,7 @@ passport.deserializeUser(function(user, done) {
   user.isStudent = false;
   user.isTeacher = false;
   user.isAdmin = false;
+  user.teacher_uid = null;
   done(null, user);
 });
 
