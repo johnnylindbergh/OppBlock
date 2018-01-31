@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var server = require('http').createServer(app);
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+var conn        = require('./database_ops').connection;
 
 var GOOGLE_CLIENT_ID      = "905388552359-p7i0l15pvkefgfn59ch3t1gsqtfu1qdi.apps.googleusercontent.com"
   , GOOGLE_CLIENT_SECRET  = "IVQF9031DSqYr6WSqOtdGXXH";
@@ -114,10 +115,47 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
+app.get('/testaccountinfo',function(req,res){
+   res.end(req.user.domain);
+});
+
 module.exports = {
 	isLoggedIn:function(req,res,next){
-
+		if (req.isAuthenticated()){
+      return next();
+		}else{
+      res.redirect('/login');
+    }
 	}
+
+  isAdmin:function(req,res,next){
+    if (req.isAuthenticated()){
+      if (req.user.email == "bware@stab.org"){
+        return next();
+      }else{
+        res.redirect('/login');
+      }
+    }
+
+  }
+
+  isStudent:function(req,res,next){
+    conn.query("SELECT * FROM students WHERE email=?",[req.user.email],
+        function(error, res){
+          if (error == null){
+            return next();
+          }else{
+            res.redirect('/login')
+          }
+        }
+    );
+
+  }
+
+  // isTeacher:function(req,res,next){
+
+  // }
+
 
 
 }
