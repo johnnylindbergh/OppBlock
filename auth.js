@@ -29,6 +29,9 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
+  user.isStudent = false;
+  user.isTeacher = false;
+  user.isAdmin = false;
   done(null, user);
 });
 
@@ -143,13 +146,12 @@ module.exports = {
     if (req.isAuthenticated()){
       conn.query("SELECT * FROM students WHERE email=?",[req.user.email],
         function(error, res){
-          if (error == null){
+          if (res !== undefined){
             return next();
             res.user.isStudent = true;
           }else{
             res.user.isStudent = false;
-            res.redirect('/login')
-
+            res.redirect('/login');
           }
         }
       );
@@ -161,17 +163,22 @@ module.exports = {
   isTeacher:function(req,res,next){
     if (req.isAuthenticated()){
       con.query("SELECT * FROM teachers WHERE email=?",[req.user.email]),function(error,res){
-      if (error == null){
-        return next();
+        if (res !== undefined){
+          return next();
+         res.user.isTeacher = true;
+        }else{
+          res.user.isTeaher = false;
+          res.redirect('/login');
+       }
       }else{
-        res.redirect('/login');
-      }
-    }else{
       res.redirect('/login');
+     }  
     }
-    
   }
 
+  // anotherfunc:function(req,res,next){
+    
+  // }
 
 
 }
