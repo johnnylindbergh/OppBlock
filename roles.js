@@ -13,18 +13,20 @@ module.exports = {
   isAdmin:function(req,res,next){
     if (req.isAuthenticated()){
       con.query("SELECT * FROM admins WHERE email=?",[req.user.email],
-        function(error, res){
-          if (res !== undefined){
-            res.user.isAdmin = true;
+        function(error, row){
+          if (row !== undefined){
+            req.user.isAdmin = true;
+            req.user.isStudent = false;
+            req.user.isTeacher = true;
+            req.user.local = row;
             return next(); 
           }else{
-            res.user.isAdmin = false;
-            res.redirect('/login');
+            res.redirect('/student');
           }
         }
       );
     }else{
-      res.redirect('/login');
+      res.redirect('/auth/google');
     }
 
   },
@@ -32,18 +34,21 @@ module.exports = {
   isStudent:function(req,res,next){
     if (req.isAuthenticated()){
       con.query("SELECT * FROM students WHERE email=?",[req.user.email],
-        function(error, res){
-          if (res !== undefined){
-            res.user.isStudent = true;
+        function(error, row){
+          if (row !== undefined){
+            // TODO: should run a query to verify if this student is also an admin
+            req.user.isAdmin = false;
+            req.user.isStudent = true;
+            req.user.isTeacher = false;
+            req.user.local = row;
             return next(); 
           }else{
-            res.user.isStudent = false;
-            res.redirect('/login');
+            res.redirect('/teacher');
           }
         }
       );
     }else{
-      res.redirect('/login');
+      res.redirect('/auth/google');
     }
   },
 
@@ -51,15 +56,20 @@ module.exports = {
 
   isTeacher:function(req,res,next){
     if (req.isAuthenticated()){
-      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,res){
-        if (res !== undefined){
-          res.user.isTeacher = true;
+      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,row){
+        if (row !== undefined){
+          // TODO should run a query to verify if this teacher is also an admin
+          req.user.isAdmin = false;
+          req.user.isStudent = false;
+          req.user.isTeacher = true;
+          req.user.local = row;
           return next();
         }else{
-          res.user.isTeaher = false;
-          res.redirect('/login');
+          res.redirect('/student');
         }
       });
+    }else{
+      res.redirect('/auth/google');
     }
   }
 

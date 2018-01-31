@@ -16,7 +16,7 @@ module.exports = function(app) {
 		// });
 	});
 
-	app.get('/teacher/:id', function(req, res) {
+	app.get('/teacher/:id', isTeacher, function(req, res) {
 		var teacher_uid = req.params.id;
 		req.user.teacher_uid = teacher_uid;
 		con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [teacher_uid], function(err, resultsTeacher) {
