@@ -17,7 +17,7 @@ module.exports = function(app) {
 
 	app.get('/teacher/:id', function(req, res) {
 		var teacher_uid = req.params.id;
-		req.body
+		req.user.teacher_uid = teacher_uid;
 		con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [teacher_uid], function(err, resultsTeacher) {
 			if (resultsTeacher.length != 0) {
 				res.render('teacher.html', {
@@ -36,7 +36,7 @@ module.exports = function(app) {
 	});
 
 	app.get('/editOffering/:id', function(req, res) {
-		var teacher_uid = req.user.teacher_id;
+		var teacher_uid = req.user.teacher_uid;
 		var offering_uid = req.params.id;
 		con.query('select * from offerings where uid_offering = ?;', [offering_uid], function(err, offeringInfo) {
 			if (!err) {
@@ -70,7 +70,7 @@ module.exports = function(app) {
 
 	app.get('/delete/:id/', function(req, res) {
 		var offering_uid = req.params.id;
-		var teacher_uid = req.params.teacher_uid;
+		var teacher_uid = req.user.teacher_uid;
 		con.query('delete from calendar where uid_offering = ?;', [offering_uid], function(err,result) {
 			con.query('delete from offerings where uid_offering = ?', [offering_uid], function(err) {
 				if (err) {
@@ -88,7 +88,7 @@ module.exports = function(app) {
 		var name = req.body.name;
 		var description = req.body.description;
 		var max_size = parseInt(req.body.max_size);
-		var teacherId = parseInt(req.params.teacher_id);
+		var teacherId = req.user.teacher_uid;
 		var recurring = req.body.recurring == 'on' ? 1 : 0;
 
 		var days = req.body.days;
