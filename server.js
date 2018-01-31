@@ -15,9 +15,6 @@ app.use(bodyParser.urlencoded({
 app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 
-app.use(express.staic('views'))
-app.use(express.static('public'))
-
 var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
 var student = require("./student.js").init(app);
@@ -26,3 +23,4 @@ var student = require("./student.js").init(app);
 var server = app.listen(8980, function() {
     console.log('OppBlock server listening on port %s', server.address().port);
 });
+

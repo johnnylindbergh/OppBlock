@@ -1,5 +1,5 @@
 body{
-	background-image: url("/public/oppbackground.jpg");
+	background-image: url("/Users/cmackethan/OneDrive/School/Photography Intensive/12.12.16 (Sugar Hollow)/DSC_0203-2.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
@@ -40,6 +40,8 @@ body{
 input{
 	width:150.5px;
 	font-size:15px;
+	display: inline-block;
+	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
@@ -48,13 +50,10 @@ input{
 	color: grey;
 	margin-top:10px;
 	margin-right:5px;
+	float:left;
 }
 
-form{
-	float: left;
-}
-
-input[type="submit"]:hover{
+input:hover{
 	background-color: black;
 	color: white;
 }
