@@ -1,5 +1,5 @@
 var con = require('./database.js').connection;
-var settings = require('./database.js').system_settings;
+var settings = require('./settings.js');
 module.exports =  {
 
 	// initialize routes for admin backend
@@ -7,23 +7,43 @@ module.exports =  {
 	init: function(app) {
 		app.get("/settings", function(req, res) {
 			var data = [];
-			var keys = Object.keys(settings);
-			for (var i = 0; i < keys.length; i++) {	// loop through all settingsg
-				data.push(settings[keys[i]]);
+			var keys = Object.keys(settings.system_settings);
+			for (var i = 0; i < keys.length; i++) {	// loop through all settings
+				data.push(settings.system_settings[keys[i]]);
 			}
-			res.render("admin_settings.html", {settings: data});
+			res.render("adminsettings.html", {settings: data});
 		});
 		app.post("/settings", function(req, res) {
 			var keys = Object.keys(req.body);
+			var key_count = keys.length;	// counts the number of remaining keys to update in DB
 			for(var i = 0; i < keys.length; i++) {
-				// update settings object
-				settings[keys[i]].value_int = parseInt(req.body[keys[i]]);
-				// update database
-				con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [req.body[keys[i]], settings[keys[i]].sid] );
+				settings.update(keys[i], req.body[keys[i]], function(err) {
+					if (!err) {
+						key_count--;
+						if (key_count == 0)
+							res.redirect("/settings");
+					} else {
+						res.end("Could not update settings -- reboot server.");
+					}
+				});
 			}
-			res.redirect("/settings");
 		});
+		//	Opp Block Creation Calendar Endpoints
+		/*
+		app.get('/calendar', function(req, res) { 
 
+
+			res.render('admin_calendar.html', {
+
+			});
+		});
+		app.post('/calendar', function(req, res) {
+			for (var i=0; i<; i++) {
+				con.query('UPDATE opp_block_day WHERE ', [], function() {
+					
+				});
+			}
+		});*/
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
@@ -31,16 +51,37 @@ module.exports =  {
 	},
 	
 	//add CSV file of students to database
-
-	createStudentCSV: function(csvfile) {
+	createStudentCSV: function(studentdata) {
 		//convert giant string into array
-		csvfile = studentdata;
-		studentdata.split("\n");
-		studentdata.split("");
-  		//add values in array to database
-  		for (var i = 0; i < studentdata.length; i + 7) {
-  			conn.query('INSERT INTO students(student_lastname, student_firstname, student_grade, student_sport, student_advisor, student_gender, student_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', [studentdata[i], studentdata[i+1], studentdata[i+2], studentdata[i+3], studentdata[i+4], studentdata[i+5], studentdata[i+6]], function(result) {
-  				callback(result);
+		var a = studentdata.split("\n");	// this is an array of every line
+		for (var i = 0; i < a.length; i++) {
+			var line = a[i].trim();
+			var b = line.split(",");
+			for (var j = 0; j < b.length; j++)
+				b[j] = b[j].trim();
+	  		//add values in array to database
+  			//console.log(studentdata);
+  			con.query('INSERT INTO students(lastname, firstname, grade, gender, email) VALUES (?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4]], function(err, result) {
+  				if (err) throw err;
+  			});
+		}	
+
+  	},
+
+  	createTeacherCSV: function(teacherdata) {
+  		//var a is giant string input
+  		var a = teacherdata.split("\n");
+  		for (var i = 0; i < a.length; i++) {
+  			var line = a[i].trim();
+  			//var b is array of strings
+  			var b = line.split(",");
+
+			for (var j = 0; j < b.length; j++)
+				b[j] = b[j].trim();
+
+  			//query
+  			con.query('INSERT INTO teachers(teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?);', [b[0], b[1], b[2]], function(err, result) {
+  				if (err) throw err;
   			});
   		}
   	},

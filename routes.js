@@ -7,6 +7,7 @@ var moment = require('moment');
 module.exports = function(app) {
 
 
+
 	app.get('/', function(req, res) {
 		//session.startSession(req, res);
 		// req.session.put('info', 'myInfo', function(req,res){
@@ -166,3 +167,93 @@ module.exports = function(app) {
 
 }
 
+	//CSV Post
+	app.post('/studentcsvinput', function(req,res) {
+		if (res != undefined){
+			admin.createStudentCSV(req.body.Rad);
+			res.redirect('/admin');
+		}
+	});
+
+	app.post('/teachercsvinput', function(req, res) {
+		if (res != undefined){
+			admin.createTeacherCSV(req.body.Radical);
+			res.redirect('/admin');
+		}
+	});
+
+	app.get('/csvinput', function(req,res) {
+		res.render('clientcsv.html', {
+		});
+	});
+
+
+	app.get('/Day/:id', function(req, res) {
+		var day_uid = req.params.id;
+			con.query('select * from offerings;', function(err, resultsDay) {
+				var link=resultsDay[0].uid_teacher;
+				//console.log(link);
+				con.query('select name from teachers where uid_teacher=?;',[link], function(err, resultName){
+				
+				//console.log(resultsDay);
+				
+				res.render('Day.html', { 
+				data:resultsDay,
+				Teacher:resultName.name
+				
+				});
+			});
+			
+			
+		});	
+	});
+	
+	app.get('/Offeringstudents/:id', function(req, res){
+		var teacher_uid = req.params.id;
+		//console.log(teacher_uid);
+		con.query('select uid_offering from offerings where uid_teacher=?;',[teacher_uid], function(err, resultsO){
+			var off=resultsO[0].uid_offering;
+			//console.log(off);
+			con.query('select uid_student from choices where uid_offering=?;', [off], function(err, resultsS){
+				
+				var stud=resultsS[0].uid_student;
+				
+				con.query('select lastname from students where uid_student=?;',[stud], function(err, resultsZ){
+				con.query('select name from teachers where uid_teacher=?;', [teacher_uid], function(err, resultsN){
+				console.log(resultsN);
+				res.render('Offeringstudents.html',{
+				name:resultsN[0].name,
+				data:resultsZ
+				});
+			});
+			});
+		});
+	});
+	});
+
+
+
+	app.get('/Admin', function(req, res){
+		con.query('select * from opp_block_day;', function(err, resultsAdmin){
+				console.log(resultsAdmin);
+				res.render('Admin.html',{
+				
+				data:resultsAdmin
+				});
+			
+		});
+	});
+	
+
+	//need to join those uid students with student names
+	app.get('/Mopblock', function(req, res){
+		con.query('select * from absent;', function(err, resultsMopblock){
+				console.log(resultsMopblock);
+				res.render('Mopblock.html',{
+				data:resultsMopblock
+			});
+			
+		});
+	});
+	//need to access stuff from choices table idk how
+}

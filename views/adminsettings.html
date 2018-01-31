@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>System Settings :: Admin</title>
+<style type="text/css">
+td {
+    padding: 8px;
+}
+</style>
+</head>
+
+
+<body>
+	<h1>System Settings :: Admin</h1>
+
+    <form method="post" action="/settings">
+        <table>
+    	{{#settings}}
+    		<tr>
+    			<td><label for="{{name}}">{{friendly_name}}</label></td>
+                <td><input type="text" id="{{name}}" name="{{name}}" value="{{#value_int}}{{value_int}}{{/value_int}}" /></td>
+                <td>({{description}})</td>
+            </tr>
+        {{/settings}}
+        </table>
+        <input type="submit" value="Save Settings" />
+    </form>
+
+</body>
+</html>
