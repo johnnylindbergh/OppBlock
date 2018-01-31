@@ -59,6 +59,17 @@ app.get('/', function(req, res){
   res.render('index', { user: req.user });
 });
 
+app.get('/student',isStudent,function(req,res){
+  res.redirect('/student');
+});
+
+app.get('/teacher',isTeacher,function(req,res){
+  res.redirect('/teacher');
+});
+
+app.get('/admin',isAdmin,function(req,res){
+  res.redirect('/admin');
+});
 app.get('/account', ensureAuthenticated, function(req, res){
   console.log(req.user._raw);
   res.render('account', { user: req.user });
@@ -94,7 +105,7 @@ app.get('/test',function(req,res){
   console.log(req.user);
   //check role
   //add variables for a teacher/admin/student
-  
+
 
 
 });
