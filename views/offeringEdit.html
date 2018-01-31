@@ -17,7 +17,7 @@ th {
 	<h1>Teacher Page</h1>
 </head>
 <body>
-	<form action="/updateOffering/{{offeringId}}" method="post">
+	<form action="/updateOffering/{{offeringIdUpdate}}/{{teacherIdUpdate}}" method="post">
         {{#data}}
     Name:<br>
   <input type="text" name="name" value="{{name}}">
@@ -26,20 +26,20 @@ th {
   <input type="text" name="description" value="{{description}}">
    <br>Max Size:<br>
   <input type="text" name="max_size" value="{{max_size}}">
- <br>{{^recurring}}  <br> set to current:{{/recurring}}
-  <input {{#recurring}}type = "hidden"{{/recurring}}  type="checkbox" name="recurring" >
-</br>
+ </br>
    {{#dayData}}
     {{#canEdit}}
    {{day}}
-  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}>{{/canEdit}}
+  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
+  {{/canEdit}}
    {{/dayData}}
+
   </br>
   <input type="submit" value="Submit">
     {{/data}}
 
 </form> 
 
- <a href="/delete/{{offeringId}}">Delete</a>
+ <a href="/delete/{{offeringId}}/{{teacherIdDelete}}">Delete</a>
 </body>
 </html>

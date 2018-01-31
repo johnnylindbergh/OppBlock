@@ -22,13 +22,16 @@ th {
 </head>
 <body>
 
- 
+ <form action="/updateAttendance/{{uid_offering}}" method="post">
 
 {{#students}}
-{{uid_student}} {{firstname}} {{lastname}}  {{arrived}}</br>
+
+<input type="checkbox" value={{uid_student}} name="students" {{#arrived}}checked="checked"{{/arrived}}>
+ {{firstname}} {{lastname}} </br>
 
 
 {{/students}}
+<input type="submit" value="Submit">
 </table>
 
 	
