@@ -40,8 +40,6 @@ body{
 input{
 	width:150.5px;
 	font-size:15px;
-	display: inline-block;
-	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
@@ -50,10 +48,13 @@ input{
 	color: grey;
 	margin-top:10px;
 	margin-right:5px;
-	float:left;
 }
 
-input:hover{
+form{
+	float: left;
+}
+
+input[type="submit"]:hover{
 	background-color: black;
 	color: white;
 }
