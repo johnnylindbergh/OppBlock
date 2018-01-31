@@ -145,8 +145,11 @@ module.exports = {
         function(error, res){
           if (error == null){
             return next();
+            res.user.isStudent = true;
           }else{
+            res.user.isStudent = false;
             res.redirect('/login')
+
           }
         }
       );
