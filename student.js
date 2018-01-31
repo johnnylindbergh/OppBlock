@@ -2,6 +2,11 @@ var con = require('./database.js').connection;
 var moment = require('moment');
 var settings = require('./settings').system_settings;
 
+// A message to students who haven't signed up after the student cutoff time has passed
+// Can't be a system setting because it is text
+// Will reflect an administrator decision
+var message_students_notsignedup = "Since you forgot to sign up, you will be locked in Mr. Ware's Torture Chamber. Have fun!";
+
 module.exports = {
 
  // Gets the number of students in an offering on a day
@@ -130,13 +135,8 @@ module.exports = {
       		callback(availableList);
       	}
       });
-
-// A message to students who haven't signed up after the student cutoff time has passed
-// Can't be a system setting because it is text
-// Will reflect an administrator decision
-var message_students_notsignedup = "Since you forgot to sign up, you will be locked in Mr. Ware's Torture Chamber. Have fun!";
-
-module.exports = {
+  }});
+},
 
  // Gets the number of students in an offering on a day
  numStudents: function(uid_day, uid_offering, getStudentInfo, callback)	{
@@ -323,7 +323,7 @@ module.exports = {
 							res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
 						} else {
 							// Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
-							con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) {// only gets the uid not the name
+							con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) { // only gets the uid not the name
 								if(!err) {
 									// Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
 									if(currentChoice.length != 0) {
@@ -379,6 +379,7 @@ module.exports = {
 										// Renders the page without any choices, since the student is excluded
 										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
 									}
+
 								} else {
 									res.send("An Err done occured.");
 									res.render('error.html', {err:err});
@@ -388,10 +389,6 @@ module.exports = {
 					});
 				} else {
 					res.send("We're Sorry. You don't exist in our database!");
-				}
-			} else {
-				res.send("We're sorry. That wasn't a student id!");
-					res.send('error.html', {err:"You don't exist!"});
 				}
 			} else {
 				res.render('error.html', {err:err});
@@ -409,7 +406,6 @@ module.exports = {
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [2/*Default Oppblock*/, req.params.id, req.body.uid_day], function(err) {
 			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, req.params.id, req.body.uid_day], function(err) {
 				if(!err) {
 					response.redirect('/student/' + req.params.id);
