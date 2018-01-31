@@ -1,5 +1,6 @@
 var con = require('./database.js').connection;
 var settings = require('./settings.js');
+var moment = require('moment');
 module.exports =  {
 
 	// initialize routes for admin backend
@@ -29,13 +30,19 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
+		//	Maybe Add an ARE YOU SURE message before the post request?
 		app.get('/calendar', function(req, res) { 
 			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
 					if(oppDays.length != 0) {
-						res.render('admin_calendar.html', {}); //FIgure out Correct mustache variables
+						var days = [];
+						//	Formats the date objects into readable dates 
+						for(var i = 0; i<oppDays.length; i++) {
+							days.push({day: moment(oppDays[i].day).format('YYYY-MM-DD')});
+						}
+						res.render('admin_calendar.html', {batchSelect: settings.opp_days, days: days});
 					} else {
-						res.render('admin_calendar.html', {});
+						res.render('admin_calendar.html', {batchSelect: settings.opp_days, days: null});
 					}
 				} else {
 					res.render('error.html', {err:err});
@@ -44,12 +51,12 @@ module.exports =  {
 		});
 		app.post('/calendar', function(req, res) {
 			var callback = 0;
-			for (var i=0; i<req.body.days.length; i++) {
-				con.query('UPDATE opp_block_day WHERE day = ?', [req.body.days[i]], function(err, result) { //Figure out correct Variable
+			for (var i=0; i<req.body.newDays.length; i++) {
+				con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays[i]], function(err, result) { 
 					if(!err) {
 						callback += 1;
 						console.log("Finished Query #" + callback);
-						if (callback == req.body.days.length) { //check if right number
+						if (callback == req.body.newDays.length) { //check if right number
 							res.redirect('/calendar');
 							res.end();
 						}

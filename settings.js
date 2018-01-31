@@ -5,12 +5,11 @@
 // ***************************************************************************************************
 // Special note: opp_days
 // opp_days allows you to determine the day(s) upon which opp blocks typically occur
-// if you call settings.opp_days(), the function returns a list of seven boolean (true/false) values
-// the array corresponds to [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+// if you call settings.opp_days(), the function returns a list of day objects which correspond to usual Opp days
+// For easy mustache integration, each object in the list is a key/value pair following the format {weekDay: "[A Day of the Week]"}
 // EXAMPLE USAGE:
-//	var settings = require('./settings');
-//	settings.opp_days[1]					-> will be true if there's an opp block on Monday, false otherwise
-//	settings.opp_days[settings.days.MONDAY]	-> built-in constants allow easier day reference if needed
+// 	var settings = require('./settings');	-> Gets the settings
+// 	settings.opp_days[0].weekDay			-> will return the first weekDay, for example "Tuesday", on which Oppblocks probably occur
 // ***************************************************************************************************
 // TODO: improve documentation of available system settings
 // TODO: use system settings to control available views/flows as appropriate (e.g. shutting down opp block reg)
@@ -34,15 +33,16 @@ module.exports = {
 		});
 	},
 	opp_days: function() {
+		var weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		var days = [];
 		var day_int = system_settings["opp_days"].value_int;
+		var counter = 0;
 		for (var i = 64; i > 0.5; i /= 2) {
 			if (Math.floor(day_int / i) == 1){
 				day_int -= i;
-				days.push(true);
+				days.push({weekDay: weekDays[counter]});
 			}
-			else
-				days.push(false);
+			counter += 1;
 		}
 		return days;
 	},
@@ -53,15 +53,6 @@ module.exports = {
 		con.query("UPDATE system_settings SET value_int = ? WHERE sid = ?", [value, system_settings[setting].sid], function(error, results, fields) {
 			cb(error);
 		});
-	},
-	days: {
-		SUNDAY: 0,
-		MONDAY: 1,
-		TUESDAY: 2,
-		WEDNESDAY: 3,
-		THURSDAY: 4,
-		FRIDAY: 5,
-		SATURDAY: 6
 	},
 	system_settings: system_settings
 }

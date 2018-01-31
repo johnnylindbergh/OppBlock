@@ -5,7 +5,7 @@ var settings = require('./settings').system_settings;
 // A message to students who haven't signed up after the student cutoff time has passed
 // Can't be a system setting because it is text
 // Will reflect an administrator decision
-var message_students_notsignedup = "Since you forgot to sign up, you will be locked in Mr. Ware's Torture Chamber. Have fun!";
+var message_students_notsignedup = "Meet Mr. Ware in the dining hall!";
 
 module.exports = {
 

@@ -3,15 +3,56 @@
 		<title>Craig Memorial OppBlock System</title>
 	    <link rel="stylesheet" type="text/css"/>
 	    <style> body {padding: 0; margin: 0;} </style>
+	    <link rel='stylesheet' href='https://fullcalendar.io/js/fullcalendar-3.8.2/fullcalendar.min.css' />
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/lib/jquery.min.js'></script>
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/lib/moment.min.js'></script>
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/fullcalendar.min.js'></script>
 	</head>
 	<body>
 		<h1> Opp Block Day Creation Calendar </h1>
-		<form method="post">
-			{{#batchSelect}}
-			<h4 class="{{weekDay}}" > Select </h4>
-			{{/batchSelect}}
-			
-			<input type="submit" style="" value="Save">
+		<form type="hidden" id="secretForm">
+			{{#days}}
+			<input type="hidden" id="days" name="days" value={{day}}>
+			{{/days}}
 		</form>
+		<h2> Make sure to save the oppblocks before moving on to the next month </h2>
+		<div style="display:inline-block; width:40%; text-align:left"> 
+			{{#batchSelect}}
+			<button class="{{weekDay}}"> Select all {{weekDay}}s </button>
+			{{/batchSelect}}
+		</div>
+		<form method="post" style="display:inline-block; width:40%; text-align:right;" id="newForm">
+			<input type="submit" value="Save">
+		</form>
+		<div id="calendar"> </div>
 	</body>
+	<script>
+		$(document).ready(function() {
+			//	Makes an array of already selected days
+			var days = $('#secretForm').serializeArray();
+			//	Initializes fullCalendar
+		    $('#calendar').fullCalendar({
+		        dayClick: function(date, jsEvent, view) {
+		        	//	TBD: Fix Calendar/coloring so that one can switch months back and forth and still see the coloring
+		        	//	Makes sure this cell hasn't yet been selected
+		        	console.log($(this).css('background-color'));
+		        	if($(this).css('background-color') == 'rgba(0, 0, 0, 0)') {
+		        		//	Selects the cell
+				        $('#newForm').prepend("<input type=hidden id=newDays name=newDays value=" + date.format('YYYY-MM-DD') + ">");
+				        $(this).css('background-color', 'blue');
+				    } else if ($(this).css('background-color') == 'rgb(0, 0, 255)') {
+				    	//	Deselects the cell
+				    	console.log("GREAT");
+				    	$('input').remove("[value=" + date.format('YYYY-MM-DD') + "]");
+				        $(this).css('background-color', 'rgba(0, 0, 0, 0)');
+				    }
+			    }
+		    })
+		    
+		    for(var i=0; i<days.length; i++) {
+				//$('#').val(days[i].day);    	
+		    }
+		});
+	</script>
 </html>
+
