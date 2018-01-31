@@ -1,5 +1,5 @@
 body{
-	background-image: url('/public/oppbackground.jpg');
+	background-image: url("/Users/cmackethan/OneDrive/School/Photography Intensive/12.12.16 (Sugar Hollow)/DSC_0203-2.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
@@ -20,7 +20,7 @@ body{
 	border:5px;
 	border-color: black;
 	width:1200px;
-	height:1200px;
+	height:600px;
 	margin:auto;
 	text-align: center;
 	padding-left:20px;
@@ -39,6 +39,7 @@ body{
 
 textarea{
 	display:block;
+	float: left;
 	background-color: white;
 	border-style:solid;
 	border-width:2px;
@@ -49,6 +50,8 @@ textarea{
 input{
 	width:150.5px;
 	font-size:15px;
+	display: inline-block;
+	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
@@ -57,6 +60,7 @@ input{
 	color: grey;
 	margin-top:10px;
 	margin-right:5px;
+	float:left;
 }
 
 input:hover{
