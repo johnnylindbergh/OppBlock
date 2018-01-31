@@ -61,14 +61,8 @@ module.exports =  {
 				b[j] = b[j].trim();
 	  		//add values in array to database
   			//console.log(studentdata);
-  			console.log("b[0]" + b[0]);
-  			console.log("b[1]" + b[1]);
-  			console.log("b[2]" + b[2]);
-  			console.log("b[3]" + b[3]);
-  			console.log("b[4]" + b[4]);
   			con.query('INSERT INTO students(lastname, firstname, grade, gender, email) VALUES (?, ?, ?, ?, ?);', [b[0], b[1], b[2], b[3], b[4]], function(err, result) {
   				if (err) throw err;
-  				console.log("1 record inserted");
   			});
 		}	
 
@@ -86,9 +80,8 @@ module.exports =  {
 				b[j] = b[j].trim();
 
   			//query
-  			con.query('INSERT INTO teachers(prefix, teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {
+  			con.query('INSERT INTO teachers(teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?);', [b[0], b[1], b[2]], function(err, result) {
   				if (err) throw err;
-  				console.log("1 record inserted");
   			});
   		}
   	},
