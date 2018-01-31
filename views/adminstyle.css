@@ -1,0 +1,88 @@
+body{
+	background-image: url("/Users/cmackethan/OneDrive/School/Photography Intensive/12.12.16 (Sugar Hollow)/DSC_0203-2.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto;
+}
+
+#logo{
+	width: 8%;
+	height: 8%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2%;
+}
+
+#centralBox{
+	background-color: #793141;
+	border-style:solid;
+	border:5px;
+	border-color: black;
+	width:1200px;
+	height:600px;
+	margin:auto;
+	text-align: center;
+	padding-left:20px;
+	margin-top:30px;
+
+}
+
+#titleText{
+	margin:auto;
+	padding-top:100px;
+	text-align:left;
+	color:white;
+	font-family: Courier;
+	font-size: 40px;
+}
+
+#signedInAs{
+	margin: auto;
+	padding-top: 10px;
+	text-align: left;
+	color: white;
+	font-family: Lucida Grande;
+}
+
+table{
+	border-collapse: collapse;
+	margin-top: 50px;
+}
+
+th, td{
+	font-family: Lucida Grande;
+	font-weight: normal;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even){background-color: grey}
+
+tr:hover {background-color: white;}
+
+th{
+	background-color: black;
+	color: white;
+}
+
+button{
+	width:150.5px;
+	font-size:15px;
+	display:inline-block;
+	text-align:left;
+	cursor:pointer;
+	border:none;
+	height:34px;
+	background-color: white;
+	border-color: white;
+	color: grey;
+	margin-top:10px;
+	margin-right:5px;
+	float:left;
+}
+
+button:hover{
+	background-color: black;
+	color: white;
+}

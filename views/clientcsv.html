@@ -1,4 +1,28 @@
-<form action="/csvinput" method="post">
-  CSV File: <textarea rows="25" cols="100" name="Rad"> </textarea>
-  <button type="button">Submit</button>
-</form>
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>Oppblock System: Database Management</title>
+  	  <link rel="stylesheet" href="clientcsvstyle.css" type="text/css"/>
+	  <style> body {padding: 0; margin: 0;} </style>
+  </head>
+  <body>
+  	<img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
+
+  	<div id= "centralBox">
+  	  <p id= "titleText">Database Management</p>
+
+  	  <form action="/studentcsvinput" method="post">
+  	     <textarea rows="25" cols="80" name="Rad" placeholder="Paste Student CSV File"> </textarea>
+  	     <input type="submit"></input>
+  	  </form>
+
+      <form action="/teachercsvinput" method="post">
+         <textarea rows="25" cols="80" name="Radical" placeholder="Paste Teacher CSV File"> </textarea>
+         <input type="submit"></input>
+      </form>
+
+  	</div>
+
+  </body>
+
+</html>
