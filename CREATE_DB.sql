@@ -182,9 +182,11 @@ INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
+
 ##INSERT into students (lastname, firstname, grade) values ("Last-Yuen", "Milo", 11);
 ##INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
 ##INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
+
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
 
@@ -219,6 +221,7 @@ INSERT into groups (group_info) values ('the cool group');
  ##INSERT into calendar (uid_day, uid_offering) values (3,3);
  ##INSERT into calendar (uid_day, uid_offering) values (4,3);
 
+
 -- INSERT into calendar (uid_day, uid_offering) values (1,4);
 
 -- INSERT into calendar (uid_day, uid_offering) values (2,5);
@@ -227,8 +230,8 @@ INSERT into groups (group_info) values ('the cool group');
 -- INSERT into calendar (uid_day, uid_offering) values (2,8);
  
 
--- INSERT into choices (uid_day, uid_student) values (1,1);
--- INSERT into choices (uid_day, uid_student) values (1,2);
+ INSERT into choices (uid_day, uid_student, uid_offering) values (1,1,1);
+ INSERT into choices (uid_day, uid_student, uid_offering) values (1,2,1);
 
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
 
