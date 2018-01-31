@@ -11,7 +11,7 @@ module.exports =  {
 			for (var i = 0; i < keys.length; i++) {	// loop through all settings
 				data.push(settings.system_settings[keys[i]]);
 			}
-			res.render("admin_settings.html", {settings: data});
+			res.render("adminsettings.html", {settings: data});
 		});
 		app.post("/settings", function(req, res) {
 			var keys = Object.keys(req.body);
@@ -55,8 +55,10 @@ module.exports =  {
 		//convert giant string into array
 		var a = studentdata.split("\n");	// this is an array of every line
 		for (var i = 0; i < a.length; i++) {
+			a = a.trim();
 			var b = a[i].split(",");
-			b[4].trim();
+			for (var j = 0; j < b.length; j++)
+				b[j] = b[j].trim();
 	  		//add values in array to database
   			//console.log(studentdata);
   			console.log("b[0]" + b[0]);
@@ -75,9 +77,13 @@ module.exports =  {
   	createTeacherCSV: function(teacherdata) {
   		//var a is giant string input
   		var a = teacherdata.split("\n");
+		a = a.trim();
   		for (var i = 0; i < a.length; i++) {
   			//var b is array of strings
   			var b = a[i].split(",");
+
+			for (var j = 0; j < b.length; j++)
+				b[j] = b[j].trim();
 
   			//query
   			con.query('INSERT INTO teachers(prefix, teacher_lastname, teacher_firstname, teacher_email) VALUES (?, ?, ?, ?);', [b[0], b[1], b[2], b[3]], function(err, result) {

@@ -176,7 +176,6 @@ module.exports = function(app) {
 		res.render('clientcsv.html', {
 		});
 	});
-}
 
 
 	app.get('/Day/:id', function(req, res) {
@@ -247,4 +246,4 @@ module.exports = function(app) {
 		});
 	});
 	//need to access stuff from choices table idk how
-	}
+}
