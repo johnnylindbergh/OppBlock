@@ -285,7 +285,7 @@ module.exports = {
 				if(curr.isBefore(closest) && (curr.isAfter(moment()) || curr.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) ){
 					closest = curr;	
 					uid_day = results[i].uid_day;				
-				}
+				} }
 			} 
 			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
