@@ -19,6 +19,8 @@ var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
 var student = require("./student.js").init(app);
 var auth = require("./auth.js")(app);
+var roles = require("./roles.js");
+
 
 app.get('/testing', function(req, res){
   res.end(JSON.stringify(req.user));

@@ -1,4 +1,3 @@
-// UNDER CONSTRUCTION
 
 var util = require('util');
 var bodyParser = require('body-parser');
@@ -25,7 +24,7 @@ passport.deserializeUser(function(user, done) {
   user.isStudent = false;
   user.isTeacher = false;
   user.isAdmin = false;
-  user.teacher_uid = null;
+  // user.teacher_uid = null;
   done(null, user);
 });
 
@@ -92,7 +91,12 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/test',function(req,res){
-	res.end('Logged in');
+  console.log(req.user);
+  //check role
+  //add variables for a teacher/admin/student
+  
+
+
 });
 
 app.get('/secretpage', ensureAuthenticated, function(req, res) {
@@ -118,57 +122,3 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-// module.exports = {
-// 	isLoggedIn:function(req,res,next){
-// 		if (req.isAuthenticated()){
-//       return next();
-// 		}else{
-//       res.redirect('/login');
-//     }
-// 	},
-
-//   isAdmin:function(req,res,next){
-//     if (req.isAuthenticated()){
-//       if (req.user.email == "bware@stab.org"){
-//         return next();
-//       }else{
-//         res.redirect('/login');
-//       }
-//     }
-
-//   },
-
-//   isStudent:function(req,res,next){
-//     if (req.isAuthenticated()){
-//       con.query("SELECT * FROM students WHERE email=?",[req.user.email],
-//         function(error, res){
-//           if (res !== undefined){
-//             return next();
-//             res.user.isStudent = true;
-//           }else{
-//             res.user.isStudent = false;
-//             res.redirect('/login');
-//           }
-//         }
-//       );
-//     }else{
-//       res.redirect('/login');
-//     }
-//   },
-
-//   isTeacher:function(req,res,next){
-//     if (req.isAuthenticated()){
-//       con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,res){
-//         if (res !== undefined){
-//           return next();
-//          res.user.isTeacher = true;
-//         }else{
-//           res.user.isTeaher = false;
-//           res.redirect('/login');
-//         }
-//       });
-//     }
-//   }
-
-
-// }
