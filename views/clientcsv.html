@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<title>Craig Memorial Oppblock System</title>
+  	<title>Oppblock System: Database Management</title>
   	  <link rel="stylesheet" href="clientcsvstyle.css" type="text/css"/>
 	  <style> body {padding: 0; margin: 0;} </style>
   </head>
@@ -10,10 +10,17 @@
 
   	<div id= "centralBox">
   	  <p id= "titleText">Database Management</p>
-  	  <form action="/csvinput" method="post">
-  	  <textarea rows="25" cols="165" name="Rad" placeholder=" Paste CSV File"> </textarea>
-  	  <button type="button">Submit</button>
+
+  	  <form action="/studentcsvinput" method="post">
+  	     <textarea rows="25" cols="80" name="Rad" placeholder="Paste Student CSV File"> </textarea>
+  	     <input type="submit"></input>
   	  </form>
+
+      <form action="/teachercsvinput" method="post">
+         <textarea rows="25" cols="80" name="Radical" placeholder="Paste Teacher CSV File"> </textarea>
+         <input type="submit"></input>
+      </form>
+
   	</div>
 
   </body>

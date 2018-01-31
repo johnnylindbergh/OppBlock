@@ -2,15 +2,15 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>{{Date}} Offerings</title>
+<title>{{Day}} Offerings</title>
 </head>
 
 <body>
-<h2>{{Date}}</h2>
-<h3>{{Dayoftheweek}}</h3>
+<h2>{{Day}}</h2>
+
 <table>
 <tr>
-    <th>Edit</th>
+    <th>Students</th>
     <th>Teacher</th>
     <th>Name</th>
     <th>Description</th>
@@ -20,14 +20,16 @@
   
   {{#data}}
   <tr>
-    <td><a href="/editOffering/{{uid_offering}}">Edit</a></td> 
+    <td><a href="/Offeringstudents/{{uid_offering}}">Students</a></td> 
     <td>{{Teacher}}</td>
-    <td>{{offeringName}}</td>
+    <td>{{name}}</td>
     <td>{{description}}</td> 
     <td>{{max_size}}</td> 
     <td>{{recurring}}</td>
   </tr>
+  {{/data}}
   </table>  
+  <p>{{Teacher}}</p>
     
 </body>
 </html>
