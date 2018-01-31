@@ -1,12 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Admin Page</title>
-</head>
-
+  <head>
+    <meta charset="utf-8">
+    <title>Oppblock System: Administrator Portal</title>
+      <link rel="stylesheet" href="adminstyle.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
 <body>
+	    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
+
 	<h1>Administrator Portal</h1>
 	<h3>{{Admin}}</h3>
 	<a href="/clientcsv">Add Students</a><br>
@@ -29,6 +32,28 @@
         {{/data}}
     </table>
     
+    <div id= "centralBox">
+      <p id= "titleText">Administrator Portal</p>
+      <p id= "signedInAs">Signed in as {{Admin}}</p>
 
-</body>
+    <button type="button" href="/clientcsv">Database</button>
+    <button type="button" href="/Mopblock">MopBlock</button>
+    <button type="button" href="/Groups">Groups</button>
+    <button type="button" href="/admin_settings">Settings</button>
+    <button type="button" href="/scheduler">Schedule</button>
+    
+    <table style="width:100%" align="center">
+      <tr>
+        <th>Date</th>
+        <th>Day of the Week</th>
+      </tr>
+      {{#data}}
+      <tr>
+        <td>{{date}}</td>
+        <td>{{dayoftheweek}}</td>
+      </tr>
+      {{/data}}
+    </table>
+    
+  </body>
 </html>

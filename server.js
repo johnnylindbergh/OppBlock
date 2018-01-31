@@ -4,6 +4,7 @@ var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var credentials = require("./credentials.js");
 var con = require('./database.js');
+var settings = require("./settings.js").init();
 var moment = require('moment');
 var getClosest = require("get-closest");
 var Levenshtein = require("levenshtein");
@@ -14,13 +15,12 @@ app.use(bodyParser.urlencoded({
 app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 
-con.init();	//initialize system settings
 var admin = require("./admin.js").init(app);
 var routes = require('./routes.js')(app);
-var student = require("./student.js");
+var student = require("./student.js").init(app);
 
 
-var server = app.listen(8080, function() {
+var server = app.listen(8980, function() {
     console.log('OppBlock server listening on port %s', server.address().port);
 });
 
