@@ -55,8 +55,8 @@ module.exports =  {
 		//convert giant string into array
 		var a = studentdata.split("\n");	// this is an array of every line
 		for (var i = 0; i < a.length; i++) {
-			a = a.trim();
-			var b = a[i].split(",");
+			var line = a[i].trim();
+			var b = line.split(",");
 			for (var j = 0; j < b.length; j++)
 				b[j] = b[j].trim();
 	  		//add values in array to database
@@ -77,10 +77,10 @@ module.exports =  {
   	createTeacherCSV: function(teacherdata) {
   		//var a is giant string input
   		var a = teacherdata.split("\n");
-		a = a.trim();
   		for (var i = 0; i < a.length; i++) {
+  			var line = a[i].trim();
   			//var b is array of strings
-  			var b = a[i].split(",");
+  			var b = line.split(",");
 
 			for (var j = 0; j < b.length; j++)
 				b[j] = b[j].trim();
