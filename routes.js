@@ -20,7 +20,7 @@ module.exports = function(app) {
 				res.redirect('/student');
 			}
 		} else {
-			res.render('/auth/google');
+			res.redirect('/auth/google');
 		}
 	});
 
