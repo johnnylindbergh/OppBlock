@@ -202,7 +202,7 @@ module.exports = function(app) {
 			con.query('select * from offerings;', function(err, resultsDay) {
 				var link=resultsDay[0].uid_teacher;
 				//console.log(link);
-				con.query('select name from teachers where uid_teacher=?;',[link], function(err, resultName){
+				con.query('select teacher_firstname as name from teachers where uid_teacher=?;',[link], function(err, resultName){
 				
 				//console.log(resultsDay);
 				
