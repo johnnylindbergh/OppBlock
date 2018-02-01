@@ -35,11 +35,40 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
+  console.log("Deserializing:" + user);
+
+  user.isAdmin = false;
   user.isStudent = false;
   user.isTeacher = false;
-  user.isAdmin = false;
-  // user.teacher_uid = null;
-  done(null, user);
+
+  con.query("SELECT * FROM admins WHERE email=?",[user.email],
+    function(error, row){
+      if (!error && row !== undefined && row.length > 0){
+        user.isAdmin = true;
+        user.local = row;
+        done(null, user);
+      } else {
+        con.query("SELECT * FROM students WHERE email=?",[user.email],
+        function(error, row){
+          if (!error && row !== undefined && row.length > 0){
+            user.isStudent = true;
+            user.local = row;
+            done(null, user);
+          } else {
+            con.query("SELECT * FROM teachers WHERE teacher_email=?",[user.email],
+              function(error,row){
+                if (!error && row !== undefined && row.length > 0){
+                  user.isTeacher = true;
+                  user.local = row;
+                  done(null, user);
+                } else {
+                  done(true, null); // error default
+                }
+              }
+          }
+        }
+      }
+    }
 });
 
 passport.use(new GoogleStrategy({
@@ -77,7 +106,7 @@ app.get('/auth/google', passport.authenticate('google', { scope: [
 //   which, in this example, will redirect the user to the home page.
 app.get( '/auth/google/callback', 
     	passport.authenticate( 'google', { 
-    		successRedirect: '/test',
+    		successRedirect: '/',
     		failureRedirect: '/failure'
 }));
 
