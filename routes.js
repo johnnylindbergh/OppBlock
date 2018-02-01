@@ -3,6 +3,7 @@ var con = db.connection;
 var settings = db.system_settings;
 var moment = require('moment');
 var middleware = require('./roles.js');
+var admin = require('./admin.js');
 
 
 module.exports = function(app) {
