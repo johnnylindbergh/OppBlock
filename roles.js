@@ -11,9 +11,12 @@ module.exports = {
 	},
 
   isAdmin:function(req,res,next){
+    console.log("Why are you here?");
     if (req.isAuthenticated()){
       con.query("SELECT * FROM admins WHERE email=?",[req.user.email],
         function(error, row){
+          console.log("ROW?");
+          console.log(row);
           if (row !== undefined && row.length > 0){
             req.user.isAdmin = true;
             req.user.isStudent = false;
