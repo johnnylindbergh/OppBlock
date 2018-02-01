@@ -27,12 +27,7 @@ module.exports = function(app) {
 					teacherName: resultsTeacher[0].teacherName,
 				});
 			} else {
-				con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-					console.log(resultsTeacher);
-					 res.render('teacher.html', {					 	
-					 	teacherName: resultsTeacher[0].prefix + " " + resultsTeacher[0].teacherName,
-					 });
-				});
+				res.redirect('/error');
 			}
 		});
 	});
