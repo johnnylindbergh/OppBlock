@@ -55,8 +55,7 @@ module.exports =  {
 				con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays[i]], function(err, result) { 
 					if(!err) {
 						callback += 1;
-						console.log("Finished Query #" + callback);
-						if (callback == req.body.newDays.length) { //check if right number
+						if (callback == req.body.newDays.length) {
 							res.redirect('/calendar');
 							res.end();
 						}

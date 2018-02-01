@@ -15,13 +15,13 @@
 			<input type="hidden" id="days" name="days" value={{day}}>
 			{{/days}}
 		</form>
-		<h2> Make sure to save the oppblocks before moving on to the next month </h2>
-		<div style="display:inline-block; width:40%; text-align:left"> 
+		<h2> Click on days to mark them as Oppblock days. If you make a mistake, click again to unmark it. Press save to save your choices, making them permanent (marron). </h2>
+		<!--<div style="display:inline-block; width:40%; text-align:left"> 
 			{{#batchSelect}}
-			<button class="{{weekDay}}"> Select all {{weekDay}}s </button>
+			<button class="{{weekDay}}" id="{{dayNum}}"> Select all {{weekDay}}s </button>
 			{{/batchSelect}}
-		</div>
-		<form method="post" style="display:inline-block; width:40%; text-align:right;" id="newForm">
+		</div>-->
+		<form method="post" style="display:inline-block; text-align:left;" id="newForm">
 			<input type="submit" value="Save">
 		</form>
 		<div id="calendar"> </div>
@@ -29,13 +29,22 @@
 	<script>
 		$(document).ready(function() {
 			//	Makes an array of already selected days
-			var days = $('#secretForm').serializeArray();
 			//	Initializes fullCalendar
 		    $('#calendar').fullCalendar({
+		    	viewRender: function(view, element) {
+		    		//	EW: Repeated Code-- should be in a function or something simpler, since it just differentiates between days already inserted into the db, and ones currently being chosen
+		    		var savedDays = $('#secretForm').serializeArray();
+		    		var newDays = $('#newForm').serializeArray();
+		    		for(var i=0; i<savedDays.length; i++) {
+						$("td [data-date=" + savedDays[i].value + "]").css('background-color', 'maroon');    	
+		    		}
+		    		for(var i=0; i<newDays.length; i++) {
+						$("td [data-date=" + newDays[i].value + "]").css('background-color', 'blue');    	
+		    		}
+		    	},
 		        dayClick: function(date, jsEvent, view) {
-		        	//	TBD: Fix Calendar/coloring so that one can switch months back and forth and still see the coloring
+		        	//	TBD: Fix Calendar/coloring so that one can switch back and forth between months and still see the coloring
 		        	//	Makes sure this cell hasn't yet been selected
-		        	console.log($(this).css('background-color'));
 		        	if($(this).css('background-color') == 'rgba(0, 0, 0, 0)') {
 		        		//	Selects the cell
 				        $('#newForm').prepend("<input type=hidden id=newDays name=newDays value=" + date.format('YYYY-MM-DD') + ">");
@@ -47,11 +56,15 @@
 				        $(this).css('background-color', 'rgba(0, 0, 0, 0)');
 				    }
 			    }
-		    })
-		    
-		    for(var i=0; i<days.length; i++) {
-				//$('#').val(days[i].day);    	
-		    }
+		    });
+		    /*$('button').click(function(){
+		    	//$('#newForm').prepend("<input type=hidden id=newDays name=newDays value=" + date.format('YYYY-MM-DD') + ">");
+		    	console.log(this);
+		    	console.log($("td:nth-of-type("+ (parseInt($(this).attr("id")) + 1) + ")").attr('data-date'));
+		    	$("td:nth-of-type("+ (parseInt($(this).attr("id")) + 1) + ")").css('background-color', 'blue');
+
+		    });*/
+		    //$("td:nth-of-type(2)") ++ Onclick();???
 		});
 	</script>
 </html>
