@@ -83,6 +83,27 @@ button, a.button{
 	text-decoration: none;
 }
 
+input{
+	width:150.5px;
+	font-size:15px;
+	display: inline-block;
+	text-align:left;
+	cursor:pointer;
+	border:none;
+	height:34px;
+	background-color: white;
+	border-color: white;
+	color: grey;
+	margin-top:10px;
+	margin-right:5px;
+	float:left;
+}
+
+input:hover{
+	background-color: black;
+	color: white;
+}
+
 button:hover, a.button:hover{
 	background-color: black;
 	color: white;
