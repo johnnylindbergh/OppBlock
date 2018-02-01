@@ -100,11 +100,6 @@ input{
 	margin-right:5px;
 }
 
-input:hover{
-	background-color: black;
-	color: white;
-}
-
 button:hover, a.button:hover{
 	background-color: black;
 	color: white;
