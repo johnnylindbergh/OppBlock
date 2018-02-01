@@ -60,6 +60,8 @@ passport.deserializeUser(function(user, done) {
                 if (!error && row !== undefined && row.length > 0){
                   user.isTeacher = true;
                   user.local = row;
+                  console.log("HELLO!");
+                  console.log(user.local);
                   done(null, user);
                 } else {
                   done(true, null); // error default
