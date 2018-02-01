@@ -5,23 +5,23 @@ module.exports = {
 	isLoggedIn:function(req,res,next){
 		if (req.isAuthenticated()){
       return next();
-		}else{
+		} else {
       res.redirect('/login');
     }
 	},
 
   isAdmin:function(req,res,next){
-    if (req.isAuthenticated() && req.user.isAdmin)
+    if (req.isAuthenticated() && req.user.isAdmin) {
       return next();
-    }else{
+    } else {
       res.redirect('/auth/google');
     }
   },
 
   isStudent:function(req,res,next){
-    if (req.isAuthenticated() && req.user.isStudent)
+    if (req.isAuthenticated() && req.user.isStudent) {
       return next();
-    }else{
+    } else {
       res.redirect('/auth/google');
     }
   },
@@ -29,9 +29,9 @@ module.exports = {
 
 
   isTeacher:function(req,res,next){
-    if (req.isAuthenticated() && req.user.isTeacher)
+    if (req.isAuthenticated() && req.user.isTeacher) {
       return next();
-    }else{
+    } else {
       res.redirect('/auth/google');
     }
   }
