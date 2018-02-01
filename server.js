@@ -59,9 +59,7 @@ passport.deserializeUser(function(user, done) {
               function(error,row){
                 if (!error && row !== undefined && row.length > 0){
                   user.isTeacher = true;
-                  user.local = row;
-                  console.log("HELLO!");
-                  console.log(user.local.uid_teacher);
+                  user.local = row[0];
                   done(null, user);
                 } else {
                   done(true, null); // error default
