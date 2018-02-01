@@ -2,26 +2,19 @@
 <html>
   <head>
   <title>Oppblock System: Edit Offering</title>
-  <link rel="stylesheet" href="offeringeditstyle.css" type="text/css"/>
+  <link rel="stylesheet" href="/adminstyle.css" type="text/css"/>
    <style> body {padding: 0; margin: 0;} </style>
   </head>
   <body>
-    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
+    <img id = "logo" src="/OppBlockLogoFinal.png">
 
     <div id="centralBox">
-      <p id="titleText">Edit Offerings</p>
-
-	<h1>Teacher Page</h1>
-</head>
-<body>
-<<<<<<< HEAD
+      <p id= "titleText">Teacher Portal</p>
+  <p id= "signedInAs">Edit Offering</p>
   
-	<form action="/updateOffering/{{offeringIdUpdate}}/{{teacherId}}" method="post">
-=======
-	<form action="/updateOffering/{{offeringIdUpdate}}/{{teacherIdUpdate}}" method="post">
+	<form action="/updateOffering/{{offeringIdUpdate}}" method="post">
 
->>>>>>> d6b21adeff6fc82e39e20458b9714a9f247417bf
-        {{#data}}
+  {{#data}}
     Name:<br>
   <input type="text" name="name" value="{{name}}">
   <br>
@@ -29,11 +22,8 @@
   <input type="text" name="description" value="{{description}}">
    <br>Max Size:<br>
   <input type="text" name="max_size" value="{{max_size}}">
-<<<<<<< HEAD
 
-=======
  </br>
->>>>>>> d6b21adeff6fc82e39e20458b9714a9f247417bf
    {{#dayData}}
     {{#canEdit}}
     </br>
@@ -48,6 +38,7 @@
 
 </form> 
 
- <a href="/delete/{{offeringId}}/{{teacherIdDelete}}">Delete</a>
+ <a class="button" href="/delete/{{offeringId}}">Delete</a>
+ </div>
 </body>
 </html>

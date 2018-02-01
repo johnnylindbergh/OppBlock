@@ -70,7 +70,7 @@ button, a.button{
 	width:150.5px;
 	font-size:15px;
 	display:inline-block;
-	text-align:left;
+	text-align:center;
 	cursor:pointer;
 	border:none;
 	height:34px;
@@ -80,6 +80,7 @@ button, a.button{
 	margin-top:10px;
 	margin-right:5px;
 	float:left;
+	text-decoration: none;
 }
 
 button:hover, a.button:hover{
