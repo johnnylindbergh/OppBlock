@@ -8,36 +8,17 @@
   </head>
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
 <body>
-	    <img id = "logo" src="/OppBlockLogoFinal.png">
+  <img id = "logo" src="/OppBlockLogoFinal.png">
 
 	<h1>Administrator Portal</h1>
 	<h3>{{Admin}}</h3>
-	<a href="/clientcsv">Add Students</a><br>
-    <a href="/Mopblock">Students who didn't sign up</a><br>
-    <a href="/Groups">Student Groups</a><br>
-    <a href="/admin_settings">Settings</a>
-    
-    <table style="">
-		<tr>
-			
-            <th>Date</th>
-            <th>Link</th>
-        </tr>
-        {{#data}}
-        <tr>
-            
-            <td>{{day}}</td>
-            <td><a href="/Day/{{uid_day}}">Link</a></td>
-        </tr>
-        {{/data}}
-    </table>
     
     <div id= "centralBox">
       <p id= "titleText">Administrator Portal</p>
       <p id= "signedInAs">Signed in as {{Admin}}</p>
 
-    <button type="button" href="/clientcsv">Database</button>
-    <button type="button" href="/Mopblock">MopBlock</button>
+    <button type="button" href="/clientcsv">Add Students/Teachers</button>
+    <button type="button" href="/Mopblock">Non Sign-Ups</button>
     <button type="button" href="/Groups">Groups</button>
     <button type="button" href="/admin_settings">Settings</button>
     <button type="button" href="/scheduler">Schedule</button>
@@ -45,15 +26,15 @@
     <table style="width:100%" align="center">
       <tr>
         <th>Date</th>
-        <th>Day of the Week</th>
+        <th>Link</th>
       </tr>
       {{#data}}
       <tr>
-        <td>{{date}}</td>
-        <td>{{dayoftheweek}}</td>
+          
+          <td>{{day}}</td>
+          <td><a href="/Day/{{uid_day}}">Link</a></td>
       </tr>
       {{/data}}
     </table>
-    
   </body>
 </html>

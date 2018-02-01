@@ -1,15 +1,21 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-   
-	
-	<h1>Teacher Page</h1>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>Oppblock System: Teacher Portal</title>
+      <link rel="stylesheet" href="adminstyle.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
 <body>
-	<h3>{{teacherName}}</h3>
+  <img id = "logo" src="/OppBlockLogoFinal.png">
+
+  <div id= "centralBox">
+
+  <h1>Teacher Portal</h1>
+	<h3>Signed in as {{teacherName}}</h3>
 	
 	<h2>Offerings</h2> 
-    <a href="/add/">Add</a>
+  <button type="button" href="/clientcsv">Add</button>
 
 <table style="width:100%">
 
@@ -20,23 +26,17 @@
     <th>Maximum Size</th>
   </tr>
 
- 
+  {{#data}}
+  <tr>
+      <td><buton href="/editOffering/{{uid_offering}}/">Edit</button></td> 
+      <td>{{offeringName}}</td> 
+      <td>{{description}}</td> 
+      <td>{{max_size}}</td> 
+  </tr>
 
-{{#data}}
-
-
-
-
-
-<tr>
-    <td><a href="/editOffering/{{uid_offering}}/">Edit</a></td> 
-    <td>{{offeringName}}</td> 
-    <td>{{description}}</td> 
-    <td>{{max_size}}</td> 
-</tr>
-
-{{/data}}
-</table>
+  {{/data}}
+  </table>
+  </div>
 
 	
 </body>
