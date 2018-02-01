@@ -69,7 +69,7 @@ module.exports = {
           req.user.local = row;
           return next();
         }else{
-          console.log("FAIL
+          console.log("FAIL");
           res.redirect('/student');
         }
       });
