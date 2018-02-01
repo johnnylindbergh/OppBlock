@@ -1,6 +1,6 @@
 var db = require('./database.js');
 var con = db.connection;
-var settings = db.system_settings;
+var settings = require('./settings.js').system_settings;
 var moment = require('moment');
 var middleware = require('./roles.js');
 var admin = require('./admin.js');
@@ -19,9 +19,7 @@ module.exports = function(app) {
 	});
 
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
-		console.log(JSON.stringify(req.user));
 		var uid_teacher = req.user.local.uid_teacher;
-		console.log("TEACHER AUTHENTICATED UID" + uid_teacher);
 		con.query('select teachers.uid_teacher, teachers.teacher_firstn as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 			if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 				res.render('teacher.html', {
@@ -30,8 +28,6 @@ module.exports = function(app) {
 				});
 			} else {
 				con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-					console.log("Wut");
-					console.log(resultsTeacher);
 					if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 					 res.render('teacher.html', {					 	
 					 	teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
