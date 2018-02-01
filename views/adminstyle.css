@@ -86,3 +86,8 @@ button:hover{
 	background-color: black;
 	color: white;
 }
+
+h1, h2, h3 {
+	color:white;
+	font-family: Courier;
+}
