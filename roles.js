@@ -61,6 +61,7 @@ module.exports = {
         console.log("ROW");
         console.log(row);
         if (row !== undefined && row.length > 0){
+          console.log("SUCCESS!");
           // TODO should run a query to verify if this teacher is also an admin
           req.user.isAdmin = false;
           req.user.isStudent = false;
@@ -68,6 +69,7 @@ module.exports = {
           req.user.local = row;
           return next();
         }else{
+          console.log("FAIL
           res.redirect('/student');
         }
       });
