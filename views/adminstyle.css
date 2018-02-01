@@ -19,6 +19,7 @@ body{
 	border-style:solid;
 	border:5px;
 	border-color: black;
+	color: white;
 	width:1200px;
 	height:600px;
 	margin:auto;
@@ -96,7 +97,6 @@ input{
 	color: grey;
 	margin-top:10px;
 	margin-right:5px;
-	float:left;
 }
 
 input:hover{
