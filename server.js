@@ -64,11 +64,11 @@ passport.deserializeUser(function(user, done) {
                 } else {
                   done(true, null); // error default
                 }
-              }
+              });
           }
-        }
+        });
       }
-    }
+    });
 });
 
 passport.use(new GoogleStrategy({
