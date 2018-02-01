@@ -14,7 +14,7 @@ module.exports = {
     if (req.isAuthenticated()){
       con.query("SELECT * FROM admins WHERE email=?",[req.user.email],
         function(error, row){
-          if (row !== undefined){
+          if (row !== undefined && row.length > 0){
             req.user.isAdmin = true;
             req.user.isStudent = false;
             req.user.isTeacher = true;
@@ -35,7 +35,7 @@ module.exports = {
     if (req.isAuthenticated()){
       con.query("SELECT * FROM students WHERE email=?",[req.user.email],
         function(error, row){
-          if (row !== undefined){
+          if (row !== undefined && row.length > 0){
             // TODO: should run a query to verify if this student is also an admin
             req.user.isAdmin = false;
             req.user.isStudent = true;
@@ -57,7 +57,7 @@ module.exports = {
   isTeacher:function(req,res,next){
     if (req.isAuthenticated()){
       con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,row){
-        if (row !== undefined){
+        if (row !== undefined && row.length > 0){
           // TODO should run a query to verify if this teacher is also an admin
           req.user.isAdmin = false;
           req.user.isStudent = false;
