@@ -11,11 +11,17 @@ module.exports = function(app) {
 
 
 	app.get('/', function(req, res) {
-		//session.startSession(req, res);
-		// req.session.put('info', 'myInfo', function(req,res){
-		console.log(req.body.idtoken);
-		res.render('login.html');
-		// });
+		if (req.isAuthenticated()) {
+			if (req.user.isAdmin) {
+				res.redirect('/admin');
+			} else if (req.user.isTeacher) {
+				res.redirect('/teacher');
+			} else {
+				res.redirect('/student');
+			}
+		} else {
+			res.render('/auth/google');
+		}
 	});
 
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
