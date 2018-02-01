@@ -69,7 +69,7 @@ th{
 button, a.button{
 	width:150.5px;
 	font-size:15px;
-	display:inline-block;
+	display:block;
 	text-align:center;
 	cursor:pointer;
 	border:none;
