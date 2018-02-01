@@ -37,20 +37,39 @@ body{
 	font-size: 40px;
 }
 
-textarea{
-	display:block;
-	float: left;
-	background-color: white;
-	border-style:solid;
-	border-width:2px;
-	border-color: white;
-	margin-top:10px;
+#signedInAs{
+	margin: auto;
+	padding-top: 10px;
+	text-align: left;
+	color: white;
+	font-family: Lucida Grande;
 }
 
-input{
+table{
+	border-collapse: collapse;
+	margin-top: 50px;
+}
+
+th, td{
+	font-family: Lucida Grande;
+	font-weight: normal;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even){background-color: grey}
+
+tr:hover {background-color: white;}
+
+th{
+	background-color: black;
+	color: white;
+}
+
+button{
 	width:150.5px;
 	font-size:15px;
-	display: inline-block;
+	display:inline-block;
 	text-align:left;
 	cursor:pointer;
 	border:none;
@@ -63,7 +82,7 @@ input{
 	float:left;
 }
 
-input:hover{
+button:hover{
 	background-color: black;
 	color: white;
 }

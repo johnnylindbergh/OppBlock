@@ -1,23 +1,26 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-	<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 3px;
-}
-th {
-    text-align: left;
-}
-</style>
+  <head>
+  <title>Oppblock System: Edit Offering</title>
+  <link rel="stylesheet" href="offeringeditstyle.css" type="text/css"/>
+   <style> body {padding: 0; margin: 0;} </style>
+  </head>
+  <body>
+    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
+
+    <div id="centralBox">
+      <p id="titleText">Edit Offerings</p>
 
 	<h1>Teacher Page</h1>
 </head>
 <body>
-	<form action="/updateOffering/{{offeringId}}/{{teacherId}}" method="post">
+<<<<<<< HEAD
+  
+	<form action="/updateOffering/{{offeringIdUpdate}}/{{teacherId}}" method="post">
+=======
+	<form action="/updateOffering/{{offeringIdUpdate}}/{{teacherIdUpdate}}" method="post">
+
+>>>>>>> d6b21adeff6fc82e39e20458b9714a9f247417bf
         {{#data}}
     Name:<br>
   <input type="text" name="name" value="{{name}}">
@@ -26,20 +29,25 @@ th {
   <input type="text" name="description" value="{{description}}">
    <br>Max Size:<br>
   <input type="text" name="max_size" value="{{max_size}}">
- <br>{{^recurring}}  <br> set to current:{{/recurring}}
-  <input {{#recurring}}type = "hidden"{{/recurring}}  type="checkbox" name="recurring" >
-</br>
+<<<<<<< HEAD
+
+=======
+ </br>
+>>>>>>> d6b21adeff6fc82e39e20458b9714a9f247417bf
    {{#dayData}}
     {{#canEdit}}
+    </br>
    {{day}}
-  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}>{{/canEdit}}
+  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
+  {{/canEdit}}
    {{/dayData}}
+
   </br>
   <input type="submit" value="Submit">
     {{/data}}
 
 </form> 
 
- <a href="/delete/{{offeringId}}">Delete</a>
+ <a href="/delete/{{offeringId}}/{{teacherIdDelete}}">Delete</a>
 </body>
 </html>

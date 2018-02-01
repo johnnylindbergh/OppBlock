@@ -37,16 +37,6 @@ body{
 	font-size: 40px;
 }
 
-textarea{
-	display:block;
-	float: left;
-	background-color: white;
-	border-style:solid;
-	border-width:2px;
-	border-color: white;
-	margin-top:10px;
-}
-
 input{
 	width:150.5px;
 	font-size:15px;

@@ -2,29 +2,14 @@
 <html>
 <head>
    
-	<style>
-    body {
-        background-color: lightblue;
-    }
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 4px;
-}
-th {
-    text-align: center;
-}
-</style>
-
+	
 	<h1>Teacher Page</h1>
 </head>
 <body>
 	<h3>{{teacherName}}</h3>
 	
 	<h2>Offerings</h2> 
-    <a href="/add/{{teacherId}}">Add</a>
+    <a href="/add/">Add</a>
 
 <table style="width:100%">
 
@@ -33,30 +18,21 @@ th {
     <th>Name</th>
     <th>Description</th>
     <th>Maximum Size</th>
-    <th>Current</th>
   </tr>
 
  
 
 {{#data}}
 
-{{#recurring}}
-current: {{offeringName}}
-</br>
-</br>
 
-
-
-{{/recurring}}
 
 
 
 <tr>
-    <td><a href="/editOffering/{{uid_offering}}/{{uid_teacher}}/">Edit</a></td> 
+    <td><a href="/editOffering/{{uid_offering}}/">Edit</a></td> 
     <td>{{offeringName}}</td> 
     <td>{{description}}</td> 
     <td>{{max_size}}</td> 
-    <td>{{recurring}}</td> 
 </tr>
 
 {{/data}}
