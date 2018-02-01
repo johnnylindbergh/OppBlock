@@ -20,11 +20,11 @@ module.exports = function(app) {
 
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
 		var uid_teacher = req.user.local.uid_teacher;
-		con.query('select teachers.uid_teacher, teachers.prefix, teachers.name as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+		con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 			if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 				res.render('teacher.html', {
 					data: resultsTeacher,
-					teacherName: resultsTeacher[0].prefix + " " + resultsTeacher[0].teacherName,
+					teacherName: resultsTeacher[0].teacherName,
 				});
 			} else {
 				con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
