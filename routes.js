@@ -21,6 +21,9 @@ module.exports = function(app) {
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
 		var uid_teacher = req.user.local.uid_teacher;
 		con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+			console.log(err);
+			console.log("Row:");
+			console.log(resultsTeacher);
 			if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 				res.render('teacher.html', {
 					data: resultsTeacher,
