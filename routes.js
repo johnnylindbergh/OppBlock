@@ -29,7 +29,7 @@ module.exports = function(app) {
 			} else {
 				con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 					console.log("Wut");
-					consolle.log(resultsTeacher);
+					console.log(resultsTeacher);
 					if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 					 res.render('teacher.html', {					 	
 					 	teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
