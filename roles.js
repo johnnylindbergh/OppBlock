@@ -56,10 +56,7 @@ module.exports = {
 
   isTeacher:function(req,res,next){
     if (req.isAuthenticated()){
-      console.log("TEACHER FLOW: AUTH");
-      console.log(req.user.email);
-      con.query("SELECT * FROM teachers WHERE email=?",[req.user.email],function(error,row){
-        console.log(row);
+      con.query("SELECT * FROM teachers WHERE teacher_email=?",[req.user.email],function(error,row){
         if (row !== undefined && row.length > 0){
           // TODO should run a query to verify if this teacher is also an admin
           req.user.isAdmin = false;
