@@ -20,8 +20,9 @@ module.exports = function(app) {
 
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
 		var uid_teacher = req.user.local.uid_teacher;
-		con.query('select teachers.uid_teacher, teachers.teacher_firstn as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+		con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 			if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+				console.log(resultsTeacher);
 				res.render('teacher.html', {
 					data: resultsTeacher,
 					teacherName: resultsTeacher[0].teacherName,
@@ -82,7 +83,7 @@ module.exports = function(app) {
 					console.log(err);
 				} else {
 					console.log(teacher_uid);
-					res.redirect("/teacher/");
+					res.redirect("/teacher");
 				}
 			});
 		});
@@ -115,7 +116,7 @@ module.exports = function(app) {
 			if (err) {
 				console.log(err);
 			} else {
-				res.redirect("/teacher/" + teacherId);
+				res.redirect("/teacher");
 			}
 		});
 		for (var d = 0; d < days.length; d++) {	
