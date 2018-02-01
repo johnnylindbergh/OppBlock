@@ -23,16 +23,15 @@
    <br>Max Size:<br>
   <input type="text" name="max_size" value="{{max_size}}">
 
- </br>
+ <br>
    {{#dayData}}
     {{#canEdit}}
-    </br>
    {{day}}
   <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
   {{/canEdit}}
-   {{/dayData}}
+{{/dayData}}
 
-  </br>
+  <br>
   <input type="submit" value="Submit">
     {{/data}}
 
