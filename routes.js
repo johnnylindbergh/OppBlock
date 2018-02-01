@@ -19,6 +19,7 @@ module.exports = function(app) {
 	});
 
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
+		console.log(JSON.stringify(req.user));
 		var uid_teacher = req.user.local.uid_teacher;
 		console.log("TEACHER AUTHENTICATED UID" + uid_teacher);
 		con.query('select teachers.uid_teacher, teachers.teacher_firstn as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
