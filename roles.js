@@ -55,8 +55,11 @@ module.exports = {
 
 
   isTeacher:function(req,res,next){
+    console.log("TEACHER AUTH");
     if (req.isAuthenticated()){
       con.query("SELECT * FROM teachers WHERE teacher_email=?",[req.user.email],function(error,row){
+        console.log("ROW");
+        console.log(row);
         if (row !== undefined && row.length > 0){
           // TODO should run a query to verify if this teacher is also an admin
           req.user.isAdmin = false;
