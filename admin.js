@@ -40,9 +40,9 @@ module.exports =  {
 						for(var i = 0; i<oppDays.length; i++) {
 							days.push({day: moment(oppDays[i].day).format('YYYY-MM-DD')});
 						}
-						res.render('admin_calendar.html', {batchSelect: settings.opp_days, days: days});
+						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: days});
 					} else {
-						res.render('admin_calendar.html', {batchSelect: settings.opp_days, days: null});
+						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: null});
 					}
 				} else {
 					res.render('error.html', {err:err});

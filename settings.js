@@ -40,7 +40,7 @@ module.exports = {
 		for (var i = 64; i > 0.5; i /= 2) {
 			if (Math.floor(day_int / i) == 1){
 				day_int -= i;
-				days.push({weekDay: weekDays[counter]});
+				days.push({weekDay: weekDays[counter], dayNum: counter});
 			}
 			counter += 1;
 		}
