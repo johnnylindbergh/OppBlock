@@ -1,5 +1,6 @@
 var con = require('./database.js').connection;
 var settings = require('./settings.js');
+var moment = require('moment');
 module.exports =  {
 
 	// initialize routes for admin backend
@@ -29,21 +30,41 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
-		/*
+		//	Maybe Add an ARE YOU SURE message before the post request?
 		app.get('/calendar', function(req, res) { 
-
-
-			res.render('admin_calendar.html', {
-
+			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
+				if (!err) {
+					if(oppDays.length != 0) {
+						var days = [];
+						//	Formats the date objects into readable dates 
+						for(var i = 0; i<oppDays.length; i++) {
+							days.push({day: moment(oppDays[i].day).format('YYYY-MM-DD')});
+						}
+						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: days});
+					} else {
+						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: null});
+					}
+				} else {
+					res.render('error.html', {err:err});
+				}
 			});
 		});
 		app.post('/calendar', function(req, res) {
-			for (var i=0; i<; i++) {
-				con.query('UPDATE opp_block_day WHERE ', [], function() {
-					
+			var callback = 0;
+			for (var i=0; i<req.body.newDays.length; i++) {
+				con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays[i]], function(err, result) { 
+					if(!err) {
+						callback += 1;
+						if (callback == req.body.newDays.length) {
+							res.redirect('/calendar');
+							res.end();
+						}
+					} else {
+						res.render('error.html', {err:err});
+					}
 				});
 			}
-		});*/
+		});
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
