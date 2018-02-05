@@ -29,7 +29,7 @@ INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("hours_close_oppblock",
     "Start Time for Opp Block (hours, 24hr time)",
     "Number of hours after midnight on Opp Block days when the Opp Block begins, so that the system should give teachers the option to take attendance.",
-    17);
+    14);
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("minutes_close_oppblock",
     "Start Time for Opp Block (minutes)",
     "Number of minutes after midnight on Opp Block days when the Opp Block begins, so that the system should give teachers the option to take attendance.",
@@ -37,7 +37,7 @@ INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("minutes_length_oppblock",
     "End Time for Opp Block (minutes)",
     "Duration of an Opp Block",
-    60);
+    50);
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("opp_days",
     "Opp Block Days",
     "Days of the week upon which Opp Block typically occurs.",
@@ -157,6 +157,8 @@ INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mla
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
 
+insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Johnny", "Lindbergh", "jlindbergh@students.stab.org");
+
 ## Test Data
 
 INSERT into opp_block_day (day) values ('2018-01-26');
@@ -201,6 +203,8 @@ INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10)
 -- INSERT into calender (uid_day, uid_offering) values (1,1);
 -- INSERT into calender (uid_day, uid_offering) values (2,1);
 
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Johnny's OppBlock", 10, 1, 0, "This OppBlock is...");
+INSERT into calendar (uid_day, uid_offering) values (6,1);
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");
@@ -230,7 +234,10 @@ INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10)
 -- INSERT into calendar (uid_day, uid_offering) values (2,6);
 -- INSERT into calendar (uid_day, uid_offering) values (2,7);
 -- INSERT into calendar (uid_day, uid_offering) values (2,8);
+ 
 
+ INSERT into choices (uid_day, uid_student, uid_offering) values (6,1,1);
+ INSERT into choices (uid_day, uid_student, uid_offering) values (6,2,1);
 
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
 

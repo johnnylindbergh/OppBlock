@@ -33,15 +33,15 @@ module.exports = function(app) {
 		var oppBlockLength = settings.minutes_length_oppblock.value_int;
 
 
-		console.log(oppBlockStartHours);
-		console.log(oppBlockStartMinutes);
-		console.log(oppBlockLength);
+
 		con.query('select * from opp_block_day order by day asc', function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 					if (moment(resultsDay[i].day).isSame(moment(), 'day')){
 						var oppStart = moment(resultsDay[i].day).add(oppBlockStartHours, 'hours').add(oppBlockStartMinutes, 'minutes');
 						var oppEnd = moment(oppStart).add(oppBlockLength, 'minutes');
+						console.log(oppStart);
+						console.log(oppEnd);
 						if (moment().isAfter(oppStart) && moment().isBefore(oppEnd) ){
 							inProgress = true;
 							con.query('select * from calendar where uid_day = ?', [resultsDay[i].uid_day], function(err, currentOffering){
@@ -80,37 +80,57 @@ module.exports = function(app) {
 						break;
 					}
 				}
-				con.query('select * from choices join students on choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[currentOffering.uid_day, currentOffering.uid_offering], function(err, students){
-					if (!err){
-						con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-							if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-								res.render('teacher.html', {
-									currentOffering:currentOffering,
-									students:students,
-									data: resultsTeacher,
-									teacherName: resultsTeacher[0].teacherName,
-								});
-							} else {
-								con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-									if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-					 				res.render('teacher.html', {					 	
-					 					teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
-					 				});
-									} else {
-										res.redirect('/error');
-									}
-								});
-							}
-						});
-					}
-				});
+				if (currentOffering != undefined){
+					con.query('select * from choices join students on choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[currentOffering.uid_day, currentOffering.uid_offering], function(err, students){
+						if (!err){
+							con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+								if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+									res.render('teacher.html', {
+										currentOffering:currentOffering,
+										students:students,
+										data: resultsTeacher,
+										teacherName: resultsTeacher[0].teacherName,
+									});
+								} else {
+									con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+										if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+					 					res.render('teacher.html', {					 	
+					 						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
+					 					});
+										} else {
+											res.redirect('/error');
+										}
+									});
+								}
+							});
+						}
+					});
+				} else {
+					con.query('select teachers.uid_teacher, teachers.teacher_firstname as teacherName, offerings.name as offeringName, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+								if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+									res.render('teacher.html', {
+										data: resultsTeacher,
+										teacherName: resultsTeacher[0].teacherName,
+									});
+								} else {
+									con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+										if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+					 					res.render('teacher.html', {					 	
+					 						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
+					 					});
+										} else {
+											res.redirect('/error');
+										}
+									});
+								}
+							});
+				}
 			}
 		});
 	});
 
 	app.get('/editOffering/:id/', middleware.isTeacher, function(req, res) {
 		var offering_uid = req.params.id;
-		console.log("offfering: "+ offering_uid);
 		var teacher_uid = req.user.local.uid_teacher;
 		con.query('select * from offerings where uid_offering = ?;', [offering_uid], function(err, offeringInfo) {
 			if (!err) {

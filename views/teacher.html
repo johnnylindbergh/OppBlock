@@ -16,10 +16,16 @@
 
 {{#currentOffering}}
 <br>
-  <button class="accordion"> Current Offering: {{name}} </button>
+  <button class="accordion"> 
+    <br>
+    Current Offering: {{name}} <a class="button" href="/attendance/{{uid_offering}}/{{uid_day}}" style = "float:right; ">Take Attendance</a></button>
   {{/currentOffering}}
 
+
 <div class="panel">
+<br>
+
+
 <h3 style = "font-family: Lucida Grande">Students</h3>
 <table style="width:100%" align="center" class="panel">
   <tr class="panel">
