@@ -108,6 +108,8 @@ CREATE TABLE students (
 
 CREATE TABLE absent (
     uid_student INT,
+    uid_day INT,
+    FOREIGN KEY (uid_day) REFERENCES opp_block_day(uid_day),
     FOREIGN KEY (uid_student) REFERENCES students(uid_student)
 );
 
