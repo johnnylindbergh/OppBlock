@@ -21,12 +21,13 @@ th {
 	<h1>Attendance Page</h1>
 </head>
 <body>
-
+Signed in as: {{#teacherInfo}}{{teacher_firstname}}{{teacher_lastname}}{{/teacherInfo}}
+<br>
  <form action="/updateAttendance/{{uid_offering}}" method="post">
 
 {{#students}}
 
-<input type="checkbox" value={{uid_student}} name="students" {{#arrived}}checked="checked"{{/arrived}}>
+<input type="checkbox" value={{uid_student}} name="students" checked="checked">
  {{firstname}} {{lastname}} </br>
 
 

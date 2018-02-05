@@ -13,7 +13,7 @@
   <p id= "signedInAs">Edit Offering</p>
   
 	<form action="/updateOffering/{{offeringIdUpdate}}" method="post">
-
+  <input type="hidden" name="isNew" value="{{isNew}}">
   {{#data}}
     Name:<br>
   <input type="text" name="name" value="{{name}}">
