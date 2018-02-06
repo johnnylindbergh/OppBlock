@@ -1,6 +1,7 @@
 var con = require('./database.js').connection;
 var moment = require('moment');
 var settings = require('./settings').system_settings;
+var middleware = require('./roles.js');
 
 // A message to students who haven't signed up after the student cutoff time has passed
 // Can't be a system setting because it is text
@@ -309,9 +310,9 @@ module.exports = {
 	});
  },
  init: function(app) {
-	app.get('/student/:id', function(req, res){
-		// Gets Student's id from url
-		var uid_student = req.params.id; 
+	app.get('/student', middleware.isStudent, function(req, res){
+		// Gets Student's id from middleware
+		var uid_student = req.user.local.uid_student; 
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
 		con.query('SELECT firstname FROM students WHERE uid_student = ?', [uid_student], function(err, student) {
 			if(!err) {
@@ -396,19 +397,22 @@ module.exports = {
 		});
 	});
 
-	app.post('/student/:id', function(req, response) {
+	app.post('/student', middleware.isStudent, function(req, response) {
+		// Gets Student's id from middleware
+		var uid_student = req.user.local.uid_student; 
+
 		// checks if post request comes from an override or a choice
 		if(req.body.choice != undefined) {
 			// Updates Choice
-			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, req.params.id, req.body.uid_day], function(err, results) {
-				response.redirect('/student/' + req.params.id);
+			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, uid_student, req.body.uid_day], function(err, results) {
+				response.redirect('/student/' + uid_student);
 				response.end();
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, req.params.id, req.body.uid_day], function(err) {
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, req.body.uid_day], function(err) {
 				if(!err) {
-					response.redirect('/student/' + req.params.id);
+					response.redirect('/student/' + uid_student);
 					response.end();
 				} else {
 					res.send(err);
