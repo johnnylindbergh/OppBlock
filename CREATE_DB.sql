@@ -154,7 +154,8 @@ INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', '
 INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
-
+INSERT into admins (lastname, firstname, email) values ('Du', 'Weiran', 'wdu@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('Du', 'William', 'wdu@students.stab.org');
 
 
 ## Test Data
@@ -178,7 +179,7 @@ INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduff
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
-
+INSERT into teachers (prefix, name, teacher_info) values ('N/A', 'Weiran Du', 'Teacher info here');
 
 INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
