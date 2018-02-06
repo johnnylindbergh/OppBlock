@@ -312,9 +312,9 @@ module.exports = {
  init: function(app) {
 	app.get('/student', middleware.isStudent, function(req, res){
 		// Gets Student's id from middleware
-		var student = req.user.local;
+		var student = req.user.local[0];
 		var uid_student = student.uid_student; 
-		console.log(student);
+		console.log(uid_student);
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
 		// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
 		module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
