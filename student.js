@@ -314,13 +314,11 @@ module.exports = {
 		// Gets Student's id from middleware
 		var student = req.user.local[0];
 		var uid_student = student.uid_student; 
-		console.log(uid_student);
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
 		// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
 		module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
 		// Checks whether it is time for students to choose yet
 			if (uid_day == null) { 
-				console.log(student.firstname);
 				res.render('student.html', {Student:student.firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
 			} else {
 				// Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
@@ -392,7 +390,7 @@ module.exports = {
 
 	app.post('/student', middleware.isStudent, function(req, response) {
 		// Gets Student's id from middleware
-		var uid_student = req.user.local.uid_student; 
+		var uid_student = req.user.local[0].uid_student; 
 
 		// checks if post request comes from an override or a choice
 		if(req.body.choice != undefined) {
