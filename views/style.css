@@ -20,7 +20,7 @@ body{
 	border:5px;
 	border-color:black;
 	width:1200px;
-	height:600px;
+	height:1000px;
 	margin:auto;
 	text-align:center;
 	padding-left:20px;
@@ -89,7 +89,7 @@ textarea{
 input{
 	width:150.5px;
 	font-size:15px;
-	display: inline-block;
+	display:block;
 	text-align:left;
 	cursor:pointer;
 	border:none;
@@ -97,15 +97,34 @@ input{
 	background-color: white;
 	border-color: white;
 	color: grey;
+	margin-left:100px;
 	margin-top:10px;
-	margin-right:5px;
-	float:left;
+	margin-left:0px;
+/*	margin-right:5px;*/
 }
 
-input:hover{
+/*input:hover{
 	background-color: black;
 	color: white;
+}*/
+
+#mstitle{
+	display:block;
+	margin-left:0px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
 }
+
+#offeringdelete{
+	display:block;
+	margin-left:0px;
+	margin-top:5px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
+}
+
 
 button{
 	width:150.5px;

@@ -14,30 +14,26 @@
   
 	<form action="/updateOffering/{{offeringIdUpdate}}" method="post">
 
-  {{#data}}
-    Name:<br>
+  <p id = "mstitle">{{#data}}     Name:</p>
+  <br>
   <input type="text" name="name" value="{{name}}">
   <br>
-  Description:<br>
+  <p id = "mstitle">Description:</p><br>
   <input type="text" name="description" value="{{description}}">
-   <br>Max Size:<br>
+   <br> <p id = "mstitle">Max Size: </p><br>
   <input type="text" name="max_size" value="{{max_size}}">
-
  <br>
-   {{#dayData}}
-    {{#canEdit}}
-   {{day}}
+   <p id = "mstitle">{{#dayData}} {{#canEdit}} {{day}}</p>
   <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
-  {{/canEdit}}
-{{/dayData}}
+   <p id = "mstitle">{{/canEdit}} {{/dayData}}</p>
 
   <br>
   <input type="submit" value="Submit">
-    {{/data}}
+    <p id = "mstitle">{{/data}}</p>
 
 </form> 
 
- <a class="button" href="/delete/{{offeringId}}">Delete</a>
+ <a class="button" id = "offeringdelete" href="/delete/{{offeringId}}">Delete</a>
  </div>
 </body>
 </html>
