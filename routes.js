@@ -4,7 +4,8 @@ var settings = require('./settings.js').system_settings;
 var moment = require('moment');
 var middleware = require('./roles.js');
 var admin = require('./admin.js');
-
+var Levenshtein = require('levenshtein');
+var getClosest = require('get-closest');
 
 module.exports = function(app) {
 
@@ -33,24 +34,23 @@ module.exports = function(app) {
 		var oppBlockLength = settings.minutes_length_oppblock.value_int;
 
 
-
+		console.log(oppBlockStartHours);
+		console.log(oppBlockStartMinutes);
+		console.log(oppBlockLength);
 		con.query('select * from opp_block_day order by day asc', function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 					if (moment(resultsDay[i].day).isSame(moment(), 'day')){
 						var oppStart = moment(resultsDay[i].day).add(oppBlockStartHours, 'hours').add(oppBlockStartMinutes, 'minutes');
 						var oppEnd = moment(oppStart).add(oppBlockLength, 'minutes');
-						console.log(oppStart);
-						console.log(oppEnd);
 						if (moment().isAfter(oppStart) && moment().isBefore(oppEnd) ){
 							inProgress = true;
 							con.query('select * from calendar where uid_day = ?', [resultsDay[i].uid_day], function(err, currentOffering){
-								if (!err){
-
-
+								if (currentOffering != undefined){
 									res.redirect('/attendance/' + currentOffering[0].uid_offering +'/'+currentOffering[0].uid_day);
-
 								}
+
+								
 							});
 						}
 					}
@@ -87,6 +87,9 @@ module.exports = function(app) {
 								if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 									res.render('teacher.html', {
 										currentOffering:currentOffering,
+										offeringIdUpdate:currentOffering.uid_offering,
+										offeringIdAdd:currentOffering.uid_offering,
+										offeringDay:currentOffering.uid_day,
 										students:students,
 										data: resultsTeacher,
 										teacherName: resultsTeacher[0].teacherName,
@@ -253,6 +256,16 @@ module.exports = function(app) {
 	app.post('/updateAttendance/:offering', middleware.isTeacher, function(req,res){
 		var teacher_uid = req.user.local.uid_teacher;
 		var students = req.body.students;
+		var allStudents = req.body.allStudents; 
+		console.log("students: "+students);
+		if (allStudents == undefined){allStudents = []}
+
+		for (var i = 0; i <allStudents.length;i++ ){
+			con.query('update students set arrived = 0 where uid_student = ?',[allStudents[i]], function(err){
+				console.log(err);
+			});
+	
+		}
 		if (students == undefined){students = []}
 			for (var i = 0; i <students.length;i++ ){
 				con.query('update students set arrived = 1 where uid_student = ?',[students[i]], function(err){
@@ -262,6 +275,40 @@ module.exports = function(app) {
 			}
 			res.redirect('/teacherHome');
 		
+
+	});
+
+	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
+		var offering = req.params.offering;
+		var day = req.params.day;
+		var student = req.body.studentName;
+		var students = [];
+		var studentIDs = [];
+		con.query('select uid_student, firstname, lastname from students', function(err, studentRes){
+			if (!err && studentRes != undefined ){
+				for (var s = 0; s <studentRes.length; s++){
+					students.push(studentRes[s].firstname +" "+studentRes[s].lastname);
+					studentIDs.push(studentRes[s].uid_student);
+				}
+				console.log(students);
+				var c = getClosest.custom(student,students, function (compareTo, baseItem) {
+  					return new Levenshtein(compareTo, baseItem).distance;
+				});
+				console.log(studentIDs[c]);
+				console.log(students[c])
+				con.query('insert into choices (uid_day, uid_offering, uid_student) values (?,?,?);', [day, offering,studentIDs[c]], function(err){
+					if (!err){
+						res.redirect('/teacherHome');
+					} else {
+						console.log(err);
+					}
+				});
+				
+			}
+		});
+
+
+
 
 	});
 

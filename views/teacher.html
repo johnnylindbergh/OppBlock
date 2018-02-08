@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <title>Oppblock System: Teacher Portal</title>
       <link rel="stylesheet" href="/adminstyle.css" type="text/css"/>
@@ -32,15 +33,36 @@
     <th class="panel">Name</th>
     <th class="panel">Status</th>
   </tr>
-
-  {{#students}}
+<form action="/updateAttendance/{{offeringIdUpdate}}" method="post">
+ {{#students}}
   <tr class="panel">
       <td class="panel">{{firstname}} {{lastname}}</td> 
-      <td class="panel">{{#arrived}}Arrived{{/arrived}} {{^arrived}}Not Arrived{{/arrived}}</td> 
+      <td class="panel">
+        <input type = "hidden" name = "allStudents" value = "{{uid_student}}" >
+
+        <input type="checkbox" id = "{{uid_student}}" style="display:none;" name="students" value = "{{uid_student}}" {{#arrived}}checked="checked"{{/arrived}}>
+        <label class="check" for="{{uid_student}}">{{#arrived}}Arrived{{/arrived}}{{^arrived}}Not Arrived{{/arrived}}</label>
+        
+      </td> 
 
   </tr>
   {{/students}}
+
+
+
+
 </table>
+<input type="submit" value="Submit">
+</form>
+
+  <form action="/addStudent/{{offeringIdAdd}}/{{offeringDay}}" method="post">
+ <br>
+      Add Student: <br>
+   
+      <input type="text" placeholder="Johnny Lindbergh"  name="studentName"> <br>
+      <input type="submit" value="Submit">
+  
+  </form>
 
 </div>
 <br>
@@ -76,6 +98,12 @@
 <script>
 var acc = document.getElementsByClassName("accordion");
 var i;
+
+
+$(".check").on("click", function(){
+  $(this).html() == "Arrived" ? $(this).html('Not Arrived') : $(this).html('Arrived');
+});
+
 
 for (i = 0; i < acc.length; i++) {
   acc[i].addEventListener("click", function() {

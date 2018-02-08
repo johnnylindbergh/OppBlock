@@ -26,7 +26,7 @@ Signed in as: {{#teacherInfo}}{{teacher_firstname}}{{teacher_lastname}}{{/teache
  <form action="/updateAttendance/{{uid_offering}}" method="post">
 
 {{#students}}
-
+<input type = "hidden" name = "allStudents" value = "{{uid_student}}">
 <input type="checkbox" value={{uid_student}} name="students" checked="checked">
  {{firstname}} {{lastname}} </br>
 
