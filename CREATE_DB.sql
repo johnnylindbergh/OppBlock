@@ -157,7 +157,9 @@ INSERT into admins (lastname, firstname, email) values ('Ware', 'Blake','bware@s
 INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', 'pquagliaroli@stab.org');
 INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
-#INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('Du', 'Weiran', 'wdu@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('Du', 'William', 'wdu@students.stab.org');
 
 insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Johnny", "Lindbergh", "jlindbergh@students.stab.org");
 
@@ -183,7 +185,7 @@ INSERT into opp_block_day (day) values ('2018-02-5');
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
-
+INSERT into teachers (prefix, name, teacher_info) values ('N/A', 'Weiran Du', 'Teacher info here');
 
 INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');

@@ -1,9 +1,10 @@
 body{
-	background-image: url("/oppbackground.jpg");
+	background-image: url("https://stringconstant.github.io/background.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
 }
+
 
 #logo{
 	width:8%;
@@ -20,7 +21,7 @@ body{
 	border:5px;
 	border-color:black;
 	width:1200px;
-	height:600px;
+	height:1000px;
 	margin:auto;
 	text-align:center;
 	padding-left:20px;
@@ -89,7 +90,7 @@ textarea{
 input{
 	width:150.5px;
 	font-size:15px;
-	display: inline-block;
+	display:block;
 	text-align:left;
 	cursor:pointer;
 	border:none;
@@ -97,24 +98,44 @@ input{
 	background-color: white;
 	border-color: white;
 	color: grey;
+	margin-left:100px;
 	margin-top:10px;
-	margin-right:5px;
-	float:left;
+	margin-left:0px;
+/*	margin-right:5px;*/
 }
 
-input:hover{
+/*input:hover{
 	background-color: black;
 	color: white;
+}*/
+
+#mstitle{
+	display:block;
+	margin-left:0px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
 }
 
-button{
+#offeringdelete{
+	display:block;
+	margin-left:0px;
+	margin-top:5px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
+}
+
+
+button, a.button{
 	width:150.5px;
 	font-size:15px;
 	display:inline-block;
-	text-align:left;
+	text-align:center;
 	cursor:pointer;
 	border:none;
 	height:34px;
+	text-decoration:none;
 	background-color: white;
 	border-color: white;
 	color: grey;
@@ -123,7 +144,8 @@ button{
 	float:left;
 }
 
-button:hover{
+
+button, a.button:hover{
 	background-color: black;
 	color: white;
 }
