@@ -2,7 +2,7 @@
 <html>
   <head>
   <title>Oppblock System: Edit Offering</title>
-  <link rel="stylesheet" href="style.css" type="text/css"/>
+  <link rel="stylesheet" href="/style.css" type="text/css"/>
    <style> body {padding: 0; margin: 0;} </style>
   </head>
   <body>
@@ -13,9 +13,9 @@
   <p id= "signedInAs">Edit Offering</p>
   
 	<form action="/updateOffering/{{offeringIdUpdate}}" method="post">
-
   <p id = "mstitle">{{#data}}     Name:</p>
   <br>
+  <input type="hidden" name="isNew" value="{{isNew}}">
   <input type="text" name="name" value="{{name}}">
   <br>
   <p id = "mstitle">Description:</p><br>
