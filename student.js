@@ -1,6 +1,7 @@
 var con = require('./database.js').connection;
 var moment = require('moment');
 var settings = require('./settings').system_settings;
+var middleware = require('./roles.js');
 
 // A message to students who haven't signed up after the student cutoff time has passed
 // Can't be a system setting because it is text
@@ -309,106 +310,100 @@ module.exports = {
 	});
  },
  init: function(app) {
-	app.get('/student/:id', function(req, res){
-		// Gets Student's id from url
-		var uid_student = req.params.id; 
+	app.get('/student', middleware.isStudent, function(req, res){
+		// Gets Student's id from middleware
+		var student = req.user.local[0];
+		var uid_student = student.uid_student; 
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
-		con.query('SELECT firstname FROM students WHERE uid_student = ?', [uid_student], function(err, student) {
-			if(!err) {
-				if(student.length != 0) {
-					// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
-					module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
-						// Checks whether it is time for students to choose yet
-						if (uid_day == null) { 
-							res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
-						} else {
-							// Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
-							con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) { // only gets the uid not the name
+		// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
+		module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
+		// Checks whether it is time for students to choose yet
+			if (uid_day == null) { 
+				res.render('student.html', {Student:student.firstname, Choice:"No Choice Selected", Description:"We're sorry, but the next Oppblock choices aren't ready yet. Check back soon!", oppTime:true, notExcluded:true});
+			} else {
+				// Knowing there is an upcoming oppblock day with choices, the system queries to find the student's current choice 
+				con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, currentChoice) { // only gets the uid not the name
+					if(!err) {
+						// Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
+						if(currentChoice.length != 0) {
+							con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
 								if(!err) {
-									// Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
-									if(currentChoice.length != 0) {
-										con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
-											if(!err) {
-												// Checks to see if it is past the cutoff time for the students to choose
-												if (cutOff) {
-													// Renders the page only with the user's current choice
-													res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
-												} else {
-													// Gets all offerings for the user, while checking whether they are excluded from that oppblock day
-													module.exports.getAvailableOfferings(uid_day, function(offerings) {
-														// At last, renders the page with the current choice, and the choices table
-														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
-													});
-												}
-											} else {
-												res.send("An Err done occured.");
-											}
+									// Checks to see if it is past the cutoff time for the students to choose
+									if (cutOff) {
+										// Renders the page only with the user's current choice
+										res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
+									} else {
+										// Gets all offerings for the user, while checking whether they are excluded from that oppblock day
+										module.exports.getAvailableOfferings(uid_day, function(offerings) {
+											// At last, renders the page with the current choice, and the choices table
+											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 										});
-										if (currentChoice[0].uid_offering == null) {
-											// Checks to see if it is past the cutoff time for the students to choose
-											if (cutOff) {
-												// Renders the page with an admin's message for the student, as they have neglected to sign up.
-												res.render('student.html', {Student:student[0].firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
-											} else {
-												// Gets all unfilled offerings for the user to choose from
-												module.exports.getAvailableOfferings(uid_day, function(offerings) {
-													// At last, renders the page with the lack of choice, and the choices table
-													res.render('student.html', {Student:student[0].firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
-												});
-											}
+									}
+								} else {
+									res.send("An Err done occured.");
+								}
+							});
+							if (currentChoice[0].uid_offering == null) {
+								// Checks to see if it is past the cutoff time for the students to choose
+								if (cutOff) {
+									// Renders the page with an admin's message for the student, as they have neglected to sign up.
+									res.render('student.html', {Student:student.firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
+								} else {
+									// Gets all unfilled offerings for the user to choose from
+									module.exports.getAvailableOfferings(uid_day, function(offerings) {
+										// At last, renders the page with the lack of choice, and the choices table
+										res.render('student.html', {Student:student.firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
+									});
+								}
+							} else {
+								con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
+									if(!err) {
+										// Checks to see if it is past the cutoff time for the students to choose
+										if (cutOff) {
+											// Renders the page only with the user's current choice
+											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
 										} else {
-											con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
-												if(!err) {
-													// Checks to see if it is past the cutoff time for the students to choose
-													if (cutOff) {
-														// Renders the page only with the user's current choice
-														res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
-													} else {
-														// Gets all unfilled offerings for the user to choose from
-														module.exports.getAvailableOfferings(uid_day, function(offerings) {
-															// At last, renders the page with the current choice, and the choices table
-															res.render('student.html', {Student:student[0].firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
-														});
-													}
-												} else {
-													res.render('error.html', {err:err});
-												}
+											// Gets all unfilled offerings for the user to choose from
+											module.exports.getAvailableOfferings(uid_day, function(offerings) {
+												// At last, renders the page with the current choice, and the choices table
+												res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 											});
 										}
 									} else {
-										// Renders the page without any choices, since the student is excluded
-										res.render('student.html', {Student:student[0].firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
+										res.render('error.html', {err:err});
 									}
-
-								} else {
-									res.send("An Err done occured.");
-									res.render('error.html', {err:err});
-								}
-							});	
+								});
+							}
+						} else {
+							// Renders the page without any choices, since the student is excluded
+							res.render('student.html', {Student:student.firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
 						}
-					});
-				} else {
-					res.send("We're Sorry. You don't exist in our database!");
-				}
-			} else {
-				res.render('error.html', {err:err});
+
+					} else {
+						res.send("An Err done occured.");
+						res.render('error.html', {err:err});
+					}
+				});	
 			}
-		});
+		});	
 	});
 
-	app.post('/student/:id', function(req, response) {
+	app.post('/student', middleware.isStudent, function(req, response) {
+		// Gets Student's id from middleware
+		var uid_student = req.user.local[0].uid_student; 
+
 		// checks if post request comes from an override or a choice
 		if(req.body.choice != undefined) {
 			// Updates Choice
-			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, req.params.id, req.body.uid_day], function(err, results) {
-				response.redirect('/student/' + req.params.id);
+			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, uid_student, req.body.uid_day], function(err, results) {
+				response.redirect('/student/' + uid_student);
 				response.end();
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, req.params.id, req.body.uid_day], function(err) {
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, req.body.uid_day], function(err) {
 				if(!err) {
-					response.redirect('/student/' + req.params.id);
+					response.redirect('/student/' + uid_student);
 					response.end();
 				} else {
 					res.send(err);

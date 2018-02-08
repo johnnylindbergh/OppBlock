@@ -1,17 +1,24 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-   
-	
-	<h1>Teacher Page</h1>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>Oppblock System: Teacher Portal</title>
+      <link rel="stylesheet" href="/adminstyle.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
 <body>
-	<h3>{{teacherName}}</h3>
+  <img id = "logo" src="/OppBlockLogoFinal.png">
+
+  <div id= "centralBox">
+
+  <p id= "titleText">Teacher Portal</p>
+  <p id= "signedInAs">Signed in as {{teacherName}}</p>
+  <a href = "/logout">Logout</a>
 	
 	<h2>Offerings</h2> 
-    <a href="/add/">Add</a>
+  <a class="button" href="/add">Add</a>
 
-<table style="width:100%">
+<table style="width:100%" align="center">
 
   <tr>
     <th>Edit</th>
@@ -20,23 +27,16 @@
     <th>Maximum Size</th>
   </tr>
 
- 
-
-{{#data}}
-
-
-
-
-
-<tr>
-    <td><a href="/editOffering/{{uid_offering}}/">Edit</a></td> 
-    <td>{{offeringName}}</td> 
-    <td>{{description}}</td> 
-    <td>{{max_size}}</td> 
-</tr>
-
-{{/data}}
-</table>
+  {{#data}}
+  <tr>
+      <td><a class="button" href="/editOffering/{{uid_offering}}/">Edit</a></td> 
+      <td>{{offeringName}}</td> 
+      <td>{{description}}</td> 
+      <td>{{max_size}}</td> 
+  </tr>
+  {{/data}}
+  </table>
+</div>
 <form type="hidden" id="offeringForm">
     {{#offerings}}
         <input type="hidden" id="offering" name={{name}} date={{day}}>

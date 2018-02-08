@@ -153,7 +153,7 @@ INSERT into admins (lastname, firstname, email) values ('Ware', 'Blake','bware@s
 INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', 'pquagliaroli@stab.org');
 INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
-INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
+#INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
 
 
 
@@ -232,8 +232,8 @@ INSERT into groups (group_info) values ('the cool group');
 -- INSERT into calendar (uid_day, uid_offering) values (2,8);
  
 
- INSERT into choices (uid_day, uid_student, uid_offering) values (1,1,1);
- INSERT into choices (uid_day, uid_student, uid_offering) values (1,2,1);
+ #INSERT into choices (uid_day, uid_student, uid_offering) values (1,1,1);
+ #INSERT into choices (uid_day, uid_student, uid_offering) values (1,2,1);
 
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
 

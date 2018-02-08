@@ -3,58 +3,36 @@
   <head>
     <meta charset="utf-8">
     <title>Oppblock System: Administrator Portal</title>
-      <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
     <style> body {padding: 0; margin: 0;} </style>
   </head>
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
 <body>
-	    <img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
-
-	<h1>Administrator Portal</h1>
-	<h3>{{Admin}}</h3>
-	<a href="/clientcsv">Add Students</a><br>
-    <a href="/Mopblock">Students who didn't sign up</a><br>
-    <a href="/Groups">Student Groups</a><br>
-    <a href="/admin_settings">Settings</a><br>
-    <a href = "/logout">Log out</a>
-    
-    <table style="">
-		<tr>
-			
-            <th>Date</th>
-            <th>Link</th>
-        </tr>
-        {{#data}}
-        <tr>
-            
-            <td>{{day}}</td>
-            <td><a href="/Day/{{uid_day}}">Link</a></td>
-        </tr>
-        {{/data}}
-    </table>
+  <img id = "logo" src="/OppBlockLogoFinal.png">
     
     <div id= "centralBox">
       <p id= "titleText">Administrator Portal</p>
       <p id= "signedInAs">Signed in as {{Admin}}</p>
 
-    <button type="button" href="/clientcsv">Database</button>
-    <button type="button" href="/Mopblock">MopBlock</button>
-    <button type="button" href="/Groups">Groups</button>
-    <button type="button" href="/admin_settings">Settings</button>
-    <button type="button" href="/scheduler">Schedule</button>
+    <a class="button" href="/csvinput">Add Students/Teachers</a>
+    <a class="button" href="/Mopblock">Non Sign-Ups</a>
+    <a class="button" href="/Groups">Groups</a>
+    <a class="button" href="/adminsettings">Settings</a>
+    <a class="button" href="/scheduler">Schedule</a>
+    <a class = "button" href = "/logout">Logout</a>
     
     <table style="width:100%" align="center">
       <tr>
         <th>Date</th>
-        <th>Day of the Week</th>
+        <th>Link</th>
       </tr>
       {{#data}}
       <tr>
-        <td>{{date}}</td>
-        <td>{{dayoftheweek}}</td>
+          
+          <td>{{day}}</td>
+          <td><a href="/Day/{{uid_day}}">Link</a></td>
       </tr>
       {{/data}}
     </table>
-    
   </body>
 </html>

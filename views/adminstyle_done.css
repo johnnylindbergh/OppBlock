@@ -1,5 +1,5 @@
 body{
-	background-image: url("/Users/cmackethan/OneDrive/School/Photography Intensive/12.12.16 (Sugar Hollow)/DSC_0203-2.jpg");
+	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
@@ -19,12 +19,14 @@ body{
 	border-style:solid;
 	border:5px;
 	border-color: black;
+	color: white;
 	width:1200px;
-	height:600px;
+	min-height: 600px;
 	margin:auto;
 	text-align: center;
 	padding-left:20px;
 	margin-top:30px;
+	padding-bottom: 100px;
 
 }
 
@@ -66,11 +68,11 @@ th{
 	color: white;
 }
 
-button{
+button, a.button{
 	width:150.5px;
 	font-size:15px;
-	display:inline-block;
-	text-align:left;
+	display:block;
+	text-align:center;
 	cursor:pointer;
 	border:none;
 	height:34px;
@@ -80,9 +82,30 @@ button{
 	margin-top:10px;
 	margin-right:5px;
 	float:left;
+	text-decoration: none;
 }
 
-button:hover{
+input{
+	width:150.5px;
+	font-size:15px;
+	display: inline-block;
+	text-align:left;
+	cursor:pointer;
+	border:none;
+	height:34px;
+	background-color: white;
+	border-color: white;
+	color: grey;
+	margin-top:10px;
+	margin-right:5px;
+}
+
+button:hover, a.button:hover{
 	background-color: black;
 	color: white;
+}
+
+h1, h2, h3 {
+	color:white;
+	font-family: Courier;
 }
