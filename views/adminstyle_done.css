@@ -47,6 +47,56 @@ body{
 	font-family: Lucida Grande;
 }
 
+.accordion {
+    background-color: grey;
+    color: white;
+    cursor: pointer;
+    width: 700px;
+    float:left;
+    border: 5px;
+    padding:10px;
+    padding-bottom:20px;
+    text-align: left;
+    font-size: 21px;
+    transition: 0.4s;
+}
+
+.active, .accordion:hover {
+    background-color: grey; 
+}
+
+.panel {
+ 	padding: 15px;
+ 	margin-bottom:10px;
+ 	text-align: left;
+ 	width:670px;
+    background-color: #793141;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+
+} 
+
+
+
+tr.panel, td.panel{
+	background-color: black;
+	opacity: 0.8;
+	text-align: left;
+	padding: 8px;
+}
+
+th.panel {
+	background: gray;
+	padding: 8px;
+}
+
+table.panel{
+	border: white;
+	margin-top: 10px;
+	font-family: Lucida Grande;
+}
+
 table{
 	border-collapse: collapse;
 	margin-top: 50px;
@@ -68,19 +118,19 @@ th{
 	color: white;
 }
 
-button, a.button{
+
+ a.button{
 	width:150.5px;
 	font-size:15px;
 	display:block;
 	text-align:center;
 	cursor:pointer;
 	border:none;
-	height:34px;
 	background-color: white;
 	border-color: white;
 	color: grey;
-	margin-top:10px;
-	margin-right:5px;
+	
+	padding: 10px;
 	float:left;
 	text-decoration: none;
 }
@@ -100,7 +150,7 @@ input{
 	margin-right:5px;
 }
 
-button:hover, a.button:hover{
+ a.button:hover{
 	background-color: black;
 	color: white;
 }
