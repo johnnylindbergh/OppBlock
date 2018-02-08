@@ -1,45 +1,8 @@
 
 <html>
-<title>
-{{Student}}'s Oppblock Status
-</title>
-<body>
-	<h1 style=""> {{Student}} </h1>
-	<h2 style=""> Your Choice: {{Choice}} <br> {{Description}} <br></h2>
-	{{^oppTime}} <!--Excludes the choice table if either it is before or past the choice cutoff time, or if the student is in an excluded sports group-->
-	<form method="post">
-		<input type="hidden" name="uid_day" value="{{uid_day}}">
-		<table style="">
-			<tr>
-			    <th>Name</th>
-			    <th>Description</th>
-			    <th>Teacher</th>
-			    <th>Maximum Size</th>
-	  		</tr>	
-	  		{{#data}}
-	  		<tr>
-	  			<td> <input type="radio" name="choice" value="{{uid}}">{{name}}</td>  <!-- uid/name = offering's uid/name-->
-	  			<td>{{description}}</td> 
-	  			<td>{{teacher}}</td>
-	  			<td>{{maxSize}}</td> 
-	  		</tr>
-	  		{{/data}}
-		</table>
-		<input type="submit" style="" value="Save New Choice">
-		<h3 style="">Make Sure You Choose an Amazing Oppblock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</h3>
-	</form>
-	{{/oppTime}}
-	{{^notExcluded}} <!-- Excludes the override button unless the student is excluded -->
-	<form method="post">
-		<input type="hidden" name="uid_day" value="{{uid_day}}">
-		<input type="submit" style="" value="Override">
-	</form>
-	{{/notExcluded}}
-</body>
-=======
 	<head>
-		<title>Craig Memorial OppBlock System</title>
-	    <link rel="stylesheet" type="text/css"/>
+		<title>Craig Memorial Student Page</title>
+	    <link rel="stylesheet" href="/style.css" type="text/css"/>
 	    <style> body {padding: 0; margin: 0;} </style>
 	</head>
 	<body>
@@ -74,6 +37,7 @@
 			<input type="submit" style="" value="Override">
 		</form>
 		{{/notExcluded}}
+		<a href = "/logout">Logout</a>
 	</body>
 </html>
 
