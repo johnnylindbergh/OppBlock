@@ -112,6 +112,8 @@ CREATE TABLE students (
 
 CREATE TABLE absent (
     uid_student INT,
+    uid_day INT,
+    FOREIGN KEY (uid_day) REFERENCES opp_block_day(uid_day),
     FOREIGN KEY (uid_student) REFERENCES students(uid_student)
 );
 
@@ -155,7 +157,7 @@ INSERT into admins (lastname, firstname, email) values ('Ware', 'Blake','bware@s
 INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', 'pquagliaroli@stab.org');
 INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
-INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
+#INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
 
 insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Johnny", "Lindbergh", "jlindbergh@students.stab.org");
 
@@ -238,8 +240,8 @@ INSERT into calendar (uid_day, uid_offering) values (7,1);
 -- INSERT into calendar (uid_day, uid_offering) values (2,8);
  
 
- #INSERT into choices (uid_day, uid_student, uid_offering) values (7,1,1);
- #INSERT into choices (uid_day, uid_student, uid_offering) values (7,2,1);
+ #INSERT into choices (uid_day, uid_student, uid_offering) values (1,1,1);
+ #INSERT into choices (uid_day, uid_student, uid_offering) values (1,2,1);
 
 -- UPDATE choices SET uid_offering = 1 WHERE uid_day = 1 AND uid_student = 1;
 

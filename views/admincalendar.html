@@ -3,15 +3,90 @@
 		<title>Craig Memorial OppBlock System</title>
 	    <link rel="stylesheet" type="text/css"/>
 	    <style> body {padding: 0; margin: 0;} </style>
+	    <link rel='stylesheet' href='https://fullcalendar.io/js/fullcalendar-3.8.2/fullcalendar.min.css' />
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/lib/jquery.min.js'></script>
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/lib/moment.min.js'></script>
+		<script src='https://fullcalendar.io/js/fullcalendar-3.8.2/fullcalendar.min.js'></script>
 	</head>
 	<body>
 		<h1> Opp Block Day Creation Calendar </h1>
-		<form method="post">
-			{{#batchSelect}}
-			<h4 class="{{weekDay}}" > Select </h4>
-			{{/batchSelect}}
-			
-			<input type="submit" style="" value="Save">
+		<form type="hidden" id="secretForm">
+			{{#days}}
+			<input type="hidden" id="days" name="days" value={{day}}>
+			{{/days}}
 		</form>
+		<h2> Click on days to mark them as Oppblock days. If you make a mistake, click again to unmark it. Press save to save your choices, making them permanent (marron). </h2>
+		<div style="display:inline-block; width:40%; text-align:left"> 
+			{{#batchSelect}}
+			<button class="{{weekDay}}" id="{{dayNum}}"> Select all {{weekDay}}s </button>
+			{{/batchSelect}}
+		</div>
+		<form method="post" style="display:inline-block; text-align:left;" id="newForm">
+			<input type="submit" value="Save">
+		</form>
+		<div id="calendar"> </div>
 	</body>
+	<script>
+		//	This function is called whenever the calendar is loaded or switches months 
+		// 	It takes in: 
+		//		An ID of a <form> which contains inputs corresponding to days on the calendar
+		//		A color with which to color the calendar cells	
+		//	The inputs from the <form> are serialized and iteratively "selected" on the calendar (changed from white to the color parameter)
+		//	Shows the user which days have already been selected permanently, and which have been selected this time (not saved yet)
+		function selectFromArray(arrayId, color) {
+			//	Serializes Days Array
+			var days = $('#' + arrayId).serializeArray();
+			//	Loops Through it
+		   	for(var i=0; i<days.length; i++) {
+		   		//Colors the cell after making sure it's the correct type of cell (fullcalendar bullshit)
+		   		var tdClass = JSON.stringify($("td [data-date=" + days[i].value + "]").attr("class"));
+				$("td [class=" + tdClass + "][data-date=" + days[i].value + "]").css('background-color', color);   
+		    }
+		}
+		//	This function either selects or a deselects a cell
+		//	It takes in:
+		//		Cell, a jquery object of the element to be changed
+		//		Select, a boolean determining whether to select (true) or deselect the cell (false)
+		//	It adds or removes a hidden input then changes the color of the cell
+		function changeACell(cell, select) {
+			if(select) {
+				var color = 'blue';
+				$('#newForm').prepend("<input type=hidden id=newDays name=newDays value=" + $(cell).attr('data-date') + ">");
+			} else {
+				var color = 'rgba(0, 0, 0, 0)';
+				$('input').remove("[value=" + $(cell).attr('data-date') + "]");
+			}
+			$(cell).css('background-color', color);
+		}
+		$(document).ready(function() {
+			//	Initializes fullCalendar
+		    $('#calendar').fullCalendar({
+		    	viewRender: function(view, element) {
+		    		//	Colors Selections
+		    		selectFromArray("newForm", "blue");
+		    		selectFromArray("secretForm", "maroon");
+		    	},
+		        dayClick: function(date, jsEvent, view) {
+		        	//	Makes sure this cell hasn't yet been selected
+		        	if($(this).css('background-color') == 'rgba(0, 0, 0, 0)') {
+		        		//	Selects the cell
+		        		changeACell(this, true);
+				    } else if ($(this).css('background-color') == 'rgb(0, 0, 255)') {
+				    	//	Deselects the cell
+				    	changeACell(this, false);
+				    }
+			    }
+		    });
+		    $('button').click(function(){
+		    	//	On any of the "Select All" buttons being clicked, this function goes through each <td> cell which corresponds to that button's day of the week
+		    	$("td:nth-of-type("+ (parseInt($(this).attr("id")) + 1) + ")").each(function(index) {
+		    		//	Checks to make sure the cell is the right type (fullcalendar bullshit) and hasn't been selected yet
+		    		if($(this).css('background-color') == 'rgba(0, 0, 0, 0)' && $(this).closest("div").attr("class") == "fc-bg") {
+		        		changeACell(this, true);
+				    }
+				});
+		    });
+		});
+	</script>
 </html>
+
