@@ -5,6 +5,7 @@ body{
 	background-size: auto;
 }
 
+
 #logo{
 	width:8%;
 	height:8%;
@@ -126,14 +127,15 @@ input{
 }
 
 
-button{
+button, a.button{
 	width:150.5px;
 	font-size:15px;
 	display:inline-block;
-	text-align:left;
+	text-align:center;
 	cursor:pointer;
 	border:none;
 	height:34px;
+	text-decoration:none;
 	background-color: white;
 	border-color: white;
 	color: grey;
@@ -142,7 +144,8 @@ button{
 	float:left;
 }
 
-button:hover{
+
+button, a.button:hover{
 	background-color: black;
 	color: white;
 }
