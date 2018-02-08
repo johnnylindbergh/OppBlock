@@ -37,7 +37,31 @@
 
 {{/data}}
 </table>
-
+<form type="hidden" id="offeringForm">
+    {{#offerings}}
+        <input type="hidden" id="offering" name={{name}} date={{day}}>
+    {{/offerings}}
+</form>
+<!-- Full Calendar Div -->
+<div id="calendar"> </div>
 	
 </body>
+<script>
+        $(document).ready(function() {
+            //  Initializes fullCalendar
+            $('#calendar').fullCalendar({
+                viewRender: function(view, element) {
+                    //  Serializes Hidden Offering Inputs
+                    //  Should I just serialize the rows of the table????
+                    var offerings = $('#offeringForm').serializeArray();
+                    //  Loops Through it
+                    for(var i=0; i<offerings.length; i++) {
+                        var offeringName = offerings[i].name;
+                        //  MAKE EVENT
+                    }
+                }
+                //  Show Weekends?
+            });
+        });
+    </script>
 </html>
