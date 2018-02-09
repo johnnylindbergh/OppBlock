@@ -76,7 +76,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://opp.thelounge.sx/auth/google/callback",
+    callbackURL: "http://localhost:8980/auth/google/callback",
     passReqToCallback: true
   },
   function(request, accessToken, refreshToken, profile, done) {

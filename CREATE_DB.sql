@@ -34,6 +34,10 @@ INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES
     "Start Time for Opp Block (minutes)",
     "Number of minutes after midnight on Opp Block days when the Opp Block begins, so that the system should give teachers the option to take attendance.",
     45);
+INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("minutes_length_oppblock",
+    "End Time for Opp Block (minutes)",
+    "Duration of an Opp Block",
+    50);
 INSERT INTO system_settings (name, friendly_name, description, value_int) VALUES ("opp_days",
     "Opp Block Days",
     "Days of the week upon which Opp Block typically occurs.",
@@ -155,16 +159,17 @@ INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mla
 INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
 #INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
 
-
+insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Johnny", "Lindbergh", "jlindbergh@students.stab.org");
 
 ## Test Data
 
-##INSERT into opp_block_day (day) values ('2018-01-13');
-##INSERT into opp_block_day (day) values ('2018-01-16');
-##INSERT into opp_block_day (day) values ('2018-01-19');
-##INSERT into opp_block_day (day) values ('2018-01-23');
-##INSERT into opp_block_day (day) values ('2018-01-26');
-##INSERT into opp_block_day (day) values ('2018-01-30');
+INSERT into opp_block_day (day) values ('2018-01-26');
+INSERT into opp_block_day (day) values ('2018-01-30');
+INSERT into opp_block_day (day) values ('2018-02-6');
+INSERT into opp_block_day (day) values ('2018-02-9');
+INSERT into opp_block_day (day) values ('2018-02-13');
+INSERT into opp_block_day (day) values ('2018-02-4');
+INSERT into opp_block_day (day) values ('2018-02-5');
 
 
 
@@ -185,10 +190,13 @@ INSERT into groups (group_info) values ('the lamest group');
 INSERT into groups (group_info) values ('the cool group');
 
 
-##INSERT into students (lastname, firstname, grade) values ("Last-Yuen", "Milo", 11);
-##INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
-##INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
-
+INSERT into students (lastname, firstname, grade) values ("Last-Yuen", "Milo", 11);
+INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
+INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
+INSERT into students (lastname, firstname, grade) values ("Lindbergh", "Johnny", 12);
+INSERT into students (lastname, firstname, grade) values ("Yao", "Jerry", 12);
+INSERT into students (lastname, firstname, grade) values ("MacKethan", "Conrad", 12);
+INSERT into students (lastname, firstname, grade) values ("Minster", "Zach", 12);
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
 
@@ -196,11 +204,11 @@ INSERT into groups (group_info) values ('the cool group');
 -- INSERT into student_groups (uid_student, uid_group) values (2,1);
 
 
-##INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);
--- INSERT into calender (uid_day, uid_offering) values (1,1);
+##INSERT into offerings (name, description, max_size, uid_teacher, recurring) values ("The Minster Opp Block", "In which one might drink coffee, teach comp sci, or listen to trance music.", 1, 1, 0);INSERT into calender (uid_day, uid_offering) values (1,1);
 -- INSERT into calender (uid_day, uid_offering) values (2,1);
 
-##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("CS Studio", 10, 1, 0, "This OppBlock is...");
+INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Johnny's OppBlock", 10, 1, 0, "This OppBlock is...");
+INSERT into calendar (uid_day, uid_offering) values (7,1);
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("Mr. Minster's 2nd Offering", 15, 1, 0, "This OppBlock is...");
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("SAT or ACT Math", 10, 2, 0, "This OppBlock is...");
 ##INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("One on One thinking games", 10, 3, 0, "This OppBlock is...");

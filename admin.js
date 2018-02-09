@@ -30,7 +30,6 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
-		//	Maybe Add an ARE YOU SURE message before the post request?
 		app.get('/calendar', function(req, res) { 
 			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
@@ -50,19 +49,33 @@ module.exports =  {
 			});
 		});
 		app.post('/calendar', function(req, res) {
-			var callback = 0;
-			for (var i=0; i<req.body.newDays.length; i++) {
-				con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays[i]], function(err, result) { 
+			//	This post request inserts an admin's desired Oppblock days into the database
+			//	
+			//	First checks if there is only one day input, which would be treated as a string
+			if (typeof(req.body.newDays) == "string") {
+				con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays], function(err, result) { 
 					if(!err) {
-						callback += 1;
-						if (callback == req.body.newDays.length) {
-							res.redirect('/calendar');
-							res.end();
-						}
+						res.redirect('/calendar');
+						res.end();
 					} else {
 						res.render('error.html', {err:err});
 					}
 				});
+			} else { //	Otherwise loops through the inputs to insert them into the database
+				var callback = 0;
+				for (var i=0; i<req.body.newDays.length; i++) {
+					con.query('INSERT INTO opp_block_day (day) VALUES (?)', [req.body.newDays[i]], function(err, result) { 
+						if(!err) {
+							callback += 1;
+							if (callback == req.body.newDays.length) {
+								res.redirect('/calendar');
+								res.end();
+							}
+						} else {
+							res.render('error.html', {err:err});
+						}
+					});
+				}
 			}
 		});
 		return this;

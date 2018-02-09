@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Craig Memorial Student Page</title>
-	    <link rel="stylesheet" type="text/css"/>
+	    <link rel="stylesheet" href="/style.css" type="text/css"/>
 	    <style> body {padding: 0; margin: 0;} </style>
 	</head>
 	<body>
@@ -19,8 +19,8 @@
 				    <th>Maximum Size</th>
 		  		</tr>	
 		  		{{#data}}
-		  		<tr>
-		  			<td> <input type="radio" name="choice" value="{{uid}}">{{name}}</td>  <!-- uid/name = offering's uid/name-->
+		  		<tr class={{disabled}}> <!-- disabled greys out the tr element and disables the radio button -->
+		  			<td> <input type="radio" name="choice" value="{{uid}}" {{disabled}}> {{name}} </td>  
 		  			<td>{{description}}</td> 
 		  			<td>{{teacher}}</td>
 		  			<td>{{maxSize}}</td> 

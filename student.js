@@ -280,13 +280,14 @@ module.exports = {
 			var uid_day = null;
 			var closest = moment().add(1, 'y');
 			for (var i=0; i<results.length; i++) {
-				// Loops to find soonest Oppblock
+				//	Loops to find soonest Oppblock
 				var curr = moment(results[i].day, 'YYYY-MM-DD');
-				if(curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
-				if(curr.isBefore(closest) && (curr.isAfter(moment()) || curr.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) ){
+				//	Checks if the current oppBlock day is in the future and before the closest
+				//	If so, replaces closest with the current
+				if (curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
 					closest = curr;	
 					uid_day = results[i].uid_day;				
-				} }
+				}
 			} 
 			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
@@ -349,7 +350,7 @@ module.exports = {
 									// Renders the page with an admin's message for the student, as they have neglected to sign up.
 									res.render('student.html', {Student:student.firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
 								} else {
-									// Gets all unfilled offerings for the user to choose from
+									// Gets all offerings for the user to choose from
 									module.exports.getAvailableOfferings(uid_day, function(offerings) {
 										// At last, renders the page with the lack of choice, and the choices table
 										res.render('student.html', {Student:student.firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
@@ -378,7 +379,6 @@ module.exports = {
 							// Renders the page without any choices, since the student is excluded
 							res.render('student.html', {Student:student.firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
 						}
-
 					} else {
 						res.send("An Err done occured.");
 						res.render('error.html', {err:err});
