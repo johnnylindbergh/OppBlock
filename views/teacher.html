@@ -6,6 +6,10 @@
     <title>Oppblock System: Teacher Portal</title>
       <link rel="stylesheet" href="/style.css" type="text/css"/>
     <style> body {padding: 0; margin: 0;} </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.8.2/fullcalendar.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.8.2/fullcalendar.min.js"></script>
   </head>
 <body>
   <img id = "logo" src="/OppBlockLogoFinal.png">
@@ -108,12 +112,11 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         viewRender: function(view, element) {
             //  Serializes Hidden Offering Inputs
-            //  Should I just serialize the rows of the table????
             var offerings = $('#offeringForm').serializeArray();
             //  Loops Through it
             for(var i=0; i<offerings.length; i++) {
-                var offeringName = offerings[i].name;
-                //  MAKE EVENT
+                var event={id:i, title: offerings[i].name, start:offerings[i].date};
+                $('#calendar').fullCalendar( 'renderEvent', event, true);
             }
         }
         //  Show Weekends?
