@@ -67,7 +67,7 @@ module.exports = function(app) {
 		
 	});
 
-
+	//	All that would be required to add an offering calendar for teachers would be to render teacher.html with 'offerings: resultsDay' and to uncomment the #calendar div in teacher.html
 	app.get('/teacherHome', function(req, res){
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
