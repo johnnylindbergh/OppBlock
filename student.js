@@ -206,6 +206,7 @@ module.exports = {
     this.maxSize = maxSize;
     this.recur = recurring;
     this.teacher = teacher;
+    this.disabled = false;
   }
   var offerList = [];
   var trueOffers = [];
@@ -257,13 +258,12 @@ module.exports = {
     var j = 0;
     for(var i = 0; i <response.length; i++) {
       module.exports.isOfferingFull(uid_day, response[i].uid, function(truth){
-        if(truth) {
-          availableList.push(response[j]);
-        }
-        j+=1;
-        if(j==response.length) {
-      		callback(availableList);
-      	}
+		  response[j].disabled = truth;
+		  availableList.push(response[j]);
+		  j+=1;
+		  if(j==response.length) {
+			callback(availableList);
+		  }
       });
     }
   });
