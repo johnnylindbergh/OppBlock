@@ -185,9 +185,9 @@ module.exports = {
     if(!err) {
       module.exports.numStudents(uid_day, uid_offering, false, function(num, infoList){
         if(num <= data[0].max_size) {
-          callback(true);
+          callback("disabled");
         } else {
-          callback(false);
+          callback("");
         }    
       });
     } else {
@@ -206,7 +206,7 @@ module.exports = {
     this.maxSize = maxSize;
     this.recur = recurring;
     this.teacher = teacher;
-    this.disabled = false;
+    this.disabled;
   }
   var offerList = [];
   var trueOffers = [];
@@ -327,23 +327,7 @@ module.exports = {
 					if(!err) {
 						// Checks if the student is in the choice table at all, thereby seeing if he/she is excluded from the oppblock day
 						if(currentChoice.length != 0) {
-							con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
-								if(!err) {
-									// Checks to see if it is past the cutoff time for the students to choose
-									if (cutOff) {
-										// Renders the page only with the user's current choice
-										res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
-									} else {
-										// Gets all offerings for the user, while checking whether they are excluded from that oppblock day
-										module.exports.getAvailableOfferings(uid_day, function(offerings) {
-											// At last, renders the page with the current choice, and the choices table
-											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
-										});
-									}
-								} else {
-									res.send("An Err done occured.");
-								}
-							});
+							//	Checks to see if the student hasn't chosen yet
 							if (currentChoice[0].uid_offering == null) {
 								// Checks to see if it is past the cutoff time for the students to choose
 								if (cutOff) {
@@ -357,6 +341,7 @@ module.exports = {
 									});
 								}
 							} else {
+								//	Knowing the student has chosen, it gets the name of their choice
 								con.query('SELECT name FROM offerings WHERE uid_offering = ?', [currentChoice[0].uid_offering], function(err, choice) {
 									if(!err) {
 										// Checks to see if it is past the cutoff time for the students to choose
@@ -364,7 +349,7 @@ module.exports = {
 											// Renders the page only with the user's current choice
 											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to your current choice! Contact an Administrator immediately if you forgot to choose.", oppTime:true, notExcluded:true});
 										} else {
-											// Gets all unfilled offerings for the user to choose from
+											// Gets all offerings for the user to choose from
 											module.exports.getAvailableOfferings(uid_day, function(offerings) {
 												// At last, renders the page with the current choice, and the choices table
 												res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"See choices table below for description", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
