@@ -337,14 +337,14 @@ module.exports = function(app) {
 		var day_uid = req.params.id;
 			con.query('select * from offerings;', function(err, resultsDay) {
 				var link=resultsDay[0].uid_teacher;
-				//console.log(link);
+				console.log(link);
 				con.query('select teacher_firstname as name from teachers where uid_teacher=?;',[link], function(err, resultName){
 				
-				//console.log(resultsDay);
+				console.log(resultName[0].name);
 				
 				res.render('Day.html', { 
 				data:resultsDay,
-				Teacher:resultName.name
+				Teacher:resultName[0].name
 				
 				});
 			});
