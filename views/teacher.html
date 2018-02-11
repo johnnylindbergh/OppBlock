@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+        <link rel="stylesheet" href="/style.css" type="text/css"/>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <title>Oppblock System: Teacher Portal</title>
-      <link rel="stylesheet" href="/style.css" type="text/css"/>
-    <style> body {padding: 0; margin: 0;} </style>
   </head>
 <body>
   <img id = "logo" src="/OppBlockLogoFinal.png">
@@ -13,58 +13,65 @@
   <div id= "centralBox">
 
   <p id= "titleText">Teacher Portal</p>
-  <p id= "signedInAs">Signed in as {{teacherName}}</p>
+  <p id= "signedInAs">Welcome, {{teacherName}}!</p>
 
-{{#currentOffering}}
-<br>
-  <button class="accordion"> 
+
+
+
+  {{#currentOffering}}
+  <div id="currentOffering">
     <br>
-    Current Offering: {{name}} <a class="button" href="/attendance/{{uid_offering}}/{{uid_day}}" style = "float:right; ">Take Attendance</a></button>
-  {{/currentOffering}}
-
-
-<div class="panel">
-<br>
-
-
-<h3 style = "font-family: Lucida Grande">Students</h3>
-<table style="width:100%" align="center" class="panel">
-  <tr class="panel">
-    <th class="panel">Name</th>
-    <th class="panel">Status</th>
-  </tr>
-<form action="/updateAttendance/{{offeringIdUpdate}}" method="post">
- {{#students}}
-  <tr class="panel">
-      <td class="panel">{{firstname}} {{lastname}}</td> 
-      <td class="panel">
-        <input type = "hidden" name = "allStudents" value = "{{uid_student}}" >
-
-        <input type="checkbox" id = "{{uid_student}}" style="display:none;" name="students" value = "{{uid_student}}" {{#arrived}}checked="checked"{{/arrived}}>
-        <label class="check" for="{{uid_student}}">{{#arrived}}Arrived{{/arrived}}{{^arrived}}Not Arrived{{/arrived}}</label>
-        
-      </td> 
-
-  </tr>
-  {{/students}}
-
-
-
-
-</table>
-<input type="submit" value="Submit">
-</form>
-
-  <form action="/addStudent/{{offeringIdAdd}}/{{offeringDay}}" method="post">
- <br>
-      Add Student: <br>
-   
-      <input type="text" placeholder="Johnny Lindbergh"  name="studentName"> <br>
-      <input type="submit" value="Submit">
+    Current Offering: {{name}}
+    <br>
+      {{#containsStudents}}
+      <h3 style = "font-family: Lucida Grande">Students</h3>
+        <table style="width:100%; table-layout:fixed" class="panel">
+          <tr class="panel">
+            <th class="panel">Name</th>
+            <th class="panel">Status</th>
+            <th class="panel"></th>
+          </tr>
+          <form action="/updateAttendance/{{offeringId}}" method="post">
+            {{#students}}
+              <tr class="panel">
+                <td class="panel">{{firstname}} {{lastname}}</td> 
+                <td class="panel">
+                  <input type ="hidden" name ="allStudents" value ="{{uid_student}}" >
+    
+                  <input type="checkbox" id ="{{uid_student}}" style="display:none;" name="students" value = "{{uid_student}}" {{#arrived}}checked="checked"{{/arrived}}>
+                  <label class="check" for="{{uid_student}}">{{#arrived}}Arrived{{/arrived}}{{^arrived}}Not Arrived{{/arrived}}</label>
+                  <td><a class="button" href="/removeStudent/{{uid_day}}/{{uid_offering}}/{{uid_student}}">Remove</a></td> 
+                </td> 
   
-  </form>
+              </tr>
+            {{/students}}
+        </table>
+  
+      <input type="submit" value="Update Attendance"> 
+      <br>
+    </form>
+    {{/containsStudents}}
+    {{^containsStudents}}
+      No Students.
+    {{/containsStudents}}
+  
+    <form action="/addStudent/{{offeringId}}/{{offeringDay}}" method="post">
+      <br>
+      Add Student: 
+      <br>
+     
+        <input type="text" placeholder="Johnny Lindbergh"  name="studentName"> 
+        <br>
+         <input type="submit" value="Add">
+    
+    </form>
 
 </div>
+
+{{/currentOffering}}
+
+
+
 <br>
 
   <a href = "/logout">Logout</a>
@@ -77,6 +84,7 @@
   <tr>
     <th>Edit</th>
     <th>Name</th>
+    <th>Location</th>
     <th>Description</th>
     <th>Maximum Size</th>
   </tr>
@@ -85,20 +93,21 @@
   <tr>
       <td><a class="button" href="/editOffering/{{uid_offering}}/">Edit</a></td> 
       <td>{{offeringName}}</td> 
+      <td>{{location}}</td>
       <td>{{description}}</td> 
       <td>{{max_size}}</td> 
   </tr>
 
   {{/data}}
+
   </table>
+  {{^data}}No Offerings{{/data}}
   </div>
 
 	
 </body>
 
 <script>
-var acc = document.getElementsByClassName("accordion");
-var i;
 
 
 $(".check").on("click", function(){
@@ -106,17 +115,6 @@ $(".check").on("click", function(){
 });
 
 
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight){
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    } 
-  });
-}
 </script>
 
 </html>

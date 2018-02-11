@@ -44,6 +44,9 @@ body{
 	font-family: Lucida Grande;
 }
 
+#currentOffering{
+	text-align-:left;
+}
 #offerings{
 	margin:auto;
 	text-align:left;
