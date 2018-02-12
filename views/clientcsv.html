@@ -6,19 +6,19 @@
 	  <style> body {padding: 0; margin: 0;} </style>
   </head>
   <body>
-  	<img id = "logo" src="/Users/cmackethan/OppBlock/OppblockLogoFinal.png">
+  	<img id = "logo" src="/OppBlockLogoFinal.png">
 
   	<div id= "centralBox">
   	  <p id= "titleText">Database Management</p>
 
   	  <form action="/studentcsvinput" method="post">
-  	     <textarea rows="25" cols="80" name="Rad" placeholder="Paste Student CSV File"> </textarea>
-  	     <input type="submit"></input>
+  	     <textarea id="csvbox" rows="25" cols="80" name="Rad" placeholder="Paste Student CSV File"></textarea>
+  	     <input id="csvsubmit" type="submit"></input>
   	  </form>
 
       <form action="/teachercsvinput" method="post">
-         <textarea rows="25" cols="80" name="Radical" placeholder="Paste Teacher CSV File"> </textarea>
-         <input type="submit"></input>
+         <textarea id="csvbox" rows="25" cols="80" name="Radical" placeholder="Paste Teacher CSV File"></textarea>
+         <input id="csvsubmit" type="submit"></input>
       </form>
 
   	</div>

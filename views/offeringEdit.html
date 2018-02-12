@@ -5,6 +5,7 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <title>Oppblock System: Edit Offering</title>
+  <link rel="stylesheet" href="style.css" type="text/css"/>
    <style> body {padding: 0; margin: 0;} </style>
   </head>
   <body>
@@ -15,12 +16,13 @@
   <p id= "signedInAs">Edit Offering</p>
   
 	<form action="/updateOffering/{{offeringId}}/" method="post">
-  <input type="hidden" name="isNew" value="{{isNew}}">
   {{#data}}
-    Name:<br>
+  <p id="mstitle">Name:</p>  
+  <br>
+  <input type="hidden" name="isNew" value="{{isNew}}">
   <input type="text" name="name" value="{{name}}">
   <br>
-  Location:<br>
+  <p id='mstitle'>Location:</p>
   <input type="text" class="location" name="location" value="{{location}}">
   <br>
   <div id='location'>
@@ -38,20 +40,16 @@
     </table>
   </div>
 
-  Description:<br>
+  <p id = "mstitle">Description:</p><br>
    <TEXTAREA name="description" rows="10" cols="40">
     {{description}}
    </TEXTAREA>
-   <br>Max Size:<br>
+   <br> <p id = "mstitle">Max Size: </p><br>
   <input type="text" name="max_size" value="{{max_size}}">
-
  <br>
-   {{#dayData}}
-    {{#canEdit}}
-   {{day}}
+   {{#dayData}} {{#canEdit}} <p id = "mstitle">{{day}}</p>
   <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
-  {{/canEdit}}
-{{/dayData}}
+  {{/canEdit}} {{/dayData}}
 
   <br>
   <input type="submit" value="Submit">
@@ -59,7 +57,7 @@
 
 </form> 
 
- <a class="button" href="/delete/{{offeringId}}/">Delete</a>
+ <a class="button" id = "offeringdelete" href="/delete/{{offeringId}}">Delete</a>
  </div>
 </body>
 
