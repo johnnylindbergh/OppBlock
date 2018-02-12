@@ -1,12 +1,13 @@
 var con = require('./database.js').connection;
 var settings = require('./settings.js');
 var moment = require('moment');
+var middleware = require('./roles.js');
 module.exports =  {
 
 	// initialize routes for admin backend
 	// TODO: (P1) restrict access to these routes to authenticated admins only using middleware (tbd)
 	init: function(app) {
-		app.get("/settings", function(req, res) {
+		app.get("/settings", middleware.isAdmin, function(req, res) {
 			var data = [];
 			var keys = Object.keys(settings.system_settings);
 			for (var i = 0; i < keys.length; i++) {	// loop through all settings
@@ -14,7 +15,7 @@ module.exports =  {
 			}
 			res.render("adminsettings.html", {settings: data});
 		});
-		app.post("/settings", function(req, res) {
+		app.post("/settings", middleware.isAdmin, function(req, res) {
 			var keys = Object.keys(req.body);
 			var key_count = keys.length;	// counts the number of remaining keys to update in DB
 			for(var i = 0; i < keys.length; i++) {
@@ -30,7 +31,7 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
-		app.get('/calendar', function(req, res) { 
+		app.get('/calendar', middleware.isAdmin, function(req, res) { 
 			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
 					if(oppDays.length != 0) {
@@ -48,7 +49,7 @@ module.exports =  {
 				}
 			});
 		});
-		app.post('/calendar', function(req, res) {
+		app.post('/calendar', middleware.isAdmin, function(req, res) {
 			//	This post request inserts an admin's desired Oppblock days into the database
 			//	
 			//	First checks if there is only one day input, which would be treated as a string

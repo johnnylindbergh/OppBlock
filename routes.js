@@ -333,7 +333,7 @@ module.exports = function(app) {
 	});
 
 
-	app.get('/Day/:id', function(req, res) {
+	app.get('/Day/:id', middleware.isAdmin, function(req, res) {
 		var day_uid = req.params.id;
 			con.query('select * from offerings;', function(err, resultsDay) {
 				var link=resultsDay[0].uid_teacher;
@@ -353,7 +353,7 @@ module.exports = function(app) {
 		});	
 	});
 	
-	app.get('/Offeringstudents/:id', function(req, res){
+	app.get('/Offeringstudents/:id', middleware.isAdmin, function(req, res){
 		var teacher_uid = req.params.id;
 		//console.log(teacher_uid);
 		con.query('select uid_offering from offerings where uid_teacher=?;',[teacher_uid], function(err, resultsO){
@@ -378,7 +378,7 @@ module.exports = function(app) {
 
 
 
-	app.get('/Admin', function(req, res){
+	app.get('/Admin', middleware.isAdmin, function(req, res){
 		con.query('select * from opp_block_day;', function(err, resultsAdmin){
 				console.log(resultsAdmin);
 				res.render('Admin.html',{
@@ -391,7 +391,7 @@ module.exports = function(app) {
 	
 
 	//need to join those uid students with student names
-	app.get('/Mopblock', function(req, res){
+	app.get('/Mopblock', middleware.isAdmin, function(req, res){
 		con.query('select * from absent;', function(err, resultsMopblock){
 				console.log(resultsMopblock);
 				res.render('Mopblock.html',{
