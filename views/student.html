@@ -2,12 +2,12 @@
 <html>
 	<head>
 		<title>Craig Memorial Student Page</title>
-	    <link rel="stylesheet" href="/style.css" type="text/css"/>
+	    <link rel="stylesheet" href="style.css" type="text/css"/>
 	    <style> body {padding: 0; margin: 0;} </style>
 	</head>
 	<body>
-		<h1 style=""> {{Student}} </h1>
-		<h2 style=""> Your Choice: {{Choice}} <br> {{Description}} <br></h2>
+		<h1> {{Student}} </h1>
+		<h2> Your Choice: {{Choice}} <br> {{Description}} <br></h2>
 		{{^oppTime}} <!--Excludes the choice table if either it is before or past the choice cutoff time, or if the student is in an excluded sports group-->
 		<form method="post">
 			<input type="hidden" name="uid_day" value="{{uid_day}}">
