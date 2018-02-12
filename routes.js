@@ -67,7 +67,7 @@ module.exports = function(app) {
 		
 	});
 
-
+	//	All that would be required to add an offering calendar for teachers would be to render teacher.html with 'offerings: resultsDay' and to uncomment the #calendar div in teacher.html
 	app.get('/teacherHome', function(req, res){
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
@@ -335,21 +335,11 @@ module.exports = function(app) {
 
 	app.get('/Day/:id', function(req, res) {
 		var day_uid = req.params.id;
-			console.log(day_uid);
-			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {
-				
-					
-				console.log(resultsDay);	
-					
-						res.render('Day.html', { 
-							data:resultsDay,
-							
-							
-						});
-					
-					
-			
-		});	
+			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {					
+			res.render('Day.html', { 
+				data:resultsDay,
+			});
+		});
 	});
 	
 	app.get('/Offeringstudents/:id', function(req, res){
