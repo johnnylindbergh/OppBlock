@@ -335,24 +335,13 @@ module.exports = function(app) {
 	});
 
 
-	app.get('/Day/:id', middleware.isAdmin, function(req, res) {
+	app.get('/Day/:id', function(req, res) {
 		var day_uid = req.params.id;
-			con.query('select * from offerings;', function(err, resultsDay) {
-				var link=resultsDay[0].uid_teacher;
-				console.log(link);
-				con.query('select teacher_firstname as name from teachers where uid_teacher=?;',[link], function(err, resultName){
-				
-				console.log(resultName[0].name);
-				
-				res.render('Day.html', { 
+			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {					
+			res.render('Day.html', { 
 				data:resultsDay,
-				Teacher:resultName[0].name
-				
-				});
 			});
-			
-			
-		});	
+		});
 	});
 	
 	app.get('/Offeringstudents/:id', middleware.isAdmin, function(req, res){
