@@ -335,20 +335,19 @@ module.exports = function(app) {
 
 	app.get('/Day/:id', function(req, res) {
 		var day_uid = req.params.id;
-			con.query('select * from offerings;', function(err, resultsDay) {
-				var link=resultsDay[0].uid_teacher;
-				//console.log(link);
-				con.query('select teacher_firstname as name from teachers where uid_teacher=?;',[link], function(err, resultName){
+			console.log(day_uid);
+			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {
 				
-				//console.log(resultsDay);
-				
-				res.render('Day.html', { 
-				data:resultsDay,
-				Teacher:resultName.name
-				
-				});
-			});
-			
+					
+				console.log(resultsDay);	
+					
+						res.render('Day.html', { 
+							data:resultsDay,
+							
+							
+						});
+					
+					
 			
 		});	
 	});
@@ -365,9 +364,9 @@ module.exports = function(app) {
 				
 				con.query('select lastname from students where uid_student=?;',[stud], function(err, resultsZ){
 				con.query('select name from teachers where uid_teacher=?;', [teacher_uid], function(err, resultsN){
-				console.log(resultsN);
+				console.log(resultsN.name);
 				res.render('Offeringstudents.html',{
-				name:resultsN[0].name,
+				name:resultsN.name,
 				data:resultsZ
 				});
 			});
@@ -380,7 +379,7 @@ module.exports = function(app) {
 
 	app.get('/Admin', function(req, res){
 		con.query('select * from opp_block_day;', function(err, resultsAdmin){
-				console.log(resultsAdmin);
+				//console.log(resultsAdmin);
 				res.render('Admin.html',{
 				
 				data:resultsAdmin
