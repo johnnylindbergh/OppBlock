@@ -42,6 +42,7 @@
     "passport-google-oauth": "^1.0.0",
     "passport-google-oauth2": "^0.1.6",
     "passport-oauth": "^1.0.0",
+    "priorityqueuejs": "^1.0.0",
     "public-ip": "^2.3.5",
     "should": "^13.2.0",
     "twilio": "^3.6.7"

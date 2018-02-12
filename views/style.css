@@ -1,10 +1,11 @@
+/*UNIVERSAL STYLE*/
+
 body{
-	background-image: url("https://stringconstant.github.io/background.jpg");
+	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
 }
-
 
 #logo{
 	width:8%;
@@ -45,6 +46,9 @@ body{
 	font-family: Lucida Grande;
 }
 
+#currentOffering{
+	text-align-:left;
+}
 #offerings{
 	margin:auto;
 	text-align:left;
@@ -77,31 +81,27 @@ th{
 a {color: black;}
 a:hover {color:blue;}
 
-textarea{
-	display:block;
-	float: left;
-	background-color: white;
-	border-style:solid;
-	border-width:2px;
-	border-color: white;
-	margin-top:10px;
-}
-
-input{
+#csvsubmit{
 	width:150.5px;
 	font-size:15px;
 	display:block;
-	text-align:left;
+	text-align:center;
 	cursor:pointer;
 	border:none;
 	height:34px;
 	background-color: white;
 	border-color: white;
 	color: grey;
-	margin-left:100px;
-	margin-top:10px;
-	margin-left:0px;
-/*	margin-right:5px;*/
+	margin:auto;
+}
+
+#csvsubmit:hover{
+	background-color: black;
+	color: white;
+}
+
+#csvbox{
+	margin: 20px;
 }
 
 /*input:hover{
@@ -111,9 +111,8 @@ input{
 
 #mstitle{
 	display:block;
-	margin-left:0px;
-	margin-bottom:5px;
-	text-align:left;
+	margin: auto;
+	text-align:center;
 	color:white;
 }
 
@@ -125,7 +124,6 @@ input{
 	text-align:left;
 	color:white;
 }
-
 
 button, a.button{
 	width:150.5px;
@@ -144,8 +142,73 @@ button, a.button{
 	float:left;
 }
 
+/*button, a.button:hover{
+	background-color: black;
+	color: white;
+}
+*/
 
-button, a.button:hover{
+#offeringdelete{
+	width:150.5px;
+	font-size:15px;
+	display:inline-block;
+	text-align:center;
+	vertical-align: middle;
+	padding: 0px;
+	cursor:pointer;
+	border:none;
+	height:40px;
+	font-family: Lucida Grande;
+	background-color: white;
+	border-color: white;
+	color: grey;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	float:left;
+}
+
+#offeringdelete:hover{
+	background-color: black;
+	color: white;
+}
+
+/*STUDENT.HTML STYLE*/
+
+#logout:hover{
+	background-color: black;
+	color: white;
+}
+
+#choice{
+	margin: auto;
+	padding-top: 100px;
+	text-align: left;
+	color: white;
+	font-family: Lucida Grande;
+}
+
+/*ADMIN.HTML STYLE*/
+
+#adminbutton{
+	width:150.5px;
+	font-size:15px;
+	display:inline-block;
+	text-align:center;
+	vertical-align: middle;
+	padding: 0px;
+	cursor:pointer;
+	border:none;
+	height:40px;
+	font-family: Lucida Grande;
+	background-color: white;
+	border-color: white;
+	color: grey;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	float:left;
+}
+
+#adminbutton:hover{
 	background-color: black;
 	color: white;
 }

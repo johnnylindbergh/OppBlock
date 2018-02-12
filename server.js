@@ -37,7 +37,6 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
-  console.log("Deserializing:" + user);
 
   user.isAdmin = false;
   user.isStudent = false;
@@ -64,7 +63,7 @@ passport.deserializeUser(function(user, done) {
                   user.local = row[0];
                   done(null, user);
                 } else {
-                  done(true, null); // error default
+                  done('you are not in the system :) use a STAB account', null); // error default
                 }
               });
           }
