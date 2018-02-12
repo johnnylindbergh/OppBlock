@@ -185,7 +185,7 @@ INSERT into opp_block_day (day) values ('2018-02-5');
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mr.','Jeremy Eith', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Mrs.','Sarah Moses', "Teacher info here");
 ##INSERT into teachers (prefix, name, teacher_info) values ('Dr.','Rosanne Simeone', "Teacher info here");
-INSERT into teachers (prefix, name, teacher_info) values ('N/A', 'Weiran Du', 'Teacher info here');
+##INSERT into teachers (prefix, name, teacher_info) values ('N/A', 'Weiran Du', 'Teacher info here');
 
 INSERT into groups (group_info) values ('the lame group');
 INSERT into groups (group_info) values ('the lamest group');
