@@ -1,3 +1,5 @@
+/*UNIVERSAL STYLE*/
+
 body{
 	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
@@ -139,10 +141,27 @@ button, a.button{
 	float:left;
 }
 
-button, a.button:hover{
+/*button, a.button:hover{
 	background-color: black;
 	color: white;
 }
+*/
+/*STUDENT.HTML STYLE*/
+
+#logout:hover{
+	background-color: black;
+	color: white;
+}
+
+#choice{
+	margin: auto;
+	padding-top: 100px;
+	text-align: left;
+	color: white;
+	font-family: Lucida Grande;
+}
+
+/*ADMIN.HTML STYLE*/
 
 #adminbutton{
 	width:150.5px;
