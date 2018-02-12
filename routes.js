@@ -154,33 +154,29 @@ module.exports = function(app) {
 
 		var days = req.body.days;
 		
-		con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {});
-	
-		if (!Array.isArray(days)){days = [days];}
+		con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
+			if (!Array.isArray(days)){days = [days];}
 		
-		for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
+			for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
 
 
 
-		con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.redirect("/teacher");
+			con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
+				if (err) {
+					console.log(err);
+				} else {
+					res.redirect("/teacher");
+				}
+			});
+
+			for (var d = 0; d < days.length; d++) {	
+					con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+						if (err){
+							console.log(err);
+						}				
+				});
 			}
 		});
-
-		for (var d = 0; d < days.length; d++) {	
-				con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
-					if (err){
-						console.log(err);
-					}				
-			});
-		}
-
-
-
-		
 	});
 	//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
 	app.get('/locations/', function(req, res) { res.send(undefined)});
