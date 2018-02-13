@@ -74,13 +74,14 @@ module.exports = {
  // Function gets all offerings on a certain day (uid_day)
  // Returns a list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
  getOfferings: function (uid_day, callback) {
-   function Offering(uid, name, description, maxSize, recurring, teacher) {
+   function Offering(uid, name, description, maxSize, recurring, teacher, location) {
     this.uid = uid;
     this.name = name;
     this.description = description;
     this.maxSize = maxSize;
     this.recur = recurring;
     this.teacher = teacher;
+    this.location = location;
     this.disabled;
   }
   var offerList = [];
@@ -101,7 +102,7 @@ module.exports = {
         for(var i=0; i<rowList.length; i++) {
           for(var j=0; j<trueOffers.length; j++) {
             if(rowList[i].uid_offering == trueOffers[j]) {
-              var offering = new Offering(rowList[i].uid_offering, rowList[i].name, rowList[i].description, rowList[i].max_size, rowList[i].recurring, rowList[i].uid_teacher);
+              var offering = new Offering(rowList[i].uid_offering, rowList[i].name, rowList[i].description, rowList[i].max_size, rowList[i].recurring, rowList[i].uid_teacher, rowList[i].location);
               offerList.push(offering);
             }
           }
@@ -164,18 +165,21 @@ module.exports = {
 			for (var i=0; i<results.length; i++) {
 				//	Loops to find soonest Oppblock
 				var curr = moment(results[i].day, 'YYYY-MM-DD');
+				// 	Specficies the oppblock to the end of oppblock on that date
+				//	TO DO: SIMPLY THIS CODE
+				curr.add({hours:settings["hours_close_oppblock"].value_int, minutes:settings["minutes_close_oppblock"].value_int}); 
+				curr.add({minutes:settings["minutes_length_oppblock"].value_int}); 
 				//	Checks if the current oppBlock day is in the future and before the closest
 				//	If so, replaces closest with the current
+				console.log(curr);
 				if (curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
-					closest = curr;	
+					closest = moment(curr.format('YYYY-MM-DD'));	
 					uid_day = results[i].uid_day;				
 				}
 			} 
 			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
 			var teacherCutoff = moment(closest.add({hours:settings["hours_close_teacher"].value_int}));
-			// 	Specficies the oppblock to a specific time on that specific date
-			closest = closest.add({hours:settings["hours_close_oppblock"].value_int, minutes:settings["minutes_close_oppblock"].value_int}); 
 			
 			//	Checks to see whether the date is before or after the student and teacher cutoff times
 			if (moment().isSameOrAfter(teacherCutoff)) {
@@ -229,7 +233,7 @@ module.exports = {
 										// Checks to see if it is past the cutoff time for the students to choose
 										if (cutOff) {
 											// Renders the page only with the user's current choice
-											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for choosing has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true});
+											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for choosing has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true}); //Change Constant Time
 										} else {
 											// Gets all offerings for the user to choose from
 											module.exports.getAvailableOfferings(uid_day, function(offerings) {
