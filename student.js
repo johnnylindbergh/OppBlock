@@ -62,7 +62,7 @@ module.exports = {
         if(num >= data[0].max_size) {
           callback("disabled");
         } else {
-          callback("");
+          callback("able");
         }    
       });
     } else {
@@ -229,12 +229,12 @@ module.exports = {
 										// Checks to see if it is past the cutoff time for the students to choose
 										if (cutOff) {
 											// Renders the page only with the user's current choice
-											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for changing choices has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true});
+											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for choosing has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true});
 										} else {
 											// Gets all offerings for the user to choose from
 											module.exports.getAvailableOfferings(uid_day, function(offerings) {
 												// At last, renders the page with the current choice, and the choices table
-												res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"See choices table below for description. If you'd like to change your choice, choose a different offering!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
+												res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"You've already chosen, but if you'd like to change your choice, choose a different offering!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 											});
 										}
 									} else {
@@ -263,14 +263,14 @@ module.exports = {
 		if(req.body.choice != undefined) {
 			// Updates Choice
 			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, uid_student, req.body.uid_day], function(err, results) {
-				response.redirect('/student/' + uid_student);
+				response.redirect('/student');
 				response.end();
 			});
 		} else {
 			// Overrides excluded group by adding student into choice table
 			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, req.body.uid_day], function(err) {
 				if(!err) {
-					response.redirect('/student/' + uid_student);
+					response.redirect('/student');
 					response.end();
 				} else {
 					res.send(err);
