@@ -161,9 +161,9 @@ module.exports = function(app) {
 				if (!err) {
 					con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
 						if (!err){
-							offering_id = offeringInfo[0].uid_offering;
+							offering_id = parseInt(offeringInfo[0].uid_offering);
 							for (var d = 0; d < days.length; d++) {	
-								con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+								con.query('insert into calendar (uid_day, uid_offering) values (?,?) ON DUPLICATE KEY UPDATE uid_day=?;', [days[d], offering_id, days[d], offering_id, days[d], offering_id], function(err,result) {
 									if (err){
 										console.log(err);
 									}else{
