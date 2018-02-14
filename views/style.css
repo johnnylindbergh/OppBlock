@@ -88,9 +88,8 @@ th, td{
 	padding: 8px;
 }
 
-tr:nth-child(even){background-color: gray}
 
-tr:hover {background-color: white;}
+tr:hover {background-color: grey;}
 
 th{
 	background-color: black;
