@@ -2,6 +2,9 @@
 
 /*UNIVERSAL STYLE*/
 
+a{color: white;}
+a:hover{color: black;}
+
 body{
 	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
@@ -64,6 +67,7 @@ table{
 
 th, td{
 	font-family: 'Open Sans';
+	color: white;
 	font-weight: normal;
 	text-align: center;
 	padding: 8px;
@@ -71,15 +75,17 @@ th, td{
 
 tr:nth-child(even){background-color: grey}
 
-tr:hover {background-color: white;}
+/*
+tr:hover{
+	background-color: white;
+	color: grey;
+}
+*/
 
 th{
 	background-color: black;
 	color: white;
 }
-
-a {color: black;}
-a:hover {color:blue;}
 
 /*CSV STYLE*/
 
@@ -162,10 +168,6 @@ a:hover {color:blue;}
 #adminbutton{
 	width:150.5px;
 	font-size:15px;
-	display:inline-block;
-	text-align:center;
-	vertical-align: middle;
-	padding: 0px;
 	cursor:pointer;
 	border:none;
 	height:40px;
@@ -173,9 +175,10 @@ a:hover {color:blue;}
 	background-color: white;
 	border-color: white;
 	color: grey;
+    text-decoration: none;
 	margin-top: 10px;
 	margin-bottom: 10px;
-	float:left;
+    float: left;
 }
 
 #adminbutton:hover{
