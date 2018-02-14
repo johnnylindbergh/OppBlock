@@ -1,0 +1,1 @@
+git fetch && git stash && git pull && git stash pop && sudo service oppblock restart
