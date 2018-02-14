@@ -113,7 +113,7 @@ module.exports = {
             for(var j=0; j<row.length; j++) {
               for(var i=0; i<offerList.length; i++) {
                 if(row[j].uid_teacher == offerList[i].teacher) {
-                  offerList[i].teacher = row[j].prefix + " " + row[j].teacher_lastname;
+                  offerList[i].teacher = row[j].teacher_lastname;
                 };
               };
             };
