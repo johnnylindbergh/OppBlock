@@ -453,7 +453,7 @@ module.exports = function(app) {
 
 	//need to join those uid students with student names
 	app.get('/Mopblock', middleware.isAdmin, function(req, res){
-		con.query('SELECT students.uid_student, CONCAT(firstname, \' \',lastname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering is not NULL;', function(err, resultsMopblock){
+		con.query('SELECT students.uid_student, advisor, grade, CONCAT(firstname, \' \',lastname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering is not NULL;', function(err, resultsMopblock){
 				console.log(resultsMopblock);
 				res.render('Mopblock.html',{
 				data:resultsMopblock
