@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
 /*UNIVERSAL STYLE*/
 
 body{
@@ -43,14 +45,15 @@ body{
 	padding-top: 10px;
 	text-align: left;
 	color: white;
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
+	font-size: 20px;
 }
 
 #offerings{
 	margin:auto;
 	text-align:left;
 	color:white;
-	font-family:Lucida Grande;
+	font-family: 'Open Sans';
 }
 
 
@@ -60,7 +63,7 @@ table{
 }
 
 th, td{
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
 	font-weight: normal;
 	text-align: center;
 	padding: 8px;
@@ -77,6 +80,8 @@ th{
 
 a {color: black;}
 a:hover {color:blue;}
+
+/*CSV STYLE*/
 
 #csvsubmit{
 	width:150.5px;
@@ -101,10 +106,7 @@ a:hover {color:blue;}
 	margin: 20px;
 }
 
-/*input:hover{
-	background-color: black;
-	color: white;
-}*/
+/*TEACHER STYLE*/
 
 #mstitle{
 	display:block;
@@ -123,8 +125,9 @@ a:hover {color:blue;}
 	color:white;
 }
 
+/*STUDENT.HTML STYLE*/
 
-button, a.button{
+#logout{
 	width:150.5px;
 	font-size:15px;
 	display:inline-block;
@@ -141,13 +144,6 @@ button, a.button{
 	float:left;
 }
 
-/*button, a.button:hover{
-	background-color: black;
-	color: white;
-}
-*/
-/*STUDENT.HTML STYLE*/
-
 #logout:hover{
 	background-color: black;
 	color: white;
@@ -158,7 +154,7 @@ button, a.button{
 	padding-top: 100px;
 	text-align: left;
 	color: white;
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
 }
 
 /*ADMIN.HTML STYLE*/
@@ -173,7 +169,7 @@ button, a.button{
 	cursor:pointer;
 	border:none;
 	height:40px;
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
 	background-color: white;
 	border-color: white;
 	color: grey;
