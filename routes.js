@@ -111,9 +111,10 @@ module.exports = function(app) {
 								dayResults[i]['canEdit'] = true;
 							}
 							
-							dayResults[i].day = moment(dayResults[i].day).format('MM-DD');
+							dayResults[i].day = moment(dayResults[i].day).format('dddd[, ] MMMM Do');
 							dayResults[i].set = dayResults[i].set == offering_uid ? 1 : 0;
 						}
+						console.log(offeringInfo);
 						res.render('offeringEdit.html', {
 							data: offeringInfo,
 							offeringId: offering_uid,
@@ -151,32 +152,52 @@ module.exports = function(app) {
 		var description = req.body.description;
 		var max_size = parseInt(req.body.max_size);
 		var teacherId = req.user.local.uid_teacher;
-
+		var isNew = req.body.isNew;
 		var days = req.body.days;
-		
-		con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
-			if (!Array.isArray(days)){days = [days];}
-		
-			for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
 
-
-
-			con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
-				if (err) {
-					console.log(err);
+		if (isNew){
+			con.query('INSERT into offerings (name, location, max_size, description, uid_teacher) values (?, ?, ?, ?, ?);', [name, location, max_size,  description, teacherId ], function(err) {
+				if (!err) {
+					con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
+						offering_id = offeringInfo.uid_offering;
+						for (var d = 0; d < days.length; d++) {	
+							con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+								if (err){
+									console.log(err);
+								}else{
+									res.redirect('/teacher');
+								}				
+							});
+						}
+					});
 				} else {
-					res.redirect("/teacher");
+					res.send("not valid offering id!");
 				}
 			});
 
-			for (var d = 0; d < days.length; d++) {	
-					con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
-						if (err){
+		} else {
+			console.log(offering_id);
+			
+			con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
+				if (!Array.isArray(days)){days = [days];}
+				for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
+					con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
+						if (err) {
 							console.log(err);
-						}				
-				});
-			}
-		});
+						} else {
+							res.redirect("/teacher");
+						}
+					});
+
+					for (var d = 0; d < days.length; d++) {	
+						con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+							if (err){
+								console.log(err);
+							}				
+						});
+					}
+			});
+		}	
 	});
 	//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
 	app.get('/locations/', function(req, res) { res.send(undefined)});
@@ -215,9 +236,9 @@ module.exports = function(app) {
 						}
 					}
 					
-					while (locations.size()>0 && closestLocations.length < 3){
+					while (locations.size()>0 && closestLocations.length < 6){
 						var l = locations.deq();
-						if (l.distance<4){
+						if (l.distance<5){
 							closestLocations.push(l);
 						}
 
@@ -233,15 +254,28 @@ module.exports = function(app) {
 
 	app.get('/add', middleware.isTeacher, function(req, res) {
 		var teacher_uid = req.user.local.uid_teacher;
-		con.query('INSERT into offerings (name, max_size, uid_teacher, recurring, description) values ("", 0, ?, 0, "");', [teacher_uid], function(err) {
+		con.query('select * from opp_block_day', function(err, dayResults) {
 			if (!err) {
-				con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
-					res.redirect('/editOffering/'+offeringInfo[0].uid_offering);
+				for (var i = 0; i < dayResults.length; i++) {
+					if (moment(dayResults[i].day).add(settings.hours_close_teacher.value_int,'hours').isBefore()){
+						dayResults[i]['canEdit'] = false;
+								
+					}else{
+						dayResults[i]['canEdit'] = true;
+						}
+							
+							dayResults[i].day = moment(dayResults[i].day).format('dddd[, ] MMMM Do');
+						}
+						res.render('offeringEdit.html', {
+							isNew:true,
+							data:{uid_offering: null, name: null, location: null, description: null, max_size: null, uid_teacher: null, recurring: null } ,
+							offeringId: 0,
+							dayData: dayResults
+						});
+					}
 				});
-			} else {
-				res.send("not valid offering id!");
-			}
-		});
+
+		
 	});
 
 

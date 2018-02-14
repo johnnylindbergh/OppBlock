@@ -1,5 +1,3 @@
-/*UNIVERSAL STYLE*/
-
 body{
 	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
@@ -22,10 +20,10 @@ body{
 	border:5px;
 	border-color:black;
 	width:1200px;
-	height:1000px;
 	margin:auto;
-	text-align:center;
-	padding-left:20px;
+	text-align:left;
+	padding:40px;
+	color:white;
 	margin-top:30px;
 }
 
@@ -46,9 +44,6 @@ body{
 	font-family: Lucida Grande;
 }
 
-#currentOffering{
-	text-align-:left;
-}
 #offerings{
 	margin:auto;
 	text-align:left;
@@ -56,6 +51,30 @@ body{
 	font-family:Lucida Grande;
 }
 
+.accordion {
+    background-color: white;
+    color: #444;
+    cursor: pointer;
+    padding: 30px;
+    padding-bottom: 40px;
+    width: 60%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.panel {
+    padding: 20px;
+    opacity:0.9;
+    width: 57%;
+    display: none;
+    overflow: hidden;
+}
 
 table{
 	border-collapse: collapse;
@@ -69,7 +88,7 @@ th, td{
 	padding: 8px;
 }
 
-tr:nth-child(even){background-color: grey}
+tr:nth-child(even){background-color: gray}
 
 tr:hover {background-color: white;}
 
@@ -78,62 +97,56 @@ th{
 	color: white;
 }
 
-a {color: black;}
-a:hover {color:blue;}
+a {color: white;}
+a:hover {color:grey;}
 
-#csvsubmit{
+textarea{
 	width:150.5px;
 	font-size:15px;
-	display:block;
-	text-align:center;
+	display: block;
+	text-align:left;
+	cursor:pointer;
+	border:none;
+	height:40px;
+	width:30%;
+	background-color: white;
+	border-color: white;
+	color: black;
+	margin-top:10px;
+	margin-right:5px;
+	margin:20px;
+}
+
+input{
+	width:150.5px;
+	font-size:15px;
+	display: block;
+	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
 	background-color: white;
 	border-color: white;
-	color: grey;
-	margin:auto;
+	color: black;
+	margin-top:10px;
+	margin-right:5px;
+	margin:20px;
+	
 }
 
-#csvsubmit:hover{
-	background-color: black;
-	color: white;
+input:hover{
+	background-color: lightgray;
+	color: black;
 }
 
-#csvbox{
-	margin: 20px;
-}
-
-/*input:hover{
-	background-color: black;
-	color: white;
-}*/
-
-#mstitle{
-	display:block;
-	margin: auto;
-	text-align:center;
-	color:white;
-}
-
-#offeringdelete{
-	display:block;
-	margin-left:0px;
-	margin-top:5px;
-	margin-bottom:5px;
-	text-align:left;
-	color:white;
-}
-
-button, a.button{
+button{
 	width:150.5px;
 	font-size:15px;
 	display:inline-block;
-	text-align:center;
+	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
-	text-decoration:none;
 	background-color: white;
 	border-color: white;
 	color: grey;
@@ -142,73 +155,7 @@ button, a.button{
 	float:left;
 }
 
-/*button, a.button:hover{
-	background-color: black;
-	color: white;
-}
-*/
-
-#offeringdelete{
-	width:150.5px;
-	font-size:15px;
-	display:inline-block;
-	text-align:center;
-	vertical-align: middle;
-	padding: 0px;
-	cursor:pointer;
-	border:none;
-	height:40px;
-	font-family: Lucida Grande;
-	background-color: white;
-	border-color: white;
-	color: grey;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	float:left;
-}
-
-#offeringdelete:hover{
-	background-color: black;
-	color: white;
-}
-
-/*STUDENT.HTML STYLE*/
-
-#logout:hover{
-	background-color: black;
-	color: white;
-}
-
-#choice{
-	margin: auto;
-	padding-top: 100px;
-	text-align: left;
-	color: white;
-	font-family: Lucida Grande;
-}
-
-/*ADMIN.HTML STYLE*/
-
-#adminbutton{
-	width:150.5px;
-	font-size:15px;
-	display:inline-block;
-	text-align:center;
-	vertical-align: middle;
-	padding: 0px;
-	cursor:pointer;
-	border:none;
-	height:40px;
-	font-family: Lucida Grande;
-	background-color: white;
-	border-color: white;
-	color: grey;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	float:left;
-}
-
-#adminbutton:hover{
+button:hover{
 	background-color: black;
 	color: white;
 }
