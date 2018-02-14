@@ -132,16 +132,24 @@ module.exports = function(app) {
 		var offering_uid = req.params.id;
 		var teacher_uid = req.user.local.uid_teacher;
 		con.query('delete from choices where uid_offering = ?', [offering_uid], function(err) {
-			con.query('delete from calendar where uid_offering = ?;', [offering_uid], function(err,result) {
-				con.query('delete from offerings where uid_offering = ?', [offering_uid], function(err) {
-
-					if (err) {
-						res.redirect("/teacher");
+			if (!err) {
+				con.query('delete from calendar where uid_offering = ?;', [offering_uid], function(err) {
+					if (!err) {
+						con.query('delete from offerings where uid_offering = ?', [offering_uid], function(err) {
+							if (!err) {
+								res.redirect("/teacher");
+								// TODO: Add 'deletion confirmed' flash message
+							} else {
+								res.render("error.html", {err: err});
+							}
+						});
 					} else {
-						res.redirect("/teacher");
+						res.render("error.html", {err: err});
 					}
 				});
-			});
+			} else {
+				res.render("error.html", {err: err});
+			}
 		});
 	});
 
