@@ -407,7 +407,7 @@ module.exports = function(app) {
 
 	app.get('/Day/:id', function(req, res) {
 		var day_uid = req.params.id;
-			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {					
+			con.query('SELECT offerings.uid_offering, advisor, grade, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {					
 			res.render('Day.html', { 
 				data:resultsDay,
 			});
