@@ -49,6 +49,26 @@ module.exports =  {
 				}
 			});
 		});
+		app.get('/addStudents', middleware.isAdmin, function(req, res) {
+			con.query('SELECT * FROM choices', function(err, result) { 
+					if(!err) {
+						if(result.length > 0) {	
+							console.log("STARTING PRINT");
+							for (var i=0; i<result.length; i++) {
+								console.log(result[i]);
+							}
+							res.send("DID SOME STURF + " + result);
+							res.end();
+						} else {
+							console.log("inserting");
+							module.exports.addStudentsToChoiceTable(8);
+							res.send("Inserted");
+						}
+					} else {
+						res.render('error.html', {err:err});
+					}
+			});
+		});
 		app.post('/calendar', middleware.isAdmin, function(req, res) {
 			//	This post request inserts an admin's desired Oppblock days into the database
 			//	
@@ -217,7 +237,7 @@ module.exports =  {
 
 	getExcludedStudentsOnDay: function (uidDay,callback){
 		var excludedStudentUidArray = [];
-		getExcludedGroupsOnDay(1, function(groups){
+		module.exports.getExcludedGroupsOnDay(1, function(groups){
 			con.query('SELECT uid_student FROM student_groups WHERE uid_group in (?)', [groups], function(err, results) {
 				//console.log("this:  "+results);
 				if (results != undefined){
@@ -248,8 +268,7 @@ module.exports =  {
 	},
 
 	addStudentsToChoiceTable: function (uidDay){
-		getExcludedStudentsOnDay(uidDay, function(students){
-
+		module.exports.getExcludedStudentsOnDay(uidDay, function(students){
 			con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
 				if (results != undefined){
 					for (var i = 0; i < results.length; i++) {

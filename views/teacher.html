@@ -25,9 +25,11 @@
 
 
   {{#currentOffering}}
+
   <div id="currentOffering">
-    <br>
-    Current Offering: {{name}}
+    <button class="accordion">Current Offering: {{name}}</button>
+    <div class="panel">
+
     <br>
       {{#containsStudents}}
       <h3 style = "font-family: Lucida Grande">Students</h3>
@@ -62,16 +64,16 @@
     {{/containsStudents}}
   
     <form action="/addStudent/{{offeringId}}/{{offeringDay}}" method="post">
-      <br>
       Add Student: 
-      <br>
+  
      
-        <input type="text" placeholder="Johnny Lindbergh"  name="studentName"> 
-        <br>
+        <input type="text"   name="studentName"> 
+        
+  
          <input type="submit" value="Add">
     
     </form>
-
+</div>
 </div>
 
 {{/currentOffering}}
@@ -79,8 +81,11 @@
 
 
 <br>
-
-  <a href = "/logout">Logout</a>
+<br>
+<br>
+<br>
+<br>
+  <a class="button" href = "/logout">Logout</a>
 	
 	<h2>Offerings</h2> 
   <a class="button" href="/add">Add</a>
@@ -110,36 +115,35 @@
   </div>
 
 </div>
-<!-- UNCOMMENT WHEN CALENDAR IS READY TO BE PUT IN
-<form type="hidden" id="offeringForm">
-    {{#offerings}}
-        <input type="hidden" id="offering" name={{name}} date={{day}}>
-    {{/offerings}}
-</form>
-<! - - Full Calendar Div - - >
-<div id="calendar"> </div> -->
+
 	
 <script>
 
-$(document).ready(function() {
-    //  Initializes fullCalendar
-    $('#calendar').fullCalendar({
-        viewRender: function(view, element) {
-            //  Serializes Hidden Offering Inputs
-            var offerings = $('#offeringForm').serializeArray();
-            //  Loops Through it
-            for(var i=0; i<offerings.length; i++) {
-                var event={id:i, title: offerings[i].name, start:offerings[i].date};
-                $('#calendar').fullCalendar( 'renderEvent', event, true);
-            }
-        }
-        //  Show Weekends?
-    });
-});
+
+
 
 $(".check").on("click", function(){
   $(this).html() == "Arrived" ? $(this).html('Not Arrived') : $(this).html('Arrived');
 });
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    });
+}
 
 
 </script>

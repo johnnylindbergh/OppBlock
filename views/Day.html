@@ -12,20 +12,22 @@
 <tr>
     <th>Students</th>
     <th>Teacher</th>
-    <th>Name</th>
+    <th>Oppblock Name</th>
+    <th>Location</th>
     <th>Description</th>
     <th>Maximum Size</th>
-    <th>Current</th>
+    
   </tr>
   
   {{#data}}
   <tr>
     <td><a href="/Offeringstudents/{{uid_offering}}">Students</a></td> 
-    <td>{{Teacher}}</td>
+    <td>{{teacher}}</td>
     <td>{{name}}</td>
+    <td>{{location}}</td>
     <td>{{description}}</td> 
     <td>{{max_size}}</td> 
-    <td>{{recurring}}</td>
+
   </tr>
   {{/data}}
   </table>  
