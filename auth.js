@@ -21,6 +21,11 @@ app.get('/testaccountinfo',function(req,res){
    res.end(req.user.domain);
 });
 
+app.get('/logout', function(req,res){
+	req.logout();
+	res.redirect('/');
+});
+
 }
 
 //server.listen( 8080 );

@@ -25,6 +25,11 @@ module.exports = function(app) {
 		}
 	});
 
+	app.get('/logout',function(req,res){
+		req.logout();
+		req.redirect('/');
+	});
+
 	app.get('/teacher', middleware.isTeacher, function(req, res) {
 		var uid_teacher = req.user.local.uid_teacher;
 
