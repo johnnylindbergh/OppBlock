@@ -26,6 +26,40 @@ module.exports = function(app) {
 		}
 	});
 
+	app.get('/logout',function(req,res){
+		req.logout();
+		req.redirect('/');
+	});
+
+	app.get('/teacher', middleware.isTeacher, function(req, res) {
+		var uid_teacher = req.user.local.uid_teacher;
+
+		var inProgress;
+		var oppBlockStartHours = settings.hours_close_oppblock.value_int;
+		var oppBlockStartMinutes = settings.minutes_close_oppblock.value_int;
+		var oppBlockLength = settings.minutes_length_oppblock.value_int;
+
+
+		console.log(oppBlockStartHours);
+		console.log(oppBlockStartMinutes);
+		console.log(oppBlockLength);
+		con.query('select * from opp_block_day order by day asc', function(err, resultsDay){
+			if (!err){
+				for (var i = 0; i < resultsDay.length; i++){
+					if (moment(resultsDay[i].day).isSame(moment(), 'day')){
+						var oppStart = moment(resultsDay[i].day).add(oppBlockStartHours, 'hours').add(oppBlockStartMinutes, 'minutes');
+						var oppEnd = moment(oppStart).add(oppBlockLength, 'minutes');
+						if (moment().isAfter(oppStart) && moment().isBefore(oppEnd) ){
+							inProgress = true;
+							con.query('select * from calendar where uid_day = ?', [resultsDay[i].uid_day], function(err, currentOffering){
+								if (currentOffering != undefined){
+									res.redirect('/attendance/' + currentOffering[0].uid_offering +'/'+currentOffering[0].uid_day);
+								}
+
+								
+							});
+						}
+					}
 
 	app.get('/teacher', middleware.isTeacher, function(req, res){
 		var uid_teacher = req.user.local.uid_teacher;
