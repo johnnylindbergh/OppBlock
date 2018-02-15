@@ -3,7 +3,6 @@
 /*UNIVERSAL STYLE*/
 
 a{color: white;}
-a:hover{color: black;}
 
 body{
 	background-image: url("/oppbackground.jpg");
@@ -46,6 +45,7 @@ body{
 #signedInAs{
 	margin: auto;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	text-align: left;
 	color: white;
 	font-family: 'Open Sans';
@@ -73,7 +73,9 @@ th, td{
 	padding: 8px;
 }
 
-tr:nth-child(even){background-color: grey}
+tr:hover{
+	background-color: grey;
+}
 
 /*
 tr:hover{
@@ -166,11 +168,11 @@ th{
 /*ADMIN.HTML STYLE*/
 
 #adminbutton{
-	width:150.5px;
+	width:200px;
+	height: 40px;
 	font-size:15px;
 	cursor:pointer;
 	border:none;
-	height:40px;
 	font-family: 'Open Sans';
 	background-color: white;
 	border-color: white;
@@ -179,6 +181,7 @@ th{
 	margin-top: 10px;
 	margin-bottom: 10px;
     float: left;
+    justify-content: center;
 }
 
 #adminbutton:hover{
