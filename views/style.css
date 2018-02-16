@@ -123,6 +123,24 @@ textarea{
 	margin:auto;
 }
 
+#csvsubmit{
+	width:200px;
+	height: 40px;
+	font-size:15px;
+	cursor:pointer;
+	border:none;
+	font-family: 'Open Sans';
+	text-align: center;
+	background-color: white;
+	border-color: white;
+	color: grey;
+    text-decoration: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+    float: left;
+    justify-content: center;
+}
+
 #csvsubmit:hover{
 	background-color: black;
 	color: white;
