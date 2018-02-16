@@ -35,7 +35,7 @@ module.exports =  {
 			//	Gets all currently saved OppBlock days
 			con.query('SELECT * FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
-					if(oppDays.length != 0) {
+					if (oppDays.length != 0) {
 						var days = [];
 						//	Pushes the date objects into an array in a readable format for mustache THEN
 						//	Runs addStudentsToChoiceTable() on each day, putting students into the choice table if necessary
@@ -220,7 +220,7 @@ module.exports =  {
 				con.query('DELETE FROM choices WHERE uid_student = ?', [students[i]]);
 			}
 		});
-	}
+	},
 	//	TO DO:
 	//		Take out the initial check once this has been run on the real server
 	//	---
@@ -233,7 +233,7 @@ module.exports =  {
 				if(choices.length == 0) {
 					con.query('SELECT uid_student FROM students', function(err, students) {
 						if(!err) {
-							for (var i = 0; i < results.length; i++) {
+							for (var i = 0; i < students.length; i++) {
 								con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, students[i].uid_student]);
 							} 
 						} else {
