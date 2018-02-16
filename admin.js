@@ -32,6 +32,7 @@ module.exports =  {
 		});
 		//	Opp Block Creation Calendar Endpoints
 		app.get('/calendar', middleware.isAdmin, function(req, res) { 
+			//	Gets all currently saved OppBlock days
 			con.query('SELECT * FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
 					if(oppDays.length != 0) {
@@ -42,6 +43,7 @@ module.exports =  {
 							days.push({day: moment(oppDays[i].day).format('YYYY-MM-DD')});
 							module.exports.addStudentsToChoiceTable(oppDays[i].uid_day);
 						}
+						//	Renders the page with the array of days and a setting which determines the days of the week OppBlock most likely happens on
 						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: days});
 					} else {
 						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: null});
@@ -50,20 +52,6 @@ module.exports =  {
 					res.render('error.html', {err:err});
 				}
 			});
-		});
-		app.get('/addStudents', middleware.isAdmin, function(req, res) {
-			con.query('SELECT * FROM choices', function(err, result) { 
-					if(!err) {
-						if(result.length > 0) {	
-							//Hacer Cosas
-						} else {
-							module.exports.addStudentsToChoiceTable(uid_day);
-						}
-					} else {
-						res.render('error.html', {err:err});
-					}
-			});
-			//	REWRITE THIS TO COORDINATE WITH ADDSTUDENTSTOCHOICETABLE()
 		});
 		app.post('/calendar', middleware.isAdmin, function(req, res) {
 			//	This post request inserts an admin's desired Oppblock days into the database
@@ -225,47 +213,39 @@ module.exports =  {
 			callback(excludedGroupsArray); 
 		});
 	},
-	//	A function to broadly deal with adding students to the choices table for a given day (uid_day) and excluding 	
-	addStudentsToChoiceTable: function (uid_day) {
-		// --------------------
-		//	UNDER CONSTRUCTION
-		// --------------------
-		module.exports.getExcludedStudentsOnDay(uid_day, function(students){
-			con.query('SELECT * FROM choices WHERE uid_day = ?', [uid_day], function(err, result) {
-				if (students.length != 0) {
-					con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
-
-					});
-				} else {
-
-				}
-			});
-		});
-		con.query('SELECT * FROM choices', function(err, result) { 
-				if(!err) {
-					if(result.length > 0) {	
-						//Hacer Cosas
-					} else {
-						module.exports.addStudentsToChoiceTable(uid_day);
-					}
-				} else {
-					res.render('error.html', {err:err});
-				}
-		});
-		con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
-			if (results != undefined){
-				for (var i = 0; i < results.length; i++) {
-					con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, results[i].uid_student]);
-				}
-			}else{
-				con.query('SELECT uid_student FROM students', [students], function(err, results) {
-					if (results != undefined){
-						for (var i = 0; i < results.length; i++) {
-							con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, results[i].uid_student]);
-						}	
-					}    
-				});
+	//	Excludes all excluded students from the choices table for a given OppBlock Day
+	excludeStudentsOnDay(uid_day) {
+		module.exports.getExcludedStudentsOnDay(uid_day, function(students) {
+			for(var i=0; i<students.length; i++) {
+				con.query('DELETE FROM choices WHERE uid_student = ?', [students[i]]);
 			}
+		});
+	}
+	//	TO DO:
+	//		Take out the initial check once this has been run on the real server
+	//	---
+	//	A function to add students to the choices table for a new oppblock day
+	addStudentsToChoiceTable: function (uid_day) {
+		con.query('SELECT * FROM choices WHERE uid_day = ?', [uid_day], function(err, choices) {
+			if(!err) {
+				//	***Change Possibly if Excluded Groups Featured Implemented***
+				//	Makes sure the students haven't already been added to the choice table for this day
+				if(choices.length == 0) {
+					con.query('SELECT uid_student FROM students', function(err, students) {
+						if(!err) {
+							for (var i = 0; i < results.length; i++) {
+								con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, students[i].uid_student]);
+							} 
+						} else {
+							console.log("Add Students to Choice Table Errored with message: ");
+							console.log(err);
+						}
+					});
+				} 
+			} else {
+				console.log("Add Students to Choice Table Errored with message: ");
+				console.log(err);
+			} 
 		});
 	},
 
