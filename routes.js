@@ -55,6 +55,11 @@ module.exports = function(app) {
 								if (currentOffering != undefined){
 									res.redirect('/attendance/' + currentOffering[0].uid_offering +'/'+currentOffering[0].uid_day);
 								}
+
+								
+							});
+						}
+					}
 	*/
 
 	app.get('/teacher', middleware.isTeacher, function(req, res){
