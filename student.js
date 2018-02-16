@@ -56,9 +56,12 @@ module.exports = {
 
  //	Pretty Self Explanatory
  isOfferingFull: function (uid_day, uid_offering, callback) {
+ 	//	Gets the maximum size
    con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
     if(!err) {
+      //	Gets the number of students in an offering 
       module.exports.numStudents(uid_day, uid_offering, false, function(num, infoList){
+        //	Compares that number to the offering's maximum size
         if(num >= data[0].max_size) {
           callback("disabled");
         } else {
@@ -96,6 +99,8 @@ module.exports = {
         trueOffers.push(dayList[i].uid_offering);
       }
     }
+    //	TO DO:
+    //	ORDER OFFERINGS FOR NICENESS
     //	Gets the info associated with those offerings
     con.query('SELECT * FROM offerings', function(err, rowList) {
       if(!err) {
@@ -196,6 +201,22 @@ module.exports = {
 		}
 	});
  },
+
+ //	A middleware to determine whether an offering is full or not
+ //	Used in the post request to make sure students don't sign up for closed offerings
+ isOpenOffering:function(req,res,next){
+ 	//	Checks if the offering is full
+ 	module.exports.isOfferingFull(req.body.uid_day, req.body.choice, function(truth) {
+ 		if(truth == "able") {
+ 			//	Keeps going if the offering is open
+	 		return next();
+	    } else {
+	    	//	Redirects to student if the offering is full, thereby cancelling the student's form submission
+	    	res.redirect('/student');
+	 	}
+ 	});
+ },
+
  init: function(app) {
 	app.get('/student', middleware.isStudent, function(req, res){
 		// Gets Student's id from middleware
@@ -258,26 +279,32 @@ module.exports = {
 			}
 		});	
 	});
-
-	app.post('/student', middleware.isStudent, function(req, response) {
-		// Gets Student's id from middleware
+	
+	//	The student post request serves two functions: to insert a student's choice into the database and to override an exclusion from the OppBlock Day
+	app.post('/student', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
+		// Gets the student's uid, the uid of their offering of choice, and the current day uid
 		var uid_student = req.user.local[0].uid_student; 
-
+		var uid_offering = req.body.choice;
+		var uid_day = req.body.uid_day;
+		
 		// checks if post request comes from an override or a choice
-		if(req.body.choice != undefined) {
+		if(uid_offering != undefined) {
 			// Updates Choice
-			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [req.body.choice, uid_student, req.body.uid_day], function(err, results) {
-				response.redirect('/student');
-				response.end();
+			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, uid_student, uid_day], function(err, results) {
+				if(!err) {
+					//	Redirects back since the request has been carried out
+					res.redirect('/student');
+				} else {
+					res.render('error.html', {err:err});
+				}
 			});
 		} else {
-			// Overrides excluded group by adding student into choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, req.body.uid_day], function(err) {
+			// Overrides an excluded group by adding the student into the choice table
+			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, uid_day], function(err) {
 				if(!err) {
-					response.redirect('/student');
-					response.end();
+					//	Redirects back since the request has been carried out
+					res.redirect('/student');
 				} else {
-					res.send(err);
 					res.render('error.html', {err:err});
 				}
 			});
