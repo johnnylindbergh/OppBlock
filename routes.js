@@ -417,7 +417,7 @@ module.exports = function(app) {
 	app.get('/Offeringstudents/:id', middleware.isAdmin, function(req, res){
 		var teacher_uid = req.params.id;
 		//console.log(teacher_uid);
-		con.query('SELECT CONCAT(students.lastname, \', \',students.firstname) AS studentname  FROM choices JOIN students ON choices.uid_student =students.uid_student WHERE uid_offering =?;',[teacher_uid], function(err, results){
+		con.query('SELECT CONCAT(students.lastname, \', \',students.firstname) AS studentname  FROM choices JOIN students ON choices.uid_student =students.uid_student WHERE uid_offering =? ORDER BY students.lastname, students.firstname DESC;',[teacher_uid], function(err, results){
 			
 				res.render('Offeringstudents.html',{
 				
