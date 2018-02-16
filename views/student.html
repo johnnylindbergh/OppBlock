@@ -4,7 +4,8 @@
   	<meta charset="utf-8">
 	<title>Craig Memorial Student Page</title>
 	<link rel="stylesheet" href="/style.css" type="text/css"/>
-	<style> body {padding: 0; margin: 0;} . </style>
+	<style> body {padding: 0; margin: 0;} </style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
 
 <body>
@@ -13,7 +14,7 @@
 	<div id= "centralBox">
 	  <p id= "titleText">Student Portal</p>
       <p id= "signedInAs">Signed in as {{Student}}</p>
-      <button id= "logout" href="/logout">Logout</button>
+      <a id= "logout" href="/logout">Logout</a>
 	  <p id= "choice"> Your Choice: {{Choice}} <br> {{Description}} <br></p>
 	  {{^oppTime}} <!--Excludes the choice table if either it is before or past the choice cutoff time, or if the student is in an excluded sports group-->
 
@@ -24,19 +25,21 @@
 			  <th>Name</th>
 			  <th>Description</th>
 			  <th>Teacher</th>
+			  <th>Location</th>
 			  <th>Maximum Size</th>
 		  	</tr>	
 		  	{{#data}}
-		  	<tr class={{disabled}}> <!-- disabled greys out the tr element and disables the radio button -->
+		  	<tr class={{disabled}} id="{{uid}}"> <!-- disabled greys out the tr element and disables the radio button -->
 		  	  <td> <input type="radio" name="choice" value="{{uid}}" {{disabled}}> {{name}} </td>  
 		  	  <td>{{description}}</td> 
 		  	  <td>{{teacher}}</td>
+		  	  <td>{{location}}</td>
 		  	  <td>{{maxSize}}</td> 
 		  	</tr>
 		  	{{/data}}
 		  </table>
 		<input type="submit" value="Save New Choice">
-		<p id="reminder">Make Sure You Choose an Amazing Oppblock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</p>
+		<p id="reminder">Make Sure You Choose an OppBlock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</p>
 	  </form>
 
 	  {{/oppTime}}
@@ -47,5 +50,11 @@
 	  </form>
 	  {{/notExcluded}}
 	</div>
+	<script>
+	$("tr[class='able']").click(function(){
+		//	Selects the radio button for an offerings when any part of the row is clicked
+		$("input[value=" + $(this).attr('id') + "]").prop("checked", true);
+	})
+	</script>
   </body>
 </html>

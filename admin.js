@@ -1,12 +1,13 @@
 var con = require('./database.js').connection;
 var settings = require('./settings.js');
 var moment = require('moment');
+var middleware = require('./roles.js');
 module.exports =  {
 
 	// initialize routes for admin backend
 	// TODO: (P1) restrict access to these routes to authenticated admins only using middleware (tbd)
 	init: function(app) {
-		app.get("/settings", function(req, res) {
+		app.get("/settings", middleware.isAdmin, function(req, res) {
 			var data = [];
 			var keys = Object.keys(settings.system_settings);
 			for (var i = 0; i < keys.length; i++) {	// loop through all settings
@@ -14,7 +15,7 @@ module.exports =  {
 			}
 			res.render("adminsettings.html", {settings: data});
 		});
-		app.post("/settings", function(req, res) {
+		app.post("/settings", middleware.isAdmin, function(req, res) {
 			var keys = Object.keys(req.body);
 			var key_count = keys.length;	// counts the number of remaining keys to update in DB
 			for(var i = 0; i < keys.length; i++) {
@@ -30,7 +31,7 @@ module.exports =  {
 			}
 		});
 		//	Opp Block Creation Calendar Endpoints
-		app.get('/calendar', function(req, res) { 
+		app.get('/calendar', middleware.isAdmin, function(req, res) { 
 			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
 					if(oppDays.length != 0) {
@@ -48,7 +49,27 @@ module.exports =  {
 				}
 			});
 		});
-		app.post('/calendar', function(req, res) {
+		app.get('/addStudents', middleware.isAdmin, function(req, res) {
+			con.query('SELECT * FROM choices', function(err, result) { 
+					if(!err) {
+						if(result.length > 0) {	
+							console.log("STARTING PRINT");
+							for (var i=0; i<result.length; i++) {
+								console.log(result[i]);
+							}
+							res.send("DID SOME STURF + " + result);
+							res.end();
+						} else {
+							console.log("inserting");
+							module.exports.addStudentsToChoiceTable(8);
+							res.send("Inserted");
+						}
+					} else {
+						res.render('error.html', {err:err});
+					}
+			});
+		});
+		app.post('/calendar', middleware.isAdmin, function(req, res) {
 			//	This post request inserts an admin's desired Oppblock days into the database
 			//	
 			//	First checks if there is only one day input, which would be treated as a string
@@ -216,7 +237,7 @@ module.exports =  {
 
 	getExcludedStudentsOnDay: function (uidDay,callback){
 		var excludedStudentUidArray = [];
-		getExcludedGroupsOnDay(1, function(groups){
+		module.exports.getExcludedGroupsOnDay(1, function(groups){
 			con.query('SELECT uid_student FROM student_groups WHERE uid_group in (?)', [groups], function(err, results) {
 				//console.log("this:  "+results);
 				if (results != undefined){
@@ -247,8 +268,7 @@ module.exports =  {
 	},
 
 	addStudentsToChoiceTable: function (uidDay){
-		getExcludedStudentsOnDay(uidDay, function(students){
-
+		module.exports.getExcludedStudentsOnDay(uidDay, function(students){
 			con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
 				if (results != undefined){
 					for (var i = 0; i < results.length; i++) {

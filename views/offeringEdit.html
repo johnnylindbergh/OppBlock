@@ -1,39 +1,116 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  <title>Oppblock System: Edit Offering</title>
-  <link rel="stylesheet" href="style.css" type="text/css"/>
-   <style> body {padding: 0; margin: 0;} </style>
-  </head>
-  <body>
-    <img id = "logo" src="/OppBlockLogoFinal.png">
-
-    <div id="centralBox">
-      <p id= "titleText">Teacher Portal</p>
-  <p id= "signedInAs">Edit Offering</p>
-  
-	<form action="/updateOffering/{{offeringIdUpdate}}" method="post">
-  <p id = "mstitle">{{#data}}     Name:</p>
-  <br>
-  <input type="hidden" name="isNew" value="{{isNew}}">
-  <input type="text" name="name" value="{{name}}">
-  <br>
-  <p id = "mstitle">Description:</p><br>
-  <input type="text" name="description" value="{{description}}">
-   <br> <p id = "mstitle">Max Size: </p><br>
-  <input type="text" name="max_size" value="{{max_size}}">
- <br>
-   <p id = "mstitle">{{#dayData}} {{#canEdit}} {{day}}</p>
-  <input type="checkbox" value ="{{uid_day}}" name="days" {{#set}}checked="checked"{{/set}}> </br>
-   <p id = "mstitle">{{/canEdit}} {{/dayData}}</p>
-
-  <br>
-  <input type="submit" value="Submit">
-    <p id = "mstitle">{{/data}}</p>
-
-</form> 
-
- <a class="button" id = "offeringdelete" href="/delete/{{offeringId}}">Delete</a>
- </div>
-</body>
+    <head>
+        <link href="/style.css" rel="stylesheet" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+        </script>
+        <title>
+            Oppblock System: Edit Offering
+        </title>
+        <link href="/style.css" rel="stylesheet" type="text/css"/>
+        <style>
+            body {padding: 0; margin: 0;}
+        </style>
+    </head>
+    <body>
+        <img id="logo" src="/OppBlockLogoFinal.png">
+            <div id="centralBox">
+                <p id="titleText">
+                    Teacher Portal
+                </p>
+                <p id="signedInAs">
+                    Edit Offering
+                </p>
+                <br>
+                <form action="/updateOffering/{{offeringId}}/" method="post">
+                    {{#data}}
+                        Oppblock Name:
+                        <input name="isNew" type="hidden" value="{{isNew}}">
+                            <input name="name" type="text" value="{{name}}">
+                                <br>
+                                        Location:
+                                    <input class="location" name="location" type="text" value="{{location}}">
+                                        <br>
+                                            <div id="location">
+                                                Potential Conflicts:
+                                                <br>
+                                                    <table id="conflicts">
+                                                        <tr>
+                                                            <th>
+                                                                Teacher
+                                                            </th>
+                                                            <th>
+                                                                Offering
+                                                            </th>
+                                                            <th>
+                                                                Location
+                                                            </th>
+                                                            <th>
+                                                                Day
+                                                            </th>
+                                                        </tr>
+                                                    </table>
+                                                </br>
+                                            </div>
+                                            
+                                                Description:
+                                                <br>
+                                                    <textarea cols="40" name="description" rows="10">{{description}}</textarea>
+                                                    <br>
+                                                        Max Size:
+                                                        <br>
+                                                            <input name="max_size" type="text" value="{{max_size}}">
+                                                                Days Offered:
+                                                                <br>
+                                                                    {{#dayData}} {{#canEdit}} {{day}}<input name="days" style='' type="checkbox" value="{{uid_day}}" {{#set}}checked="checked"{{/set}}>
+                                                
+                                                                {{/canEdit}} {{/dayData}}
+                                                                <br>
+                                                                    <input type="submit" value="Submit">
+                                                                        {{/data}}
+                                                                    </input>
+                                                                </br>
+                                                            </input>
+                                                        </br>
+                                                    </br>
+                                                </br>
+                                          
+                                        </br>
+                                    </input>
+                                </br>
+                            </input>
+                        </input>
+                    </br>
+                </form>
+                <a class="button" href="/delete/{{offeringId}}" id="offeringdelete">
+                    Delete
+                </a>
+            </div>
+        </img>
+    </body>
 </html>
+<script>
+    $('.location').attr('autocomplete', 'off');
+  $('#location').hide();
+
+$( ".location" ).change(function() {
+    var location = $(this).val();
+      $('.clear').remove();
+      $('#location').hide();
+    $.get("/locations/"+location, function(data) {
+      if (data != undefined && data.length >0 ){
+          $('#location').show();
+
+          for (var i = 0; i < data.length; i++){
+            var offering = data[i].offering;
+          
+            $('#conflicts').append("<tr class='clear'><td>"+offering.teacher_firstname+" "+offering.teacher_lastname+"</td>"+
+                                   "<td>"+offering.name + "</td>" +
+                                   "<td>"+ offering.location +"</td>" +
+                                   "<td>"+ offering.day +"</td></tr>"
+                                   );
+          }
+      } 
+    });
+});
+</script>

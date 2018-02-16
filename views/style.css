@@ -26,10 +26,10 @@ body{
 	border:5px;
 	border-color:black;
 	width:1200px;
-	height:1000px;
 	margin:auto;
-	text-align:center;
-	padding-left:20px;
+	text-align:left;
+	padding:40px;
+	color:white;
 	margin-top:30px;
 }
 
@@ -59,6 +59,30 @@ body{
 	font-family: 'Open Sans';
 }
 
+.accordion {
+    background-color: white;
+    color: #444;
+    cursor: pointer;
+    padding: 30px;
+    padding-bottom: 40px;
+    width: 60%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.panel {
+    padding: 20px;
+    opacity:0.9;
+    width: 57%;
+    display: none;
+    overflow: hidden;
+}
 
 table{
 	border-collapse: collapse;
@@ -77,13 +101,6 @@ tr:hover{
 	background-color: grey;
 }
 
-/*
-tr:hover{
-	background-color: white;
-	color: grey;
-}
-*/
-
 th{
 	background-color: black;
 	color: white;
@@ -91,14 +108,15 @@ th{
 
 /*CSV STYLE*/
 
-#csvsubmit{
+textarea{
 	width:150.5px;
 	font-size:15px;
-	display:block;
-	text-align:center;
+	display: block;
+	text-align:left;
 	cursor:pointer;
 	border:none;
-	height:34px;
+	height:40px;
+	width:30%;
 	background-color: white;
 	border-color: white;
 	color: grey;
@@ -138,18 +156,18 @@ th{
 #logout{
 	width:150.5px;
 	font-size:15px;
-	display:inline-block;
-	text-align:center;
+	display: block;
+	text-align:left;
 	cursor:pointer;
 	border:none;
 	height:34px;
-	text-decoration:none;
 	background-color: white;
 	border-color: white;
-	color: grey;
+	color: black;
 	margin-top:10px;
 	margin-right:5px;
-	float:left;
+	margin:20px;
+	
 }
 
 #logout:hover{
