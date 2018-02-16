@@ -124,7 +124,7 @@ textarea{
 }
 
 #csvsubmit{
-	width:200px;
+	width:100px;
 	height: 40px;
 	font-size:15px;
 	cursor:pointer;
@@ -135,10 +135,9 @@ textarea{
 	border-color: white;
 	color: grey;
     text-decoration: none;
-	margin-top: 10px;
-	margin-bottom: 10px;
-    float: left;
+    margin: auto;
     justify-content: center;
+    margin-left: 1.65%;
 }
 
 #csvsubmit:hover{
@@ -148,6 +147,8 @@ textarea{
 
 #csvbox{
 	margin: 20px;
+	cursor: pointer;
+	display: block;
 }
 
 /*TEACHER STYLE*/
