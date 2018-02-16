@@ -451,25 +451,15 @@ module.exports = function(app) {
 	app.get('/Offeringstudents/:id', middleware.isAdmin, function(req, res){
 		var teacher_uid = req.params.id;
 		//console.log(teacher_uid);
-		con.query('select uid_offering from offerings where uid_teacher=?;',[teacher_uid], function(err, resultsO){
-			var off=resultsO[0].uid_offering;
-			//console.log(off);
-			con.query('select uid_student from choices where uid_offering=?;', [off], function(err, resultsS){
-				
-				var stud=resultsS[0].uid_student;
-				
-				con.query('select lastname from students where uid_student=?;',[stud], function(err, resultsZ){
-				con.query('select name from teachers where uid_teacher=?;', [teacher_uid], function(err, resultsN){
-				console.log(resultsN.name);
+		con.query('SELECT CONCAT(students.lastname, \', \',students.firstname) AS studentname  FROM choices JOIN students ON choices.uid_student =students.uid_student WHERE uid_offering =? ORDER BY students.lastname, students.firstname DESC;',[teacher_uid], function(err, results){
+			
 				res.render('Offeringstudents.html',{
-				name:resultsN.name,
-				data:resultsZ
+				
+				data:results
 				});
 			});
 			});
-		});
-	});
-	});
+	
 
 
 
