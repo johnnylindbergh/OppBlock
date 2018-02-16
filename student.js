@@ -281,7 +281,7 @@ module.exports = {
 	});
 	
 	//	The student post request serves two functions: to insert a student's choice into the database and to override an exclusion from the OppBlock Day
-	app.post('/student', middleware.isStudent, isOpenOffering, function(req, res) {
+	app.post('/student', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
 		// Gets the student's uid, the uid of their offering of choice, and the current day uid
 		var uid_student = req.user.local[0].uid_student; 
 		var uid_offering = req.body.choice;
