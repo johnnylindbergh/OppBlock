@@ -379,14 +379,14 @@ module.exports = function(app) {
 	});
 
 	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
-		var offering = req.params.offering;
-		var day = req.params.day;
+		var uid_offering = req.params.offering;
+		var uid_day = req.params.day;
 		var student = req.body.studentName;
 		var students = [];
 		var studentIDs = [];
 		con.query('select uid_student, firstname, lastname from students', function(err, studentRes){
-			if (!err && studentRes != undefined ){
-				for (var s = 0; s <studentRes.length; s++){
+			if (!err && studentRes != undefined) {
+				for (var s = 0; s <studentRes.length; s++) {
 					students.push(studentRes[s].firstname +" "+studentRes[s].lastname);
 					studentIDs.push(studentRes[s].uid_student);
 				}
@@ -394,7 +394,7 @@ module.exports = function(app) {
   					return new Levenshtein(compareTo, baseItem).distance;
 				});
 
-				con.query('insert into choices (uid_day, uid_offering, uid_student) values (?,?,?);', [day, offering,studentIDs[c]], function(err){
+				con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, studentIDs[c], uid_day], function(err){
 					if (!err){
 						res.redirect('back');
 					} else {
