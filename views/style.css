@@ -192,6 +192,7 @@ textarea{
 	cursor:pointer;
 	border:none;
 	font-family: 'Open Sans';
+	text-align: center;
 	background-color: white;
 	border-color: white;
 	color: grey;
