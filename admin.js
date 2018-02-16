@@ -32,13 +32,15 @@ module.exports =  {
 		});
 		//	Opp Block Creation Calendar Endpoints
 		app.get('/calendar', middleware.isAdmin, function(req, res) { 
-			con.query('SELECT day FROM opp_block_day', function(err, oppDays) {
+			con.query('SELECT * FROM opp_block_day', function(err, oppDays) {
 				if (!err) {
 					if(oppDays.length != 0) {
 						var days = [];
-						//	Formats the date objects into readable dates 
+						//	Pushes the date objects into an array in a readable format for mustache THEN
+						//	Runs addStudentsToChoiceTable() on each day, putting students into the choice table if necessary
 						for(var i = 0; i<oppDays.length; i++) {
 							days.push({day: moment(oppDays[i].day).format('YYYY-MM-DD')});
+							module.exports.addStudentsToChoiceTable(oppDays[i].uid_day);
 						}
 						res.render('admincalendar.html', {batchSelect: settings.opp_days, days: days});
 					} else {
@@ -53,21 +55,15 @@ module.exports =  {
 			con.query('SELECT * FROM choices', function(err, result) { 
 					if(!err) {
 						if(result.length > 0) {	
-							console.log("STARTING PRINT");
-							for (var i=0; i<result.length; i++) {
-								console.log(result[i]);
-							}
-							res.send("DID SOME STURF + " + result);
-							res.end();
+							//Hacer Cosas
 						} else {
-							console.log("inserting");
-							module.exports.addStudentsToChoiceTable(8);
-							res.send("Inserted");
+							module.exports.addStudentsToChoiceTable(uid_day);
 						}
 					} else {
 						res.render('error.html', {err:err});
 					}
 			});
+			//	REWRITE THIS TO COORDINATE WITH ADDSTUDENTSTOCHOICETABLE()
 		});
 		app.post('/calendar', middleware.isAdmin, function(req, res) {
 			//	This post request inserts an admin's desired Oppblock days into the database
@@ -98,6 +94,9 @@ module.exports =  {
 					});
 				}
 			}
+		});
+		app.get('/Groups', middleware.isAdmin, function(req, res) {
+			res.send("This page is under construciton. Check back soon!");
 		});
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
@@ -158,38 +157,6 @@ module.exports =  {
 			}
 		});
 	},
-	
-	getExcludedStudentsOnDay: function(uidDay,callback){
-		var excludedStudentUidArray = [];
-		getExcludedGroupsOnDay(1, function(groups){
-			con.query('SELECT uid_student FROM student_groups WHERE uid_group in (?)', [groups], function(err, results) {
-					//console.log("this:  "+results);
-					if (results != undefined){
-						for (var i = 0; i < results.length; i++) {
-							excludedStudentUidArray.push(results[i].uid_student);
-						}
-					} 
-					callback(excludedStudentUidArray);
-
-				});
-		});
-	},
-
-	getExcludedGroupsOnDay: function(uidDay,callback){
-		var excludedGroupsArray = [];
-		con.query('SELECT uid_group FROM excluded_groups WHERE uid_day = ?', [uidDay], function(err, results) {
-
-			if (results != undefined){
-				for (var i = 0; i < results.length; i++) {
-					excludedGroupsArray.push(results[i].uid_group);
-				}
-				callback(excludedGroupsArray);  
-			}else{
-				callback(excludedGroupsArray); 
-			}    
-		});
-		
-	},
 
 	getUidFromValue: function (tableType, value, callback) {
 		if (tableType == "teachers"){
@@ -235,55 +202,70 @@ module.exports =  {
 
 	},
 
-	getExcludedStudentsOnDay: function (uidDay,callback){
+	getExcludedStudentsOnDay: function (uid_day,callback){
 		var excludedStudentUidArray = [];
-		module.exports.getExcludedGroupsOnDay(1, function(groups){
+		module.exports.getExcludedGroupsOnDay(uid_day, function(groups){
 			con.query('SELECT uid_student FROM student_groups WHERE uid_group in (?)', [groups], function(err, results) {
-				//console.log("this:  "+results);
 				if (results != undefined){
 					for (var i = 0; i < results.length; i++) {
 						excludedStudentUidArray.push(results[i].uid_student);
 					}
 				} 
 				callback(excludedStudentUidArray);
-
 			});
 		});
 	},
 
-	getExcludedGroupsOnDay: function (uidDay,callback){
+	getExcludedGroupsOnDay: function (uid_day,callback){
 		var excludedGroupsArray = [];
-		con.query('SELECT uid_group FROM excluded_groups WHERE uid_day = ?', [uidDay], function(err, results) {
+		con.query('SELECT uid_group FROM excluded_groups WHERE uid_day = ?', [uid_day], function(err, results) {
+			for (var i = 0; i < results.length; i++) {
+				excludedGroupsArray.push(results[i].uid_group);
+			}
+			callback(excludedGroupsArray); 
+		});
+	},
+	//	A function to broadly deal with adding students to the choices table for a given day (uid_day) and excluding 	
+	addStudentsToChoiceTable: function (uid_day) {
+		// --------------------
+		//	UNDER CONSTRUCTION
+		// --------------------
+		module.exports.getExcludedStudentsOnDay(uid_day, function(students){
+			con.query('SELECT * FROM choices WHERE uid_day = ?', [uid_day], function(err, result) {
+				if (students.length != 0) {
+					con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
 
+					});
+				} else {
+
+				}
+			});
+		});
+		con.query('SELECT * FROM choices', function(err, result) { 
+				if(!err) {
+					if(result.length > 0) {	
+						//Hacer Cosas
+					} else {
+						module.exports.addStudentsToChoiceTable(uid_day);
+					}
+				} else {
+					res.render('error.html', {err:err});
+				}
+		});
+		con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
 			if (results != undefined){
 				for (var i = 0; i < results.length; i++) {
-					excludedGroupsArray.push(results[i].uid_group);
+					con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, results[i].uid_student]);
 				}
-				callback(excludedGroupsArray);  
 			}else{
-				callback(excludedGroupsArray); 
-			}    
-		});
-
-	},
-
-	addStudentsToChoiceTable: function (uidDay){
-		module.exports.getExcludedStudentsOnDay(uidDay, function(students){
-			con.query('SELECT uid_student FROM students WHERE uid_student NOT in (?)', [students], function(err, results) {
-				if (results != undefined){
-					for (var i = 0; i < results.length; i++) {
-						con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uidDay, results[i].uid_student]);
-					}
-				}else{
-					con.query('SELECT uid_student FROM students', [students], function(err, results) {
-						if (results != undefined){
-							for (var i = 0; i < results.length; i++) {
-								con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uidDay, results[i].uid_student]);
-							}	
-						}    
-					});
-				}
-			});
+				con.query('SELECT uid_student FROM students', [students], function(err, results) {
+					if (results != undefined){
+						for (var i = 0; i < results.length; i++) {
+							con.query('INSERT into choices (uid_day, uid_student) values (?,?);', [uid_day, results[i].uid_student]);
+						}	
+					}    
+				});
+			}
 		});
 	},
 

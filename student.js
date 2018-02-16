@@ -96,6 +96,8 @@ module.exports = {
         trueOffers.push(dayList[i].uid_offering);
       }
     }
+    //	TO DO:
+    //	ORDER OFFERINGS FOR NICENESS
     //	Gets the info associated with those offerings
     con.query('SELECT * FROM offerings', function(err, rowList) {
       if(!err) {
