@@ -26,6 +26,41 @@ module.exports = function(app) {
 		}
 	});
 
+	app.get('/logout',function(req,res){
+		req.logout();
+		req.redirect('/');
+	});
+
+	/*app.get('/teacher', middleware.isTeacher, function(req, res) {
+		var uid_teacher = req.user.local.uid_teacher;
+
+		var inProgress;
+		var oppBlockStartHours = settings.hours_close_oppblock.value_int;
+		var oppBlockStartMinutes = settings.minutes_close_oppblock.value_int;
+		var oppBlockLength = settings.minutes_length_oppblock.value_int;
+
+
+		console.log(oppBlockStartHours);
+		console.log(oppBlockStartMinutes);
+		console.log(oppBlockLength);
+		con.query('select * from opp_block_day order by day asc', function(err, resultsDay){
+			if (!err){
+				for (var i = 0; i < resultsDay.length; i++){
+					if (moment(resultsDay[i].day).isSame(moment(), 'day')){
+						var oppStart = moment(resultsDay[i].day).add(oppBlockStartHours, 'hours').add(oppBlockStartMinutes, 'minutes');
+						var oppEnd = moment(oppStart).add(oppBlockLength, 'minutes');
+						if (moment().isAfter(oppStart) && moment().isBefore(oppEnd) ){
+							inProgress = true;
+							con.query('select * from calendar where uid_day = ?', [resultsDay[i].uid_day], function(err, currentOffering){
+								if (currentOffering != undefined){
+									res.redirect('/attendance/' + currentOffering[0].uid_offering +'/'+currentOffering[0].uid_day);
+								}
+
+								
+							});
+						}
+					}
+	*/
 
 	app.get('/teacher', middleware.isTeacher, function(req, res){
 		var uid_teacher = req.user.local.uid_teacher;
@@ -405,7 +440,7 @@ module.exports = function(app) {
 	});
 
 
-	app.get('/Day/:id', function(req, res) {
+	app.get('/Day/:id', middleware.isAdmin, function(req, res) {
 		var day_uid = req.params.id;
 			con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;',[day_uid], function(err, resultsDay) {					
 			res.render('Day.html', { 
@@ -417,31 +452,21 @@ module.exports = function(app) {
 	app.get('/Offeringstudents/:id', middleware.isAdmin, function(req, res){
 		var teacher_uid = req.params.id;
 		//console.log(teacher_uid);
-		con.query('select uid_offering from offerings where uid_teacher=?;',[teacher_uid], function(err, resultsO){
-			var off=resultsO[0].uid_offering;
-			//console.log(off);
-			con.query('select uid_student from choices where uid_offering=?;', [off], function(err, resultsS){
-				
-				var stud=resultsS[0].uid_student;
-				
-				con.query('select lastname from students where uid_student=?;',[stud], function(err, resultsZ){
-				con.query('select name from teachers where uid_teacher=?;', [teacher_uid], function(err, resultsN){
-				console.log(resultsN);
+		con.query('SELECT CONCAT(students.lastname, \', \',students.firstname) AS studentname  FROM choices JOIN students ON choices.uid_student =students.uid_student WHERE uid_offering =? ORDER BY students.lastname, students.firstname DESC;',[teacher_uid], function(err, results){
+			
 				res.render('Offeringstudents.html',{
-				name:resultsN[0].name,
-				data:resultsZ
+				
+				data:results
 				});
 			});
 			});
-		});
-	});
-	});
+	
 
 
 
 	app.get('/Admin', middleware.isAdmin, function(req, res){
 		con.query('select * from opp_block_day;', function(err, resultsAdmin){
-				console.log(resultsAdmin);
+				//console.log(resultsAdmin);
 				res.render('Admin.html',{
 				
 				data:resultsAdmin
@@ -453,7 +478,7 @@ module.exports = function(app) {
 
 	//need to join those uid students with student names
 	app.get('/Mopblock', middleware.isAdmin, function(req, res){
-		con.query('select * from absent;', function(err, resultsMopblock){
+		con.query('SELECT students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL ORDER BY students.grade, students.lastname, students.firstname DESC;', function(err, resultsMopblock){
 				console.log(resultsMopblock);
 				res.render('Mopblock.html',{
 				data:resultsMopblock

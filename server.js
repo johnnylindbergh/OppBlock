@@ -27,8 +27,8 @@ app.use( bodyParser.json());
 app.engine('html', mustacheExpress());
 app.set('views', __dirname + '/views');
 
-app.use(express.static('public'));
-app.use(express.static('views'));
+app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/views'));
 
 
 
@@ -75,7 +75,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8980/auth/google/callback",
+    callbackURL: "http://opp.stab.org/auth/google/callback",
     passReqToCallback: true
   },
   function(request, accessToken, refreshToken, profile, done) {

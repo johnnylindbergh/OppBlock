@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+/*UNIVERSAL STYLE*/
+
+a{color: white;}
+
 body{
 	background-image: url("/oppbackground.jpg");
 	background-repeat: no-repeat;
@@ -39,16 +45,18 @@ body{
 #signedInAs{
 	margin: auto;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	text-align: left;
 	color: white;
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
+	font-size: 20px;
 }
 
 #offerings{
 	margin:auto;
 	text-align:left;
 	color:white;
-	font-family:Lucida Grande;
+	font-family: 'Open Sans';
 }
 
 .accordion {
@@ -82,23 +90,23 @@ table{
 }
 
 th, td{
-	font-family: Lucida Grande;
+	font-family: 'Open Sans';
+	color: white;
 	font-weight: normal;
 	text-align: center;
 	padding: 8px;
 }
 
-tr:nth-child(even){background-color: gray}
-
-tr:hover {background-color: white;}
+tr:hover{
+	background-color: grey;
+}
 
 th{
 	background-color: black;
 	color: white;
 }
 
-a {color: white;}
-a:hover {color:grey;}
+/*CSV STYLE*/
 
 textarea{
 	width:150.5px;
@@ -111,13 +119,59 @@ textarea{
 	width:30%;
 	background-color: white;
 	border-color: white;
-	color: black;
-	margin-top:10px;
-	margin-right:5px;
-	margin:20px;
+	color: grey;
+	margin:auto;
 }
 
-input{
+#csvsubmit{
+	width:200px;
+	height: 40px;
+	font-size:15px;
+	cursor:pointer;
+	border:none;
+	font-family: 'Open Sans';
+	text-align: center;
+	background-color: white;
+	border-color: white;
+	color: grey;
+    text-decoration: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+    float: left;
+    justify-content: center;
+}
+
+#csvsubmit:hover{
+	background-color: black;
+	color: white;
+}
+
+#csvbox{
+	margin: 20px;
+}
+
+/*TEACHER STYLE*/
+
+#mstitle{
+	display:block;
+	margin-left:0px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
+}
+
+#offeringdelete{
+	display:block;
+	margin-left:0px;
+	margin-top:5px;
+	margin-bottom:5px;
+	text-align:left;
+	color:white;
+}
+
+/*STUDENT.HTML STYLE*/
+
+#logout{
 	width:150.5px;
 	font-size:15px;
 	display: block;
@@ -134,28 +188,40 @@ input{
 	
 }
 
-input:hover{
-	background-color: lightgray;
-	color: black;
+#logout:hover{
+	background-color: black;
+	color: white;
 }
 
-button{
-	width:150.5px;
+#choice{
+	margin: auto;
+	padding-top: 100px;
+	text-align: left;
+	color: white;
+	font-family: 'Open Sans';
+}
+
+/*ADMIN.HTML STYLE*/
+
+#adminbutton{
+	width:200px;
+	height: 40px;
 	font-size:15px;
-	display:inline-block;
-	text-align:left;
 	cursor:pointer;
 	border:none;
-	height:34px;
+	font-family: 'Open Sans';
+	text-align: center;
 	background-color: white;
 	border-color: white;
 	color: grey;
-	margin-top:10px;
-	margin-right:5px;
-	float:left;
+    text-decoration: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+    float: left;
+    justify-content: center;
 }
 
-button:hover{
+#adminbutton:hover{
 	background-color: black;
 	color: white;
 }
