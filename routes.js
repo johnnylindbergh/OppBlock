@@ -181,7 +181,7 @@ module.exports = function(app) {
 							}
 							res.redirect('/teacher');
 						}else{
-							cnsole.log(err);
+							console.log(err);
 						}
 					});
 				} else {
