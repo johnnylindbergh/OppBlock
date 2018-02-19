@@ -477,8 +477,9 @@ module.exports = function(app) {
 	
 
 	//need to join those uid students with student names
-	app.get('/Mopblock', middleware.isAdmin, function(req, res){
-		con.query('SELECT students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL AND uid_day = 8 ORDER BY students.grade, students.lastname, students.firstname DESC;', function(err, resultsMopblock){
+	app.get('/Mopblock/:id', middleware.isAdmin, function(req, res){
+		var dayid=req.params.id;
+		con.query('SELECT students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL AND uid_day = ? ORDER BY students.grade, students.lastname, students.firstname DESC;',[dayid], function(err, resultsMopblock){
 				console.log(resultsMopblock);
 				res.render('Mopblock.html',{
 				data:resultsMopblock
