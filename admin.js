@@ -186,17 +186,16 @@ module.exports =  {
 			//	The uid and the date of the day are taken from the url and made into variables for easy use
 			var uid_day = req.params.day;
 			var date = req.params.date;
-			// Gets --
-			con.query('SELECT students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL AND uid_day = ? ORDER BY students.grade, students.lastname, students.firstname DESC;', [uid_day], function(err, resultsMopblock){
+			// Gets all the students on that day who have signed up, but not yet arrived at their offering
+			con.query('SELECT offerings.name, offerings.uid_offering, students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student JOIN offerings ON choices.uid_offering = offerings.uid_offering WHERE choices.uid_offering IS NOT NULL AND arrived = 0 AND uid_day = ? ORDER BY students.grade, students.lastname, students.firstname DESC;', [uid_day], function(err, resultsNotarrived){
 				if(!err) {
 					//	Renders the page
-					res.render('notarrived.html', {date:date, data:resultsMopblock});
+					res.render('notarrived.html', {date:date, data:resultsNotarrived});
 				} else {
 					//	Renders the error page if an error occured
 					res.render('error.html', {err: err});
 				}
 			});
-			res.send("This page is under construction. Check back soon!");
 		});
 
 		app.get('/stats', middleware.isAdmin, function(req, res) {

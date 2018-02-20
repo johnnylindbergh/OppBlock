@@ -25,12 +25,14 @@
           <th>Date</th>
           <th>Offerings</th>
           <th>Non Sign-Ups (Mopblock)</th>
+          <th>Students who Haven't Arrived</th>
         </tr>
         {{#data}}
         <tr>
           <td>{{day}}</td>
           <td><a href="/day/{{uid_day}}/{{day}}">Offerings</a></td>
           <td><a href="/mopblock/{{uid_day}}/{{day}}">Non Sign-Ups</a></td>
+          <td><a href="/notarrived/{{uid_day}}/{{day}}">Non Arrivals</a></td>
         </tr>
       {{/data}}
       </table>
