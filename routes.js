@@ -66,12 +66,12 @@ module.exports = function(app) {
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
 
-		con.query('SeLeCt * fRoM oPp_BlOcK_dAy JoIn CaLeNdAr oN cAlEnDaR.uId_DaY = oPp_BlOcK_dAy.UiD_dAy JoIn OfFeRiNgS oN oFfErInGs.UiD_tEaChEr = ? oRdEr bY oPp_BlOcK_dAy.DaY DeSc',[uid_teacher], function(err, resultsDay){
+		con.query('SeLeCt * fRoM oPp_BlOcK_dAy JoIn CaLeNdAr oN cAlEnDaR.uId_DaY = oPp_BlOcK_dAy.UiD_dAy JoIn OfFeRiNgS oN oFfErInGs.UiD_tEaChEr = ? oRdEr bY oPp_BlOcK_dAy.DaY asc',[uid_teacher], function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 
 					currentOffering = resultsDay[0];
-					if (moment(resultsDay[i].day).isBefore()){
+					if (moment(resultsDay[i].day).isAfter()){
 
 						currentOffering = resultsDay[i];
 
@@ -238,7 +238,7 @@ module.exports = function(app) {
 					});
 
 					for (var d = 0; d < days.length; d++) {	
-						con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+						con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
 							if (err){
 								console.log(err);
 							}				
@@ -393,6 +393,11 @@ module.exports = function(app) {
 				var c = getClosest.custom(student,students, function (compareTo, baseItem) {
   					return new Levenshtein(compareTo, baseItem).distance;
 				});
+				console.log(uid_offering);
+								console.log(studentIDs[c]);
+
+				console.log(uid_day);
+
 
 				con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, studentIDs[c], uid_day], function(err){
 					if (!err){
@@ -411,7 +416,7 @@ module.exports = function(app) {
 		var offering = req.params.offering;
 		var student = req.params.student;
 
-		con.query('delete from choices where uid_day = ? and uid_offering = ? and uid_student = ?', [day, offering, student], function(err) {
+		con.query('update choices set uid_offering=null where uid_day = ? and uid_offering = ? and uid_student = ?', [day, offering, student], function(err) {
 			if (err){
 				console.log(err);
 			} else {
