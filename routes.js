@@ -66,7 +66,7 @@ module.exports = function(app) {
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
 
-		con.query('select * from opp_block_day join calendar on calendar.uid_day = opp_block_day.uid_day join offerings on offerings.uid_teacher = ? order by opp_block_day.day desc',[uid_teacher], function(err, resultsDay){
+		con.query('SeLeCt * fRoM oPp_BlOcK_dAy JoIn CaLeNdAr oN cAlEnDaR.uId_DaY = oPp_BlOcK_dAy.UiD_dAy JoIn OfFeRiNgS oN oFfErInGs.UiD_tEaChEr = ? oRdEr bY oPp_BlOcK_dAy.DaY DeSc',[uid_teacher], function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 
@@ -204,9 +204,9 @@ module.exports = function(app) {
 				if (!err) {
 					con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
 						if (!err){
-							offering_id = offeringInfo[0].uid_offering;
+							offering_id = parseInt(offeringInfo[0].uid_offering);
 							for (var d = 0; d < days.length; d++) {	
-								con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+								con.query('insert into calendar (uid_day, uid_offering) values (?,?) ON DUPLICATE KEY UPDATE uid_day=?;', [days[d], offering_id, days[d], offering_id, days[d], offering_id], function(err,result) {
 									if (err){
 										console.log(err);
 									}else{
@@ -216,7 +216,7 @@ module.exports = function(app) {
 							}
 							res.redirect('/teacher');
 						}else{
-							cnsole.log(err);
+							console.log(err);
 						}
 					});
 				} else {
@@ -285,9 +285,9 @@ module.exports = function(app) {
 						}
 					}
 					
-					while (locations.size()>0 && closestLocations.length < 6){
+					while (locations.size()>0 && closestLocations.length < 3){
 						var l = locations.deq();
-						if (l.distance<5){
+						if (l.distance<4){
 							closestLocations.push(l);
 						}
 
