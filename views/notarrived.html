@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	  <title>Not Arrived {{date}}</title>
+	  <link rel="stylesheet" href="/style.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
+
+  <body>
+    <img id = "logo" src="/OppBlockLogoFinal.png">
+    <div id= "centralBox">
+      <p id= "titleText">Students Who Haven't Arrived for {{date}} <br> Note: If it's still early in Oppblock, teachers may not have taken attendance, so keep refreshing the page to get the updated total </p>
+  
+  	  <table>
+  	  	<tr>
+          <th>Students</th>
+          <th>Grade</th>
+          <th>Choice Name</th>
+        </tr>
+        {{#data}}
+        <tr>
+          <td>{{studentname}}</td>
+          <td>{{grade}}</td>
+          <td>{{choice}}</td>
+        </tr>
+        {{/data}}
+      </table>
+    </div>
+  </body>
+</html>
