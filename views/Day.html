@@ -1,37 +1,35 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>{{Day}} Offerings</title>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>Offerings {{date}}</title>
+    <link rel="stylesheet" href="/style.css" type="text/css"/>
+  </head>
 
-<body>
-<h2>{{Day}}</h2>
-
-<table>
-<tr>
-    <th>Students</th>
-    <th>Teacher</th>
-    <th>Oppblock Name</th>
-    <th>Location</th>
-    <th>Description</th>
-    <th>Maximum Size</th>
-    
-  </tr>
-  
-  {{#data}}
-  <tr>
-    <td><a href="/Offeringstudents/{{uid_offering}}">Students</a></td> 
-    <td>{{teacher}}</td>
-    <td>{{name}}</td>
-    <td>{{location}}</td>
-    <td>{{description}}</td> 
-    <td>{{max_size}}</td> 
-
-  </tr>
-  {{/data}}
-  </table>  
-  
-    
-</body>
+  <body>
+    <img id = "logo" src="/OppBlockLogoFinal.png">
+    <div id= "centralBox">
+      <p id= "titleText"> Offerings for {{date}} </p>
+      <table>
+        <tr>
+          <th>Students</th>
+          <th>Teacher</th>
+          <th>Oppblock Name</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Maximum Size</th>  
+        </tr>
+        {{#data}}
+        <tr>
+          <td><a href="/Offeringstudents/{{uid_offering}}/{{uid_day}}">Students</a></td> 
+          <td>{{teacher}}</td>
+          <td>{{name}}</td>
+          <td>{{location}}</td>
+          <td>{{description}}</td> 
+          <td>{{max_size}}</td> 
+        </tr>
+        {{/data}}
+      </table>  
+    </div>
+  </body>
 </html>

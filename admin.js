@@ -83,7 +83,7 @@ module.exports =  {
 				}
 			}
 		});
-		app.get('/Groups', middleware.isAdmin, function(req, res) {
+		app.get('/groups', middleware.isAdmin, function(req, res) {
 			res.send("This page is under construciton. Check back soon!");
 		});
 		return this;

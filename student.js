@@ -160,10 +160,8 @@ module.exports = {
 // A uid_day of the coming oppblock (null if the students can't yet choose) AND
 // A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
  getSoonestOppblockDay: function(callback) {
- 	//	TO DO:
- 	//	FIND OUT ANYWHERE ELSE IN PROJECT WHERE THIS FUNCTION MIGHT BE NECESSARY//MAKE IT MORE GENERAL FOR THOSE PURPOSES
-	con.query('SELECT * FROM opp_block_day', function(err, results){
-		// Gets all Oppblock days
+	// Gets all Oppblock days
+	con.query('SELECT * FROM opp_block_day', function(err, results){	
 		if(!err){
 			var uid_day = null;
 			var closest = moment().add(1, 'y');

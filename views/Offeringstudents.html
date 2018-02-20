@@ -1,21 +1,26 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>{{name}}'s Offering</title>
-</head>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="/style.css" type="text/css"/>
+		<title>Students in Offering</title>
+	</head>
 
-<body>
-<h2>Offering Students</h2>
-<table style="">
-		<tr>
-            <th>Student</th>
-        </tr>
-        {{#data}}
-        <tr>
-            <td>{{studentname}}</td>
-        </tr>
-        {{/data}}
-    </table>
-</body>
+	<body>
+		<img id = "logo" src="/OppBlockLogoFinal.png">
+	    
+	    <div id= "centralBox">
+	      	<p id= "titleText">This Offering's Students</p>
+			<table>
+				<tr>
+		            <th>Student</th>
+		        </tr>
+		        {{#data}}
+		        <tr>
+		            <td>{{studentname}}</td>
+		        </tr>
+		        {{/data}}
+		    </table>
+		</div>
+	</body>
 </html>
