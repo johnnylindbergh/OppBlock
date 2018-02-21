@@ -204,9 +204,9 @@ module.exports = function(app) {
 				if (!err) {
 					con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
 						if (!err){
-							offering_id = offeringInfo[0].uid_offering;
+							offering_id = parseInt(offeringInfo[0].uid_offering);
 							for (var d = 0; d < days.length; d++) {	
-								con.query('insert into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+								con.query('insert into calendar (uid_day, uid_offering) values (?,?) ON DUPLICATE KEY UPDATE uid_day=?;', [days[d], offering_id, days[d], offering_id, days[d], offering_id], function(err,result) {
 									if (err){
 										console.log(err);
 									}else{
@@ -216,7 +216,7 @@ module.exports = function(app) {
 							}
 							res.redirect('/teacher');
 						}else{
-							cnsole.log(err);
+							console.log(err);
 						}
 					});
 				} else {
@@ -285,9 +285,9 @@ module.exports = function(app) {
 						}
 					}
 					
-					while (locations.size()>0 && closestLocations.length < 6){
+					while (locations.size()>0 && closestLocations.length < 3){
 						var l = locations.deq();
-						if (l.distance<5){
+						if (l.distance<4){
 							closestLocations.push(l);
 						}
 
@@ -349,33 +349,36 @@ module.exports = function(app) {
 
 
 
-
+	//	The page for teachers to take attendance for their offering
 	app.post('/updateAttendance/:offering', middleware.isTeacher, function(req,res){
-		var teacher_uid = req.user.local.uid_teacher;
+		//	An array of uids for students that have arrived in this offering
 		var students = req.body.students;
+		//	An array of uids for all the students in this offerings
 		var allStudents = req.body.allStudents; 
-		if (allStudents == undefined){allStudents = []}
+		//	The current uid_day
+		var uid_day = req.body.uid_day;
 
-		for (var i = 0; i <allStudents.length;i++ ){
-			con.query('update students set arrived = 0 where uid_student = ?',[allStudents[i]], function(err){
-				if (err){
-					console.log(err);
+		//	Loops through all the students and sets them as not arrived, reseting the attendance
+		if (allStudents == undefined) {allStudents = []}
+		for (var i = 0; i < allStudents.length; i++) {
+			con.query('UPDATE choices SET arrived = 0 WHERE uid_student = ? and uid_day = ?', [allStudents[i], uid_day], function(err){
+				if(err) {
+					//	Renders the error page if an error occured
+					res.render('error.html', {err: err});
 				}
 			});
-	
 		}
-		if (students == undefined){students = []}
-			for (var i = 0; i <students.length;i++ ){
-				con.query('update students set arrived = 1 where uid_student = ?',[students[i]], function(err){
-					if (err){
-						console.log(err);
-					}
-				});
-	
-			}
-			res.redirect('back');
-		
-
+		//	Then loops through the arrived students and sets them as such
+		if (students == undefined) {students = []}
+		for (var i = 0; i <students.length; i++) {
+			con.query('UPDATE choices SET arrived = 1 WHERE uid_student = ? and uid_day = ?', [students[i], uid_day], function(err){
+				if (err){
+					//	Renders the error page if an error occured
+					res.render('error.html', {err: err});
+				}
+			});
+		}
+		res.redirect('back');
 	});
 
 	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
@@ -405,7 +408,6 @@ module.exports = function(app) {
 			}
 		});
 	});
-
 	app.get('/removeStudent/:day/:offering/:student', middleware.isTeacher, function(req,res){
 		var day = req.params.day;
 		var offering = req.params.offering;
@@ -419,119 +421,4 @@ module.exports = function(app) {
 			}
 		});
 	});
-	//CSV Post
-	app.post('/studentcsvinput', middleware.isAdmin, function(req,res) {
-		if (res != undefined){
-			admin.createStudentCSV(req.body.Rad);
-			res.redirect('/admin');
-		}
-	});
-
-	app.post('/teachercsvinput', middleware.isAdmin, function(req, res) {
-		if (res != undefined){
-			admin.createTeacherCSV(req.body.Radical);
-			res.redirect('/admin');
-		}
-	});
-
-	app.get('/csvinput', middleware.isAdmin, function(req,res) {
-		res.render('clientcsv.html');
-	});
-
-	//	This is the main admin page, with links to the MopBlock and offering pages for each day
-	app.get('/Admin', middleware.isAdmin, function(req, res){
-		//	Gets all the oppblock days
-		con.query('select * from opp_block_day ORDER BY day ASC', function(err, resultsAdmin){
-			if(!err) {
-				//	Loops through all the days and formats them nicely
-				for (var i=0; i<resultsAdmin.length; i++) {
-					var day = moment(resultsAdmin[i].day).format('YYYY-MM-DD');
-					resultsAdmin[i].day = day;
-				}
-				//	Renders the page
-				res.render('Admin.html', {data:resultsAdmin});
-			} else {
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
-	});
-
-	//	This page lets admins check all the offerings on a certain day and gives links to each '/offeringstudents' page for those offerings
-	app.get('/day/:day/:date', middleware.isAdmin, function(req, res) {
-		//	The uid and the date of the day are taken from the url and made into variables for easy use
-		var uid_day = req.params.day;
-		var date = req.params.date;
-		//	This massive query gets all the offerings (with all their data) for a certain day
-		con.query('SELECT offerings.uid_offering, CONCAT(teachers.teacher_firstname, \' \', teachers.teacher_lastname) AS teacher, offerings.name, offerings.location, offerings.description, offerings.max_size FROM calendar JOIN offerings on calendar.uid_offering = offerings.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?;', [uid_day], function(err, resultsDay) {
-			if(!err) {
-				//	Renders the page
-				res.render('Day.html', {date:date, uid_day:uid_day, data:resultsDay});
-			} else {
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
-	});
-	
-	//	This page lets admins see all the students signed up for a certain offering on a certain day
-	app.get('/offeringstudents/:offering/:day', middleware.isAdmin, function(req, res){
-		//	The uid of the day and offering are taken from the url and made into variables for easy use
-		var uid_offering = req.params.offering;
-		var uid_day = req.params.day;
-		//	Gets all the students currently signed up for this offering on this day from the db
-		con.query('SELECT CONCAT(students.lastname, \', \',students.firstname) AS studentname  FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering = ? AND uid_day = ? ORDER BY students.lastname, students.firstname DESC;', [uid_offering, uid_day], function(err, results){
-			if(!err) {
-				//	Gets the name of the offering, so that the user doesn't have to remember which one they clicked
-				con.query('SELECT name FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, resultsName) {
-					if(!err) {
-						//	Renders the page
-						res.render('Offeringstudents.html', {name:resultsName[0].name, data:results});
-					} else {
-						//	Renders the error page if an error occured
-						res.render('error.html', {err: err});
-					}
-				})
-			} else {
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
-	});
-	
-	//	This page lets admins see all the students who have failed to sign up on a day
-	app.get('/mopblock/:day/:date', middleware.isAdmin, function(req, res){
-		//	The uid and the date of the day are taken from the url and made into variables for easy use
-		var uid_day = req.params.day;
-		var date = req.params.date;
-		//	Gets all the students who haven't signed up and their names
-		con.query('SELECT students.uid_student, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL AND uid_day = ? ORDER BY students.grade, students.lastname, students.firstname DESC;', [uid_day], function(err, resultsMopblock){
-			if(!err) {
-				//	Renders the page
-				res.render('Mopblock.html', {date:date, data:resultsMopblock});
-			} else {
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
-	});
-	
-	//	This page lets admins see all the students who haven't showed up for their offering on a certain day
-	app.get('/notarrived/:day/:date', middleware.isAdmin, function(req, res) {
-		//	The uid and the date of the day are taken from the url and made into variables for easy use
-		var uid_day = req.params.day;
-		var date = req.params.date;
-		// GOTTA DO THIS AT SOME POINT
-		res.send("This page is under construciton. Check back soon!");
-	});
-
-	app.get('/stats', middleware.isAdmin, function(req, res) {
-		res.send("This page is under construciton. Check back soon!");
-	});
-
-	//	TO DO: 
-	//		Implement the '/notarrived' page that shows all those who haven't arrived at their offering (which dynamically updates?)
-	//		Implement the '/stats' page that gives long term data for offerings, teachers, and students (1984???)
-	//
-	//		Replace some of the get requests with post requests because a lot of links have the disgusting '/:day/:date'??? But then harder to refresh???
 }
