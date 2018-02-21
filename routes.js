@@ -349,33 +349,36 @@ module.exports = function(app) {
 
 
 
-
+	//	The page for teachers to take attendance for their offering
 	app.post('/updateAttendance/:offering', middleware.isTeacher, function(req,res){
-		var teacher_uid = req.user.local.uid_teacher;
+		//	An array of uids for students that have arrived in this offering
 		var students = req.body.students;
+		//	An array of uids for all the students in this offerings
 		var allStudents = req.body.allStudents; 
-		if (allStudents == undefined){allStudents = []}
+		//	The current uid_day
+		var uid_day = req.body.uid_day;
 
-		for (var i = 0; i <allStudents.length;i++ ){
-			con.query('update students set arrived = 0 where uid_student = ?',[allStudents[i]], function(err){
-				if (err){
-					console.log(err);
+		//	Loops through all the students and sets them as not arrived, reseting the attendance
+		if (allStudents == undefined) {allStudents = []}
+		for (var i = 0; i < allStudents.length; i++) {
+			con.query('UPDATE choices SET arrived = 0 WHERE uid_student = ? and uid_day = ?', [allStudents[i], uid_day], function(err){
+				if(err) {
+					//	Renders the error page if an error occured
+					res.render('error.html', {err: err});
 				}
 			});
-	
 		}
-		if (students == undefined){students = []}
-			for (var i = 0; i <students.length;i++ ){
-				con.query('update students set arrived = 1 where uid_student = ?',[students[i]], function(err){
-					if (err){
-						console.log(err);
-					}
-				});
-	
-			}
-			res.redirect('back');
-		
-
+		//	Then loops through the arrived students and sets them as such
+		if (students == undefined) {students = []}
+		for (var i = 0; i <students.length; i++) {
+			con.query('UPDATE choices SET arrived = 1 WHERE uid_student = ? and uid_day = ?', [students[i], uid_day], function(err){
+				if (err){
+					//	Renders the error page if an error occured
+					res.render('error.html', {err: err});
+				}
+			});
+		}
+		res.redirect('back');
 	});
 
 	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
