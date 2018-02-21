@@ -66,7 +66,7 @@ module.exports = function(app) {
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
 
-		con.query('SeLeCt * fRoM oPp_BlOcK_dAy JoIn CaLeNdAr oN cAlEnDaR.uId_DaY = oPp_BlOcK_dAy.UiD_dAy JoIn OfFeRiNgS oN oFfErInGs.UiD_tEaChEr = ? oRdEr bY oPp_BlOcK_dAy.DaY DeSc',[uid_teacher], function(err, resultsDay){
+		con.query('select * from opp_block_day join calendar on calendar.uid_day = opp_block_day.uid_day join offerings on offerings.uid_teacher = ? order by opp_block_day.day desc',[uid_teacher], function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 
@@ -408,7 +408,6 @@ module.exports = function(app) {
 			}
 		});
 	});
-
 	app.get('/removeStudent/:day/:offering/:student', middleware.isTeacher, function(req,res){
 		var day = req.params.day;
 		var offering = req.params.offering;
