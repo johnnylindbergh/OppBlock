@@ -5,7 +5,8 @@
 a{color: white;}
 
 body{
-	background-image: url("/oppbackground.jpg");
+	/* background-image: url("/oppbackground.jpg"); */
+	background-color: white;
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto;
@@ -174,17 +175,16 @@ textarea{
 #logout{
 	width:150.5px;
 	font-size:15px;
-	display: block;
-	text-align:left;
+	display: inline-block;
+	text-align: center;
 	cursor:pointer;
 	border:none;
 	height:34px;
 	background-color: white;
 	border-color: white;
 	color: black;
-	margin-top:10px;
-	margin-right:5px;
-	margin:20px;
+	margin: auto;
+	float: left;
 	
 }
 
@@ -195,7 +195,7 @@ textarea{
 
 #choice{
 	margin: auto;
-	padding-top: 100px;
+	padding-top: 50px;
 	text-align: left;
 	color: white;
 	font-family: 'Open Sans';
