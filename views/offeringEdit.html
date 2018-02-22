@@ -61,15 +61,27 @@
                                                         <br>
                                                             <input name="max_size" type="text" value="{{max_size}}">
                                                                 Days Offered:
-                                                                <br>
-                                                                    {{#dayData}} {{#canEdit}} {{day}}<input name="days" style='' type="checkbox" value="{{uid_day}}" {{#set}}checked="checked"{{/set}}>
-                                                
-                                                                {{/canEdit}} {{/dayData}}
-                                                                <br>
-                                                                    <input type="submit" value="Submit">
+                                                                         <table style="margin:1px; padding:2px;">
+                                                                        {{#dayData}}
+                                                                       <tr>
+
+                                                                         {{#canEdit}} 
+
+                                                                          <td>{{day}}</td>
+                                                                          <td>
+                                                          <input name="days" style='' type="checkbox" value="{{uid_day}}"{{#set}}checked="checked"{{/set}}>
+                                                                          </td>
+                                                                          {{/canEdit}}
+                                                                       </tr>
+                                                                     {{/dayData}}
+                                                                      </table>
+                                                                    <br>
+
+                                                                      <input type="submit" value="Submit">
                                                                         {{/data}}
-                                                                    </input>
-                                                                </br>
+                                                                      </input>
+                                                                    </br>
+
                                                             </input>
                                                         </br>
                                                     </br>
