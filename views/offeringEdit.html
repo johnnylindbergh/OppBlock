@@ -65,13 +65,14 @@
                                                                         {{#dayData}}
                                                                        <tr>
 
-                                                                         {{#canEdit}} 
+                                                                         
 
                                                                           <td>{{day}}</td>
+
                                                                           <td>
-                                                          <input name="days" style='' type="checkbox" value="{{uid_day}}"{{#set}}checked="checked"{{/set}}>
+                                                          <input name="days" style='' type="checkbox" value="{{uid_day}}"{{#set}} checked="checked"{{/set}}{{^canEdit}} disabled title="It's past the cutoff to modify this offering."{{/canEdit}}>
                                                                           </td>
-                                                                          {{/canEdit}}
+                                                                          
                                                                        </tr>
                                                                      {{/dayData}}
                                                                       </table>
