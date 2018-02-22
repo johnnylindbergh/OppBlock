@@ -2,8 +2,8 @@
 <html>
     <head>
         <link href="/style.css" rel="stylesheet" type="text/css"/>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
         <title>
             Oppblock System: Edit Offering
         </title>
@@ -65,13 +65,17 @@
                                                                         {{#dayData}}
                                                                        <tr>
 
-                                                                         {{#canEdit}} 
+                                                                         
 
                                                                           <td>{{day}}</td>
+
                                                                           <td>
-                                                          <input name="days" style='' type="checkbox" value="{{uid_day}}"{{#set}}checked="checked"{{/set}}>
-                                                                          </td>
+                                                                          {{^canEdit}}<i class="fas fa-ban"></i> Past Cutoff{{/canEdit}}
+                                                                          {{#canEdit}}
+                                                          <input name="days" style='' type="checkbox" value="{{uid_day}}"{{#set}} checked="checked"{{/set}}>
                                                                           {{/canEdit}}
+                                                                          </td>
+                                                                          
                                                                        </tr>
                                                                      {{/dayData}}
                                                                       </table>

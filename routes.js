@@ -230,20 +230,17 @@ module.exports = function(app) {
 				if (!Array.isArray(days)){days = [days];}
 				for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
 					con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
-						if (err) {
-							console.log(err);
+						if (!err) {
+							for (var d = 0; d < days.length; d++) {	
+								con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
+									if (err){ console.log(err); }
+								});
+							}
+							res.redirect('/teacher');
 						} else {
-							res.redirect("/teacher");
+							res.render('error.html', {err: err});
 						}
 					});
-
-					for (var d = 0; d < days.length; d++) {	
-						con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
-							if (err){
-								console.log(err);
-							}				
-						});
-					}
 			});
 		}	
 	});
