@@ -285,9 +285,9 @@ module.exports = function(app) {
 						}
 					}
 					
-					while (locations.size()>0 && closestLocations.length < 3){
+					while (locations.size()>0 && closestLocations.length < 6){
 						var l = locations.deq();
-						if (l.distance<4){
+						if (l.distance<5){
 							closestLocations.push(l);
 						}
 
