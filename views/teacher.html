@@ -40,6 +40,7 @@
             <th class="panel"></th>
           </tr>
           <form action="/updateAttendance/{{offeringId}}" method="post">
+            <input type="hidden" name="uid_day" value="{{offeringDay}}">
             {{#students}}
               <tr class="panel">
                 <td class="panel">{{firstname}} {{lastname}}</td> 

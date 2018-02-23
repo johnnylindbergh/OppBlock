@@ -143,6 +143,8 @@ CREATE TABLE calendar (
     FOREIGN KEY (uid_offering) REFERENCES offerings(uid_offering)
 );
 
+CREATE UNIQUE INDEX day_offering_tuple ON calendar (uid_day, uid_offering);
+
 CREATE TABLE choices (
     uid_day INT,
     uid_student INT,

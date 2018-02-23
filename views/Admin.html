@@ -8,7 +8,7 @@
   </head>
 <!--Things to do: set new oppblock, view all stuff, edit all stuff-->
   <body>
-    <img id = "logo" src="/OppBlockLogoFinal.png">
+    <a href="/admin"><img id = "logo" src="/OppBlockLogoFinal.png"></a>
     
     <div id= "centralBox">
       <p id= "titleText">Administrator Portal</p>
@@ -18,19 +18,21 @@
       <a id="adminbutton" class="button" href="/groups">Groups</a>
       <a id="adminbutton" class="button" href="/settings">Settings</a>
       <a id="adminbutton" class="button" href="/calendar">Schedule</a>
-      <a id="adminbutton" class = "button" href = "/logout">Logout</a>
+      <a id="adminbutton" class="button" href = "/logout">Logout</a>
     
       <table style="width:100%" align="center">
         <tr>
           <th>Date</th>
           <th>Offerings</th>
           <th>Non Sign-Ups (Mopblock)</th>
+          <th>Students who Haven't Arrived</th>
         </tr>
         {{#data}}
         <tr>
           <td>{{day}}</td>
           <td><a href="/day/{{uid_day}}/{{day}}">Offerings</a></td>
           <td><a href="/mopblock/{{uid_day}}/{{day}}">Non Sign-Ups</a></td>
+          <td><a href="/notarrived/{{uid_day}}/{{day}}">Non Arrivals</a></td>
         </tr>
       {{/data}}
       </table>
