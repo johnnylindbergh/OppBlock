@@ -70,9 +70,9 @@ module.exports = function(app) {
 		con.query('SELECT * FROM opp_block_day WHERE day = ?;', [today], function(err, res) {
 			if (!err && res[0]) {	// this means there's an opp block today
 				var uid_day = res[0].uid_day;
-				con.query('SELECT * FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_day = ?', [uid_day], function(err, res) {
-					if (!err && res[0]){	// teacher is offering today
-						con.query('select * from choices join students on choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[currentOffering.uid_day, currentOffering.uid_offering], function(err, students){
+				con.query('SELECT * FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_day = ?', [uid_day], function(err, currentOffering) {
+					if (!err && currentOffering[0]){	// teacher is offering today
+						con.query('select * from choices join students on choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[currentOffering[0].uid_day, currentOffering[0].uid_offering], function(err, students){
 							if (!err){
 								con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 									if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
