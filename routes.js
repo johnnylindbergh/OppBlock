@@ -66,12 +66,16 @@ module.exports = function(app) {
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
 
+		//	DISGUSTING FIX -- PLEASE CHANGE (This gets today)
+		var today = moment().format('YYYY-MM-DD');
+
 		con.query('select * from opp_block_day join calendar on calendar.uid_day = opp_block_day.uid_day join offerings on offerings.uid_teacher = ? order by opp_block_day.day asc',[uid_teacher], function(err, resultsDay){
 			if (!err){
 				for (var i = 0; i < resultsDay.length; i++){
 
 					currentOffering = resultsDay[0];
-					if (moment(resultsDay[i].day).isBefore()){
+					//	DISGUSTING FIX COMPARES TODAY'S DATE TO ALL OPPBLOCK DATES TO GET THE CURRENT
+					if (moment(resultsDay[i].day).format('YYYY-MM-DD') == today){
 
 						currentOffering = resultsDay[i];
 
