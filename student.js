@@ -62,7 +62,7 @@ module.exports = {
       //	Gets the number of students in an offering 
       module.exports.numStudents(uid_day, uid_offering, false, function(num, infoList){
         //	Compares that number to the offering's maximum size
-        if(num >= data[0].max_size) {
+        if(data[0] && num >= data[0].max_size) {
           callback("disabled");
         } else {
           callback("able");
