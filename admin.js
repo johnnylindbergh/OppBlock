@@ -198,8 +198,10 @@ module.exports =  {
 			});
 		});
 
+		//	A page giving admins long term statistics
 		app.get('/stats', middleware.isAdmin, function(req, res) {
-			res.send("This page is under construction. Check back soon!");
+			//	Renders the page
+			res.render('stats.html');
 		});
 
 		//	A page letting admins create/manage excluded groups
