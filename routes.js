@@ -70,7 +70,7 @@ module.exports = function(app) {
 		con.query('SELECT * FROM opp_block_day WHERE day = ?;', [today], function(err, res) {
 			if (!err && res[0]) {	// this means there's an opp block today
 				var uid_day = res[0].uid_day;
-				con.query('SELECT * FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_day = ? AND offerings.uid_teacher = ?', [uid_day], function(err, currentOffering) {
+				con.query('SELECT * FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_day = ? AND offerings.uid_teacher = ?', [uid_day, uid_teacher], function(err, currentOffering) {
 					if (!err && currentOffering[0]){	// teacher is offering today
 						con.query('SELECT * FROM choices JOIN students ON choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[uid_day, currentOffering[0].uid_offering], function(err, students){
 							if (!err){
