@@ -173,7 +173,7 @@ module.exports =  {
 			con.query('SELECT students.uid_student, COUNT(students.uid_student) AS count, students.advisor, students.grade, CONCAT(students.lastname, \', \',students.firstname) AS studentname FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering IS NULL AND uid_day = ? ORDER BY students.grade, students.lastname, students.firstname DESC;', [uid_day], function(err, resultsMopblock){
 				if(!err) {
 					//	Renders the page
-					res.render('Mopblock.html', {date:date, data:resultsMopblock});
+					res.render('Mopblock.html', {date:date, data:resultsMopblock, count:count});
 				} else {
 					//	Renders the error page if an error occured
 					res.render('error.html', {err: err});
