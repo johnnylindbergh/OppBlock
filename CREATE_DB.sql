@@ -159,12 +159,14 @@ CREATE TABLE choices (
 INSERT into admins (lastname, firstname, email) values ('Ware', 'Blake','bware@stab.org' );
 INSERT into admins (lastname, firstname, email) values ('Quagliaroli','Peter', 'pquagliaroli@stab.org');
 INSERT into admins (lastname, firstname, email) values ('Last-Yuen','Milo', 'mlastyuen@students.stab.org');
-INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','cmackethan@students.stab.org');
+INSERT into admins (lastname, firstname, email) values ('MacKethan', 'Conrad','conrad.oppblock@gmail.com');
 INSERT into admins (lastname, firstname, email) values ('Duffy','Hewson' ,'hduffy@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('Du', 'Weiran', 'wdu@students.stab.org');
 INSERT into admins (lastname, firstname, email) values ('Du', 'William', 'wdu@students.stab.org');
 
 insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Johnny", "Lindbergh", "jlindbergh@students.stab.org");
+insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Bo", "Perriello", "bperriello@stab.org");
+insert into teachers (prefix, teacher_firstname, teacher_lastname, teacher_email) values ("Mr.", "Conrad", "MacKethan", "c.mackethan11@gmail.com");
 
 ## Test Data
 
@@ -200,7 +202,7 @@ INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
 INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
 INSERT into students (lastname, firstname, grade) values ("Lindbergh", "Johnny", 12);
 INSERT into students (lastname, firstname, grade) values ("Yao", "Jerry", 12);
-INSERT into students (lastname, firstname, grade) values ("MacKethan", "Conrad", 12);
+INSERT into students (lastname, firstname, grade, gender, email) values ("MacKethan", "Conrad", 12, "Male", "cmackethan@students.stab.org");
 INSERT into students (lastname, firstname, grade) values ("Minster", "Zach", 12);
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
