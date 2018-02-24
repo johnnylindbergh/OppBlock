@@ -77,9 +77,9 @@ module.exports = function(app) {
 								con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 									if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 										response.render('teacher.html', {
-											currentOffering:currentOffering,
-											offeringId:currentOffering.uid_offering,
-											offeringDay:currentOffering.uid_day,
+											currentOffering:currentOffering[0],
+											offeringId:currentOffering[0].uid_offering,
+											offeringDay:currentOffering[0].uid_day,
 											containsStudents: (students.length != 0) ,
 											students:students,
 											data: resultsTeacher,
@@ -335,6 +335,8 @@ module.exports = function(app) {
 		
 		var uid_offering = req.params.offering;
 
+		console.log(uid_day);
+
 		con.query('UPDATE choices SET arrived = 0 WHERE uid_day = ? AND uid_offering = ?', [uid_day, uid_offering], function(err){
 			if(!err) {
 				//	Then loops through the arrived students and sets them as such
@@ -407,8 +409,18 @@ module.exports = function(app) {
 function renderBasicTeacher(res, uid_teacher) {
 	con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 		if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-			res.render('teacher.html', {					 	
-				teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
+			con.query('select * from offerings where uid_teacher = ?;', [uid_teacher], function(err, offeringData) {
+				if (!err && offeringData !== undefined){
+					res.render('teacher.html', {					 	
+						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname,
+						data: offeringData
+					});
+				} else {
+					res.render('teacher.html', {					 	
+						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname,
+					});
+				}
+				
 			});
 		} else {
 			res.redirect('/error');
