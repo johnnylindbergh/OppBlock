@@ -202,7 +202,7 @@ INSERT into students (lastname, firstname, grade) values ("Du", "Weiran", 11);
 INSERT into students (lastname, firstname, grade) values ("Duffy", "Hewson", 10);
 INSERT into students (lastname, firstname, grade) values ("Lindbergh", "Johnny", 12);
 INSERT into students (lastname, firstname, grade) values ("Yao", "Jerry", 12);
-INSERT into students (lastname, firstname, grade, gender, email) values ("MacKethan", "Conrad", 12, "Male", "cmackethan@students.stab.org");
+INSERT into students (lastname, firstname, grade, gender, email) values ("MacKethan", "Conrad", 12, "Male", "conrad.oppblock@gmail.com");
 INSERT into students (lastname, firstname, grade) values ("Minster", "Zach", 12);
 ##INSERT into students (info) values ('Liu,Jay,Grade 9,BJVSoccer-W,"Bartholomew, Brian",Male,jaliu21@students.stab.org');
 
