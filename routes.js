@@ -8,7 +8,7 @@ var Levenshtein = require('levenshtein');
 var getClosest = require('get-closest');
 var PriorityQueue = require('priorityqueuejs');
 
-module.exports = function(app) {
+module.exports = function(app, socket) {
 
 	app.get('/', function(req, res) {
 		if (req.isAuthenticated()) {
@@ -117,7 +117,6 @@ module.exports = function(app) {
 				con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ? order by opp_block_day.day;', [offering_uid], function(err, dayResults) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
-							console.log(settings.hours_close_teacher.value_int);
 							if (moment(dayResults[i].day).add(settings.hours_close_teacher.value_int,'hours').isBefore()){
 								dayResults[i]['canEdit'] = false;
 								
@@ -324,40 +323,24 @@ module.exports = function(app) {
 
 
 
-	//	The page for teachers to take attendance for their offering
-	app.post('/updateAttendance/:offering', middleware.isTeacher, function(req,res){
-		//	An array of uids for students that have arrived in this offering
-		var students = req.body.students;
-		//	An array of uids for all the students in this offerings
-		var allStudents = req.body.allStudents; 
-		//	The current uid_day
-		var uid_day = req.body.uid_day;
-		
-		var uid_offering = req.params.offering;
 
-		console.log(uid_day);
 
-		con.query('UPDATE choices SET arrived = 0 WHERE uid_day = ? AND uid_offering = ?', [uid_day, uid_offering], function(err){
-			if(!err) {
-				//	Then loops through the arrived students and sets them as such
-				if (students !== undefined){
-					for (var i = 0; i <students.length; i++) {
-						con.query('UPDATE choices SET arrived = 1 WHERE uid_student = ? and uid_day = ?', [students[i], uid_day], function(err){
-							if (err){
-								//	Renders the error page if an error occured
-								res.render('error.html', {err: err});
-							}
-						});
-					}
-				}
-				res.redirect('/teacher');
-			} else{
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
+	socket.on('connection', function(socket){
 
+   		socket.on('updateAttendance', function(student, offering, day, arrived){
+
+    		if (student && offering && day && arrived != undefined){
+    			con.query('UPDATE choices SET arrived = ? WHERE uid_student = ? AND uid_offering = ? AND uid_day = ?;',[arrived, student, offering, day],function(err){
+    				if (err){
+    					res.render('error.html', {err: err});
+    				}
+    			});
+    		}
+
+ 	 	});
+ 	 
 	});
+
 
 	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
 		var uid_offering = req.params.offering;
@@ -374,10 +357,6 @@ module.exports = function(app) {
 				var c = getClosest.custom(student,students, function (compareTo, baseItem) {
   					return new Levenshtein(compareTo, baseItem).distance;
 				});
-				console.log(uid_offering);
-								console.log(studentIDs[c]);
-
-				console.log(uid_day);
 
 
 				con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, studentIDs[c], uid_day], function(err){
@@ -391,6 +370,8 @@ module.exports = function(app) {
 			}
 		});
 	});
+
+	
 	app.get('/removeStudent/:day/:offering/:student', middleware.isTeacher, function(req,res){
 		var day = req.params.day;
 		var offering = req.params.offering;
