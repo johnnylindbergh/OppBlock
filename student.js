@@ -220,6 +220,7 @@ module.exports = {
 		// Gets Student's id from middleware
 		var student = req.user.local[0];
 		var uid_student = student.uid_student; 
+		
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
 		// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
 		module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
@@ -279,34 +280,44 @@ module.exports = {
 	});
 	
 	//	The student post request serves two functions: to insert a student's choice into the database and to override an exclusion from the OppBlock Day
-	app.post('/student', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
+	app.post('/studentChoice', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
 		// Gets the student's uid, the uid of their offering of choice, and the current day uid
 		var uid_student = req.user.local[0].uid_student; 
 		var uid_offering = req.body.choice;
 		var uid_day = req.body.uid_day;
-		
-		// checks if post request comes from an override or a choice
+
+		console.log(uid_offering);
+		// Makes sure the student has chosen 
 		if(uid_offering != undefined) {
-			// Updates Choice
+			// Updates their hoice in the database
 			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, uid_student, uid_day], function(err, results) {
 				if(!err) {
 					//	Redirects back since the request has been carried out
 					res.redirect('/student');
 				} else {
-					res.render('error.html', {err:err});
-				}
-			});
-		} else {
-			// Overrides an excluded group by adding the student into the choice table
-			con.query('INSERT INTO choices (uid_offering, uid_student, uid_day) values (?, ?, ?)', [null, uid_student, uid_day], function(err) {
-				if(!err) {
-					//	Redirects back since the request has been carried out
-					res.redirect('/student');
-				} else {
+					//	Renders an error page if one occured
 					res.render('error.html', {err:err});
 				}
 			});
 		}
+	});
+
+	//	This post request is for when students are excluded wrongfully from an OppBlock Day
+	app.post('/studentOverride', middleware.isStudent, function(req, res) {
+		// Gets the student's uid and the current day uid
+		var uid_student = req.user.local[0].uid_student;
+		var uid_day = req.body.uid_day;
+
+		// Overrides an excluded group by adding the student into the choice table
+		con.query('INSERT INTO choices (uid_student, uid_day) values (?, ?)', [uid_student, uid_day], function(err) {
+			if(!err) {
+				//	Redirects back since the request has been carried out
+				res.redirect('/student');
+			} else {
+				//	Renders an error page if one occured
+				res.render('error.html', {err:err});
+			}
+		});
 	});
 	return this;
  }
