@@ -10,68 +10,31 @@ var message_students_notsignedup = "Meet Mr. Ware in the dining hall!";
 
 module.exports = {
  // Gets the number of students in an offering on a day
- numStudents: function(uid_day, uid_offering, getStudentInfo, callback)	{
+ numStudents: function (uid_day, uid_offering, callback) {
  	var numStud = 0;
- 	var studList = [];
-  //	TO DO:
-  //	REPLACE THIS CALLBACK STRING WITH A JOIN QUERY
-  //	EITHER USE GETSTUDENTINFO IN ANOTHER FILE OR CUT IT
-  //
- 	con.query('SELECT * FROM choices', function(err, row) {
-    	if(!err) {
-	    	for(var i=0; i<row.length; i++) {
-	         	if(uid_offering == row[i].uid_offering && uid_day == row[i].uid_day) {
-		           	numStud += 1;
-		           	if(getStudentInfo) {
-		             	studList.push(row[i].uid_student);
-		           	}
-	         	}  
-	       	}
-	       	if(getStudentInfo) {
-	         	var infoList = [];    
-	         	con.query('SELECT * FROM students', function(err, row) {
-		           	if(!err) {
-		            	for(var i=0; i<row.length; i++) {
-		               		for(var j=0; j<studList.length; j++) {
-			                 	if(row[i].uid_student == studList[j]) {
-			                		infoList.push(row[i].firstname + " " + row[i].lastname);
-			                 	}
-		               		}
-		            	} 
-		            	callback(numStud, infoList);
-		            } else {
-		            	console.log("SELECT FROM STUDENTS DONE ERRD");
-	             		console.log(err);
-		            }
-	         	});
-	       	} else {
-	         callback(numStud, null);
-	     	}
-       	} else {
-       		console.log("SELECT FROM CHOICES DONE ERRD");
-       		console.log(err);
+ 	con.query('SELECT students.uid_student FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering = ? AND uid_day = ?', [uid_offering, uid_day], function(err, students) {
+ 		if(!err) {
+	 		for (var i = 0; i < students.length; i++) {
+	 			numStud += 1;
+	 		}
+	 		callback(numStud);
+ 		} else {
+ 			console.log("Join Query Produced an Error.");
  		}
  	});
  },
 
  //	Pretty Self Explanatory
- isOfferingFull: function (uid_day, uid_offering, callback) {
- 	//	Gets the maximum size
-   con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [uid_offering], function(err, data) {
-    if(!err) {
-      //	Gets the number of students in an offering 
-      module.exports.numStudents(uid_day, uid_offering, false, function(num, infoList){
+ isOfferingFull: function (uid_day, uid_offering, max_size, callback) {
+    //	Gets the number of students in an offering 
+    module.exports.numStudents(uid_day, uid_offering, function(numStud) {
         //	Compares that number to the offering's maximum size
-        if(data[0] && num >= data[0].max_size) {
+        if(numStud >= max_size) {
           callback("disabled");
         } else {
           callback("able");
         }    
-      });
-    } else {
-      console.log("The function produced an error.");
-    }
-  });
+    });
  },
 
  // Function gets all offerings on a certain day (uid_day)
@@ -86,7 +49,7 @@ module.exports = {
 			var j = 0;
 		    for(var i = 0; i < result.length; i++) {
 		      //	Uses isOfferingFull for every one, which will return either 'disabled' or 'able'
-		      module.exports.isOfferingFull(uid_day, result[i].uid_offering, function(truth) {
+		      module.exports.isOfferingFull(uid_day, result[i].uid_offering, result[i].max_size, function(truth) {
 				  //	Adds the availability of the offering as a property
 				  result[j].disabled = truth;
 				  j+=1;
@@ -149,15 +112,22 @@ module.exports = {
  //	A middleware to determine whether an offering is full or not
  //	Used in the post request to make sure students don't sign up for closed offerings
  isOpenOffering:function(req,res,next){
- 	//	Checks if the offering is full
- 	module.exports.isOfferingFull(req.body.uid_day, req.body.choice, function(truth) {
- 		if(truth == "able") {
- 			//	Keeps going if the offering is open
-	 		return next();
-	    } else {
-	    	//	Redirects to student if the offering is full, thereby cancelling the student's form submission
-	    	res.redirect('/student');
-	 	}
+ 	con.query('SELECT max_size FROM offerings WHERE uid_offering', [req.body.choice], function(err, result) {
+ 		if(!err) {
+ 			//	Checks if the offering is full
+		 	module.exports.isOfferingFull(req.body.uid_day, req.body.choice, result[0].max_size, function(truth) {
+		 		if(truth == "able") {
+		 			//	Keeps going if the offering is open
+			 		return next();
+			    } else {
+			    	//	Redirects to student if the offering is full, thereby cancelling the student's form submission
+			    	res.redirect('/student');
+			 	}
+		 	});
+ 		} else {
+ 			//	Renders an error page if one occured
+			res.render('error.html', {err:err});
+ 		}
  	});
  },
 
