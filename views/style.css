@@ -53,11 +53,29 @@ body{
 	font-size: 20px;
 }
 
+/* OTHER */
+
 #offerings{
 	margin:auto;
 	text-align:left;
 	color:white;
 	font-family: 'Open Sans';
+}
+
+#submit{
+	width:100px;
+	height: 40px;
+	font-size:15px;
+	cursor:pointer;
+	border:none;
+	font-family: 'Open Sans';
+	text-align: center;
+	background-color: white;
+	border-color: white;
+	color: grey;
+    text-decoration: none;
+    margin: auto;
+    justify-content: center;
 }
 
 .accordion {
@@ -84,6 +102,8 @@ body{
     overflow: scroll;
 }
 
+/* TABLE STYLE*/
+
 table{
 	border-collapse: collapse;
 	margin-top: 50px;
@@ -105,6 +125,8 @@ th{
 	background-color: black;
 	color: white;
 }
+
+
 
 /*CSV STYLE*/
 
@@ -196,6 +218,7 @@ textarea{
 #choice{
 	margin: auto;
 	padding-top: 50px;
+	padding-bottom: 50px;
 	text-align: left;
 	color: white;
 	font-family: 'Open Sans';

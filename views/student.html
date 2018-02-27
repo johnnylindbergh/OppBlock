@@ -8,8 +8,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
 
-<body>
-  <img id = "logo" src="/OppBlockLogoFinal.png">
+  <body>
+    <img id = "logo" src="/OppBlockLogoFinal.png">
 
 	<div id= "centralBox">
 	  <p id= "titleText">Student Portal</p>
@@ -38,18 +38,19 @@
 		  	</tr>
 		  	{{/data}}
 		  </table>
-		<input type="submit" value="Save New Choice">
-		<p id="reminder">Make Sure You Choose an OppBlock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</p>
+		<input id="submit" type="submit" value="Save New Choice">
+		<!-- <p id="reminder">Make Sure You Choose an OppBlock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</p> -->
 	  </form>
 
 	  {{/oppTime}}
 	  {{^notExcluded}} <!-- Excludes the override button unless the student is excluded -->
 	  <form method="post">
 		<input type="hidden" name="uid_day" value="{{uid_day}}">
-		<input type="submit" style="" value="Override">
+		<input id="submit" type="submit" style="" value="Override">
 	  </form>
 	  {{/notExcluded}}
 	</div>
+	
 	<script>
 	/*function sortTable(n) {
 		console.log("IM DOING SOMETHING");
