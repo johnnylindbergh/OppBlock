@@ -75,84 +75,31 @@ module.exports = {
  },
 
  // Function gets all offerings on a certain day (uid_day)
- // Returns a list ('offerList') of Offering objects, with all necessary properties (although the teacher will be a Name NOT a uid)
+ // Returns a list of Offering objects including a property for avalialability ('.disbaled')
  getOfferings: function (uid_day, callback) {
-   function Offering(uid, name, description, maxSize, recurring, teacher, location) {
-    this.uid = uid;
-    this.name = name;
-    this.description = description;
-    this.maxSize = maxSize;
-    this.recur = recurring;
-    this.teacher = teacher;
-    this.location = location;
-    this.disabled;
-  }
-  var offerList = [];
-  var trueOffers = [];
-  //	TO DO:
-  //	REPLACE THIS CALLBACK STRING WITH A JOIN QUERY
-  //
-  //	Gets all offerings associated with that day
-  con.query('SELECT * FROM calendar', function(err, dayList){
-    for(var i=0; i<dayList.length; i++) {
-      if(dayList[i].uid_day == uid_day) {
-        trueOffers.push(dayList[i].uid_offering);
-      }
-    }
-    //	TO DO:
-    //	ORDER OFFERINGS FOR NICENESS
-    //	Gets the info associated with those offerings
-    con.query('SELECT * FROM offerings', function(err, rowList) {
-      if(!err) {
-        for(var i=0; i<rowList.length; i++) {
-          for(var j=0; j<trueOffers.length; j++) {
-            if(rowList[i].uid_offering == trueOffers[j]) {
-              var offering = new Offering(rowList[i].uid_offering, rowList[i].name, rowList[i].description, rowList[i].max_size, rowList[i].recurring, rowList[i].uid_teacher, rowList[i].location);
-              offerList.push(offering);
-            }
-          }
-        }
-        //	Gets the teacher's names rather than their uids
-        con.query('SELECT * FROM teachers', function(err, row) {
-          if(!err) {
-            for(var j=0; j<row.length; j++) {
-              for(var i=0; i<offerList.length; i++) {
-                if(row[j].uid_teacher == offerList[i].teacher) {
-                  offerList[i].teacher = row[j].teacher_lastname;
-                };
-              };
-            };
-            callback(offerList);
-          } else {
-            console.log("We're sorry. getOfferings() produced an error.");
-          }
-        });
-      } else {
-        console.log("We're sorry. getOfferings() produced an error.");
-      } 
-    }); 
-  });
- },
-
-// Function takes in an Oppblock day
-// Returns a list of unfilled Offering Objects for that day
- getAvailableOfferings: function (uid_day, callback) {
-  //	TO DO:
-  //	REMOVE THIS FUNCTION AND PUT THE DISABLING LOOP IN GETOFFERINGS
-  var availableList = []
-  module.exports.getOfferings(uid_day, function(response) {
-    var j = 0;
-    for(var i = 0; i <response.length; i++) {
-      module.exports.isOfferingFull(uid_day, response[i].uid, function(truth){
-		  response[j].disabled = truth;
-		  availableList.push(response[j]);
-		  j+=1;
-		  if(j==response.length) {
-			callback(availableList);
-		  }
-      });
-    }
-  });
+ 	//	Join query to find a list of offerings on a certain day with the name of their teacher
+ 	con.query('SELECT * from offerings JOIN calendar on offerings.uid_offering = calendar.uid_offering JOIN teachers on teachers.uid_teacher = offerings.uid_teacher WHERE calendar.uid_day = ?', [uid_day], function(err, result) {
+		//	Makes sure the join query didn't error or produce an empty set
+		if (!err && result != undefined) {
+			
+			//	Loops through every offering to find whether or not it is full
+			var j = 0;
+		    for(var i = 0; i < result.length; i++) {
+		      //	Uses isOfferingFull for every one, which will return either 'disabled' or 'able'
+		      module.exports.isOfferingFull(uid_day, result[i].uid_offering, function(truth) {
+				  //	Adds the availability of the offering as a property
+				  result[j].disabled = truth;
+				  j+=1;
+				  //	Calls back the list once all the queries have run
+				  if (j==result.length) {
+					callback(result);
+				  }
+		      });
+		    }
+		} else {
+			console.log("We're sorry. A join query produced an error and or an empty set.");
+		}
+	});
  },
 
 // Takes in nothing
@@ -240,7 +187,7 @@ module.exports = {
 									res.render('student.html', {Student:student.firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
 								} else {
 									// Gets all offerings for the user to choose from
-									module.exports.getAvailableOfferings(uid_day, function(offerings) {
+									module.exports.getOfferings(uid_day, function(offerings) {
 										// At last, renders the page with the lack of choice, and the choices table
 										res.render('student.html', {Student:student.firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 									});
@@ -255,7 +202,7 @@ module.exports = {
 											res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for choosing has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true}); //Change Constant Time
 										} else {
 											// Gets all offerings for the user to choose from
-											module.exports.getAvailableOfferings(uid_day, function(offerings) {
+											module.exports.getOfferings(uid_day, function(offerings) {
 												// At last, renders the page with the current choice, and the choices table
 												res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"You've already chosen, but if you'd like to change your choice, choose a different offering!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 											});
