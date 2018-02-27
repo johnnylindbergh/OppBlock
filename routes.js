@@ -8,9 +8,7 @@ var Levenshtein = require('levenshtein');
 var getClosest = require('get-closest');
 var PriorityQueue = require('priorityqueuejs');
 
-module.exports = function(app) {
-
-
+module.exports = function(app, socket) {
 
 	app.get('/', function(req, res) {
 		if (req.isAuthenticated()) {
@@ -62,71 +60,51 @@ module.exports = function(app) {
 					}
 	*/
 
-	app.get('/teacher', middleware.isTeacher, function(req, res){
+	app.get('/teacher', middleware.isTeacher, function(req, response){
 		var uid_teacher = req.user.local.uid_teacher;
 		var currentOffering;
 
-		con.query('select * from opp_block_day join calendar on calendar.uid_day = opp_block_day.uid_day join offerings on offerings.uid_teacher = ? order by opp_block_day.day desc',[uid_teacher], function(err, resultsDay){
-			if (!err){
-				for (var i = 0; i < resultsDay.length; i++){
+		//	DISGUSTING FIX -- PLEASE CHANGE (This gets today)
+		var today = moment().format('YYYY-MM-DD');
 
-					currentOffering = resultsDay[0];
-					if (moment(resultsDay[i].day).isAfter()){
-
-						currentOffering = resultsDay[i];
-
-						break;
+		con.query('SELECT * FROM opp_block_day WHERE day = ?;', [today], function(err, res) {
+			if (!err && res[0]) {	// this means there's an opp block today
+				var uid_day = res[0].uid_day;
+				con.query('SELECT * FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_day = ? AND offerings.uid_teacher = ?', [uid_day, uid_teacher], function(err, currentOffering) {
+					if (!err && currentOffering[0]){	// teacher is offering today
+						con.query('SELECT * FROM choices JOIN students ON choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[uid_day, currentOffering[0].uid_offering], function(err, students){
+							if (!err){
+								con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+									if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+										response.render('teacher.html', {
+											currentOffering:currentOffering[0],
+											offeringId:currentOffering[0].uid_offering,
+											offeringDay:currentOffering[0].uid_day,
+											containsStudents: (students.length != 0) ,
+											students:students,
+											data: resultsTeacher,
+											teacherName: resultsTeacher[0].first +" "+resultsTeacher[0].last,
+										});
+									} else {
+										con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {	// this should be in req.user. come on.
+											if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+						 					response.render('teacher.html', {					 	
+						 						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
+						 					});
+											} else {
+												response.redirect('/error');
+											}
+										});
+									}
+								});
+							}
+						});
+					} else {	// teacher is not offering today -- but you're still looking for offerings?! Bruh I'm done.
+						renderBasicTeacher(response, uid_teacher); 
 					}
-				}
-				if (currentOffering != undefined){
-
-					con.query('select * from choices join students on choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[currentOffering.uid_day, currentOffering.uid_offering], function(err, students){
-						if (!err){
-							con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-								if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-									res.render('teacher.html', {
-										currentOffering:currentOffering,
-										offeringId:currentOffering.uid_offering,
-										offeringDay:currentOffering.uid_day,
-										containsStudents: (students.length != 0) ,
-										students:students,
-										data: resultsTeacher,
-										teacherName: resultsTeacher[0].first +" "+resultsTeacher[0].last,
-									});
-								} else {
-									con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-										if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-					 					res.render('teacher.html', {					 	
-					 						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
-					 					});
-										} else {
-											res.redirect('/error');
-										}
-									});
-								}
-							});
-						}
 					});
-				} else {
-					con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-								if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-									res.render('teacher.html', {
-										data: resultsTeacher,
-										teacherName: resultsTeacher[0].first + " " + resultsTeacher[0].last
-									});
-								} else {
-									con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
-										if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
-					 					res.render('teacher.html', {					 	
-					 						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname
-					 					});
-										} else {
-											res.redirect('/error');
-										}
-									});
-								}
-							});
-				}
+			} else { // what happens when there's no opp block today?
+				renderBasicTeacher(response, uid_teacher); 
 			}
 		});
 	});
@@ -139,7 +117,6 @@ module.exports = function(app) {
 				con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ? order by opp_block_day.day;', [offering_uid], function(err, dayResults) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
-							console.log(settings.hours_close_teacher.value_int);
 							if (moment(dayResults[i].day).add(settings.hours_close_teacher.value_int,'hours').isBefore()){
 								dayResults[i]['canEdit'] = false;
 								
@@ -346,38 +323,24 @@ module.exports = function(app) {
 
 
 
-	//	The page for teachers to take attendance for their offering
-	app.post('/updateAttendance/:offering', middleware.isTeacher, function(req,res){
-		//	An array of uids for students that have arrived in this offering
-		var students = req.body.students;
-		//	An array of uids for all the students in this offerings
-		var allStudents = req.body.allStudents; 
-		//	The current uid_day
-		var uid_day = req.body.uid_day;
-		
-		var uid_offering = req.params.offering;
 
-		con.query('UPDATE choices SET arrived = 0 WHERE uid_day = ? AND uid_offering = ?', [uid_day, uid_offering], function(err){
-			if(!err) {
-				//	Then loops through the arrived students and sets them as such
-				if (students !== undefined){
-					for (var i = 0; i <students.length; i++) {
-						con.query('UPDATE choices SET arrived = 1 WHERE uid_student = ? and uid_day = ?', [students[i], uid_day], function(err){
-							if (err){
-								//	Renders the error page if an error occured
-								res.render('error.html', {err: err});
-							}
-						});
-					}
-				}
-				res.redirect('/teacher');
-			} else{
-				//	Renders the error page if an error occured
-				res.render('error.html', {err: err});
-			}
-		});
 
+	socket.on('connection', function(socket){
+
+   		socket.on('updateAttendance', function(student, offering, day, arrived){
+
+    		if (student && offering && day && arrived != undefined){
+    			con.query('UPDATE choices SET arrived = ? WHERE uid_student = ? AND uid_offering = ? AND uid_day = ?;',[arrived, student, offering, day],function(err){
+    				if (err){
+    					res.render('error.html', {err: err});
+    				}
+    			});
+    		}
+
+ 	 	});
+ 	 
 	});
+
 
 	app.post('/addStudent/:offering/:day', middleware.isTeacher, function(req,res){
 		var uid_offering = req.params.offering;
@@ -394,10 +357,6 @@ module.exports = function(app) {
 				var c = getClosest.custom(student,students, function (compareTo, baseItem) {
   					return new Levenshtein(compareTo, baseItem).distance;
 				});
-				console.log(uid_offering);
-								console.log(studentIDs[c]);
-
-				console.log(uid_day);
 
 
 				con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, studentIDs[c], uid_day], function(err){
@@ -411,6 +370,8 @@ module.exports = function(app) {
 			}
 		});
 	});
+
+	
 	app.get('/removeStudent/:day/:offering/:student', middleware.isTeacher, function(req,res){
 		var day = req.params.day;
 		var offering = req.params.offering;
@@ -425,3 +386,25 @@ module.exports = function(app) {
 		});
 	});
 }
+
+function renderBasicTeacher(res, uid_teacher) {
+	con.query('select * from teachers where uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+		if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
+			con.query('select * from offerings where uid_teacher = ?;', [uid_teacher], function(err, offeringData) {
+				if (!err && offeringData !== undefined){
+					res.render('teacher.html', {					 	
+						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname,
+						data: offeringData
+					});
+				} else {
+					res.render('teacher.html', {					 	
+						teacherName: resultsTeacher[0].teacher_firstname + " " + resultsTeacher[0].teacher_lastname,
+					});
+				}
+				
+			});
+		} else {
+			res.redirect('/error');
+		}
+	});
+};

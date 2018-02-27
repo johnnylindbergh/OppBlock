@@ -29,12 +29,12 @@
 			  <th>Maximum Size</th>
 		  	</tr>	
 		  	{{#data}}
-		  	<tr class={{disabled}} id="{{uid}}"> <!-- disabled greys out the tr element and disables the radio button -->
-		  	  <td> <input type="radio" name="choice" value="{{uid}}" {{disabled}}> {{name}} </td>  
+		  	<tr class={{disabled}} id="{{uid_offering}}"> <!-- disabled greys out the tr element and disables the radio button -->
+		  	  <td> <input type="radio" name="choice" value="{{uid_offering}}" {{disabled}}> {{name}} </td>  
 		  	  <td>{{description}}</td> 
-		  	  <td>{{teacher}}</td>
+		  	  <td>{{teacher_lastname}}</td>
 		  	  <td>{{location}}</td>
-		  	  <td>{{maxSize}}</td> 
+		  	  <td>{{max_size}}</td> 
 		  	</tr>
 		  	{{/data}}
 		  </table>
@@ -44,7 +44,7 @@
 
 	  {{/oppTime}}
 	  {{^notExcluded}} <!-- Excludes the override button unless the student is excluded -->
-	  <form method="post">
+	  <form method="post" action="/studentOverride">
 		<input type="hidden" name="uid_day" value="{{uid_day}}">
 		<input id="submit" type="submit" style="" value="Override">
 	  </form>

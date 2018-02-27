@@ -13,7 +13,9 @@ var Levenshtein = require("levenshtein");
 var https = require('https');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
 var passport = require('passport');
-
+//I am going to get hate for this
+var server          = require('http').createServer(app);
+var socket          = require('socket.io')(server);
 
 var GOOGLE_CLIENT_ID      = "827038446996-lrrntro5hskmu9aj1jc55nrmv9090jr0.apps.googleusercontent.com"
   , GOOGLE_CLIENT_SECRET  = "FDN0_OJ3tM3jlfsRZYsWyGTq";
@@ -75,7 +77,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8980/auth/google/callback",
+    callbackURL: "http://opp.stab.org/auth/google/callback",
     passReqToCallback: true
   },
   function(request, accessToken, refreshToken, profile, done) {
@@ -118,7 +120,7 @@ app.get('/logout', function(req, res){
 
 
 var admin = require("./admin.js").init(app);
-var routes = require('./routes.js')(app);
+var routes = require('./routes.js')(app, socket);
 var student = require("./student.js").init(app);
 var auth = require("./auth.js")(app);
 var roles = require("./roles.js");
@@ -129,9 +131,11 @@ app.get('/testing', function(req, res){
 });
 
 
-var server = app.listen(8980, function() {
+server.listen(8980, function() {
     console.log('OppBlock server listening on port %s', server.address().port);
 });
+
+
 
 
 
