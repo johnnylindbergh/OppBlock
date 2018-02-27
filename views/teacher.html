@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <title>Oppblock System: Teacher Portal</title>
     <link rel="stylesheet" href="/style.css" type="text/css"/>
     <style> body {padding: 0; margin: 0;} </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.8.2/fullcalendar.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link href="http://www.bootstraptoggle.com/css/bootstrap-toggle.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="/socket.io/socket.io.js"></script> 
   </head>
-<body>
-  <img id = "logo" src="/OppBlockLogoFinal.png">
 
-  <div id= "centralBox">
+  <body>
+    <img id = "logo" src="/OppBlockLogoFinal.png">
 
-  <p id= "titleText">Teacher Portal</p>
-  <p id= "signedInAs">Welcome, {{teacherName}}!</p>
+    <div id= "centralBox">
+      <p id= "titleText">Teacher Portal</p>
+      <p id= "signedInAs">Welcome, {{teacherName}}!</p>
 
-
-
-
-  {{#currentOffering}}
+{{#currentOffering}}
 
   <div id="currentOffering">
     <button class="accordion">Current Offering: {{name}}</button>
