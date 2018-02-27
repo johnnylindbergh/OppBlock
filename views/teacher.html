@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-        <link rel="stylesheet" href="/style.css" type="text/css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <title>Oppblock System: Teacher Portal</title>
     <link rel="stylesheet" href="/style.css" type="text/css"/>
     <style> body {padding: 0; margin: 0;} </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.8.2/fullcalendar.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.8.2/fullcalendar.min.js"></script>
+    <link href="http://www.bootstraptoggle.com/css/bootstrap-toggle.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script> 
   </head>
 <body>
   <img id = "logo" src="/OppBlockLogoFinal.png">
@@ -39,24 +38,20 @@
             <th class="panel">Status</th>
             <th class="panel"></th>
           </tr>
-          <form action="/updateAttendance/{{offeringId}}" method="post">
             <input type="hidden" name="uid_day" value="{{offeringDay}}">
             {{#students}}
               <tr class="panel">
                 <td class="panel">{{firstname}} {{lastname}}</td> 
-                <td class="panel">
-                  <input type ="hidden" name ="allStudents" value ="{{uid_student}}" >
-    
-                  <input type="checkbox" id ="{{uid_student}}" style="display:none;" name="students" value = "{{uid_student}}" {{#arrived}}checked="checked"{{/arrived}}>
-                  <label class="check" for="{{uid_student}}">{{#arrived}}Arrived{{/arrived}}{{^arrived}}Not Arrived{{/arrived}}</label>
-                  <td><a class="button" href="/removeStudent/{{uid_day}}/{{uid_offering}}/{{uid_student}}">Remove</a></td> 
-                </td> 
+                <td class="panel">          
+              <input class='arrived' student ={{uid_student}} offering={{uid_offering}} day={{offeringDay}} type="checkbox" {{#arrived}}checked{{/arrived}}  data-toggle="toggle" data-on="Arrived" data-off="Not Arrived" data-onstyle="success" data-offstyle="danger">
+                </td>
+                  
+                  <td><a class="button" href="/removeStudent/{{uid_day}}/{{uid_offering}}/{{uid_student}}">Remove</a></td>  
   
               </tr>
             {{/students}}
         </table>
-  
-      <input type="submit" value="Update Attendance"> 
+
       <br>
     </form>
     {{/containsStudents}}
@@ -112,21 +107,35 @@
   {{/data}}
 
   </table>
-  {{^data}}No Offerings{{/data}}
+  {{^data}} <br><center>No Offerings</center>{{/data}}
   </div>
 
 </div>
 
 	
 <script>
-$(".check").on("click", function(){
-  $(this).html() == "Arrived" ? $(this).html('Not Arrived') : $(this).html('Arrived');
+$(document).ready(function() {
+    var socket = io();
+
+
+
+
+$(".arrived").change(function(){
+
+  var student = $(this).attr('student');
+  var offering = $(this).attr('offering');
+  var day = $(this).attr('day');
+  var arrived = $(this).prop('checked');
+
+  socket.emit('updateAttendance', student, offering, day, arrived);
+
 });
 
 $(".accordion").click(function() {
   $(".panel").slideToggle();
 });
 
+});
 </script>
 </body>
 </html>
