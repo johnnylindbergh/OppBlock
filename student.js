@@ -174,7 +174,6 @@ module.exports = {
 				curr.add({minutes:settings["minutes_length_oppblock"].value_int}); 
 				//	Checks if the current oppBlock day is in the future and before the closest
 				//	If so, replaces closest with the current
-				console.log(curr);
 				if (curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
 					closest = moment(curr.format('YYYY-MM-DD'));	
 					uid_day = results[i].uid_day;				
@@ -220,7 +219,7 @@ module.exports = {
 		// Gets Student's id from middleware
 		var student = req.user.local[0];
 		var uid_student = student.uid_student; 
-		
+
 		// This query gets the student's first name for the display page, thereby checking whether the url contained a valid uid
 		// This function finds the upcoming oppblock, whether it is time for students to choose, and whether it is past the cutoff time
 		module.exports.getSoonestOppblockDay(function(uid_day, cutOff) {
@@ -279,27 +278,30 @@ module.exports = {
 		});	
 	});
 	
-	//	The student post request serves two functions: to insert a student's choice into the database and to override an exclusion from the OppBlock Day
-	app.post('/studentChoice', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
+	//	The student post request serves to insert/update a student's choice in the database
+	app.post('/student', middleware.isStudent, module.exports.isOpenOffering, function(req, res) {
 		// Gets the student's uid, the uid of their offering of choice, and the current day uid
 		var uid_student = req.user.local[0].uid_student; 
 		var uid_offering = req.body.choice;
 		var uid_day = req.body.uid_day;
 
-		console.log(uid_offering);
-		// Makes sure the student has chosen 
+		// Makes sure the student has chosen something
 		if(uid_offering != undefined) {
-			// Updates their hoice in the database
+			// Updates their choice in the database
 			con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, uid_student, uid_day], function(err, results) {
 				if(!err) {
-					//	Redirects back since the request has been carried out
+					//	Redirects back once the update has been carried out
 					res.redirect('/student');
 				} else {
 					//	Renders an error page if one occured
 					res.render('error.html', {err:err});
 				}
 			});
+		} else {
+			//	Redirects back if the student hasn't chosen anything
+			res.redirect('/student');
 		}
+
 	});
 
 	//	This post request is for when students are excluded wrongfully from an OppBlock Day

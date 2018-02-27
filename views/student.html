@@ -39,12 +39,11 @@
 		  	{{/data}}
 		  </table>
 		<input type="submit" value="Save New Choice">
-		<p id="reminder">Make Sure You Choose an OppBlock Offering Before {{cutOffStudent}} on the Next Scheduled Oppblock Day</p>
 	  </form>
 
 	  {{/oppTime}}
 	  {{^notExcluded}} <!-- Excludes the override button unless the student is excluded -->
-	  <form method="post">
+	  <form method="post" action="/studentOverride">
 		<input type="hidden" name="uid_day" value="{{uid_day}}">
 		<input type="submit" style="" value="Override">
 	  </form>
