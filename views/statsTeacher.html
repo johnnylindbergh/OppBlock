@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	  <title>Stats</title>
+	  <link rel="stylesheet" href="/style.css" type="text/css"/>
+    <style> body {padding: 0; margin: 0;} </style>
+  </head>
+
+  <body>
+    <a href="/admin"><img id = "logo" src="/OppBlockLogoFinal.png"></a>
+    <div id= "centralBox">
+      <p id= "titleText">Statistics: Teachers and their Averages</p>
+
+  	  <table>
+        <tr>
+          <th>Teacher</th>
+          <th>Days Where She/He Made Offerings (%)</th>
+          <th>Average Gender Ratio of Offerings (%)</th>
+          <th>Average Number of Students (in Her/His Offerings)</th>
+          <th>Average Number of Freshmen</th>
+          <th>Average Number of Sophomores</th>
+          <th>Average Number of Juniors</th>
+          <th>Average Number of Seniors</th>
+        </tr>
+        {{#data}}
+        <tr>
+          <td>{{teachername}}</td>
+          <td>{{percentMade}}</td>
+          <td>{{percentGender}}</td>
+          <td>{{numStudents}}</td>
+          <td>{{numFreshmen}}</td>
+          <td>{{numSophomores}}</td>
+          <td>{{numJuniors}}</td>
+          <td>{{numSeniors}}</td>
+        </tr>
+        {{/data}}
+      </table>
+    </div>
+  </body>
+</html>
