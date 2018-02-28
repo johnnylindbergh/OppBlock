@@ -114,7 +114,7 @@ module.exports = function(app, socket) {
 		var teacher_uid = req.user.local.uid_teacher;
 		con.query('select * from offerings where uid_offering = ?;', [offering_uid], function(err, offeringInfo) {
 			if (!err) {
-				con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ? order by opp_block_day.day;', [offering_uid], function(err, dayResults) {
+				con.query('select opp_block_day.uid_day, opp_block_day.day, calendar.uid_offering as "set" from opp_block_day left join calendar on opp_block_day.uid_day=calendar.uid_day and calendar.uid_offering = ? order by opp_block_day.day desc;', [offering_uid], function(err, dayResults) {
 					if (!err) {
 						for (var i = 0; i < dayResults.length; i++) {
 							if (moment(dayResults[i].day).add(settings.hours_close_teacher.value_int,'hours').isBefore()){
@@ -164,7 +164,6 @@ module.exports = function(app, socket) {
 			}
 		});
 	});
-
 	app.post('/updateOffering/:offering_id/', middleware.isTeacher, function(req, res) {
 		var offering_id = req.params.offering_id;
 		var name = req.body.name;
@@ -174,53 +173,64 @@ module.exports = function(app, socket) {
 		var teacherId = req.user.local.uid_teacher;
 		var isNew = req.body.isNew;
 		var days = req.body.days;
-		if (days == undefined){days = []}
 
 		if (isNew){
-			con.query('INSERT into offerings (name, location, max_size, description, uid_teacher) values (?, ?, ?, ?, ?);', [name, location, max_size,  description, teacherId ], function(err) {
+			con.query('INSERT into offerings (name, location, max_size, description, uid_teacher) values (?, ?, ?, ?, ?);', [name, location, max_size,  description, teacherId ], function(err, id) {
 				if (!err) {
-					con.query('select * from offerings where uid_offering = last_insert_id();', function(err, offeringInfo) {
-						if (!err){
-							offering_id = parseInt(offeringInfo[0].uid_offering);
-							for (var d = 0; d < days.length; d++) {	
-								con.query('insert into calendar (uid_day, uid_offering) values (?,?) ON DUPLICATE KEY UPDATE uid_day=?;', [days[d], offering_id, days[d], offering_id, days[d], offering_id], function(err,result) {
-									if (err){
-										console.log(err);
-									}else{
+					offering_id = id.insertId;
+					for (var d = 0; d < days.length; d++) {	
+						con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err,result) {
+							if (err){
+								console.log(err);
+							}else{
 										
-									}				
-								});
-							}
-							res.redirect('/teacher');
-						}else{
-							console.log(err);
-						}
-					});
+							}				
+						});
+					}
+
+					res.redirect('/teacher');
+					
 				} else {
 					res.send("not valid offering id!");
 				}
 			});
 
 		} else {
-			
-			con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
-				if (!Array.isArray(days)){days = [days];}
-				for (var i = 0; i < days.length; i++) {if(days[i] != undefined){days[i] = parseInt(days[i])}else{days = []}}
+			con.query('SELECT uid_teacher FROM offerings WHERE uid_offering = ?', [offering_id], function(err, offeringConfirmation){
+				if (!err && offeringConfirmation[0].uid_teacher == teacherId){
 					con.query('UPDATE offerings SET name = ?, location = ?, description = ?, max_size = ? WHERE uid_offering = ?;', [name, location, description, max_size, offering_id], function(err) {
 						if (!err) {
-							for (var d = 0; d < days.length; d++) {	
-								con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?);', [days[d], offering_id], function(err,result) {
-									if (err){ console.log(err); }
-								});
-							}
-							res.redirect('/teacher');
-						} else {
-							res.render('error.html', {err: err});
+							con.query('delete from calendar where uid_offering = ?;', [offering_id], function(err,result) {
+								if (!err){
+									if (days){
+										for (var d = 0; d < days.length; d++) {	
+											con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err,result) {
+												if (err){
+													console.log(err);
+												} else {
+										
+												}				
+											});
+										}
+									}
+									
+								} else {
+									console.log(err);
+								}
+							});
 						}
 					});
+				}
+
 			});
-		}	
+
+
+		}
+
+
+		
 	});
+	
 	//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
 	app.get('/locations/', function(req, res) { res.send(undefined)});
 
@@ -297,7 +307,7 @@ module.exports = function(app, socket) {
 
 	app.get('/add', middleware.isTeacher, function(req, res) {
 		var teacher_uid = req.user.local.uid_teacher;
-		con.query('select * from opp_block_day', function(err, dayResults) {
+		con.query('select * from opp_block_day order by day desc', function(err, dayResults) {
 			if (!err && dayResults != undefined) {
 				for (var i = 0; i < dayResults.length; i++) {
 					if (moment(dayResults[i].day).add(settings.hours_close_teacher.value_int,'hours').isBefore()){
