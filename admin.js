@@ -199,21 +199,32 @@ module.exports =  {
 		});
 
 		//	A page giving admins long term statistics
-		app.get('/stats', middleware.isAdmin, function(req, res) {
+		app.get('/statsTeacher', middleware.isAdmin, function(req, res) {
+			//NEED WAY TO MAKE IT FOR ONLY PAST DAYS
+			con.query('SELECT uid_teacher, lastname_teacher, FROM teachers', function(err, teachers) {
+				if(!err) {
+					//	WRITE DOWNWHAT NEEDS TO HAPPEN
+					for (var i=0; i<teachers.length; i++) {
+						con.query('SELECT')
+					}
+				} else {
+					//	Renders the error page if an error occured
+					res.render('error.html', {err: err});
+				}
+			});
 			//	Renders the page
-			res.render('stats.html');
+			res.render('statsTeacher.html', {data:teachers});
 		});
 
 		//	A page letting admins create/manage excluded groups
 		app.get('/groups', middleware.isAdmin, function(req, res) {
-			res.send("This page is under construction. Check back soon!");
+			//	Renders the page
+			res.render('groups.html');
 		});
 
 		//	TO DO: 
-		//		Implement the '/notarrived' page that shows all those who haven't arrived at their offering (which dynamically updates?)
 		//		Implement the '/stats' page that gives long term data for offerings, teachers, and students (1984???)
-		//
-		//		Replace some of the get requests with post requests because a lot of links have the disgusting '/:day/:date'??? But then harder to refresh???
+		//		Implement the '/groups' page to do excluded groups
 		return this;
 		// Note: return this returns this module so we can do this elsewhere:
 		// var admin = require('./admin.js').init(app);
