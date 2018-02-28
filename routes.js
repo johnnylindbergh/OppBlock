@@ -74,7 +74,7 @@ module.exports = function(app, socket) {
 					if (!err && currentOffering[0]){	// teacher is offering today
 						con.query('SELECT * FROM choices JOIN students ON choices.uid_student = students.uid_student and choices.uid_day = ? and choices.uid_offering = ?',[uid_day, currentOffering[0].uid_offering], function(err, students){
 							if (!err){
-								con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name as offeringName, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
+								con.query('select teachers.uid_teacher, teachers.teacher_firstname as first, teachers.teacher_lastname as last, offerings.name, offerings.location as location, offerings.uid_offering, offerings.description, offerings.max_size, offerings.recurring from teachers inner join offerings ON teachers.uid_teacher=offerings.uid_teacher where teachers.uid_teacher = ?;', [uid_teacher], function(err, resultsTeacher) {
 									if (!err && resultsTeacher !== undefined && resultsTeacher.length != 0) {
 										response.render('teacher.html', {
 											currentOffering:currentOffering[0],
