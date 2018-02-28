@@ -178,20 +178,20 @@ module.exports = function(app, socket) {
 			con.query('INSERT into offerings (name, location, max_size, description, uid_teacher) values (?, ?, ?, ?, ?);', [name, location, max_size,  description, teacherId ], function(err, id) {
 				if (!err) {
 					offering_id = id.insertId;
-					for (var d = 0; d < days.length; d++) {	
-						con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err,result) {
-							if (err){
-								console.log(err);
-							}else{
-										
-							}				
-						});
+					if (days){
+						for (var d = 0; d < days.length; d++) {	
+							con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err) {
+								if (err){
+									console.log(err);
+								}			
+							});
+						}
 					}
 
 					res.redirect('/teacher');
 					
 				} else {
-					res.send("not valid offering id!");
+					res.send("not valid offering form!");
 				}
 			});
 
@@ -206,29 +206,21 @@ module.exports = function(app, socket) {
 										for (var d = 0; d < days.length; d++) {	
 											con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err,result) {
 												if (err){
-													console.log(err);
-												} else {
-										
-												}				
+													res.render("error.html", {err: err});
+												} 
 											});
 										}
-									}
-									
-								} else {
-									console.log(err);
-								}
+									} 
+											
+								} 
 							});
-						}
+						} 
 					});
-				}
 
+					res.redirect('/teacher');
+				} 
 			});
-
-
 		}
-
-
-		
 	});
 	
 	//UPDATE offerings SET name=?, description = ?, max_size = ?, recurring = ?, WHERE uid_offering=?;
