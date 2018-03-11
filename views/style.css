@@ -132,7 +132,7 @@ th{
 textarea{
 	width:150.5px;
 	font-size:15px;
-	display: block;
+	display: inline-block;
 	text-align:left;
 	cursor:pointer;
 	border:none;
