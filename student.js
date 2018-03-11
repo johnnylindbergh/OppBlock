@@ -113,7 +113,7 @@ module.exports = {
  //	Used in the post request to make sure students don't sign up for closed offerings
  isOpenOffering:function(req,res,next){
  	con.query('SELECT max_size FROM offerings WHERE uid_offering', [req.body.choice], function(err, result) {
- 		if(!err) {
+ 		if(!err && result != undefined && result.length != 0) {
  			//	Checks if the offering is full
 		 	module.exports.isOfferingFull(req.body.uid_day, req.body.choice, result[0].max_size, function(truth) {
 		 		if(truth == "able") {
