@@ -24,13 +24,11 @@
                 <br>
                 <form action="/updateOffering/{{offeringId}}/" method="post">
                     {{#data}}
-                        Oppblock Name:
+                         <h4>Oppblock Name: </h4>
                         <input name="isNew" type="hidden" value="{{isNew}}">
                             <input name="name" type="text" value="{{name}}">
-                                <br>
-                                        Location:
+                                        <h4> Location:</h4>
                                     <input class="location" name="location" type="text" value="{{location}}">
-                                        <br>
                                             <div id="location">
                                                 Potential Conflicts:
                                                 <br>
@@ -53,14 +51,12 @@
                                                 </br>
                                             </div>
                                             
-                                                Description:
-                                                <br>
+                                                <h4>Description: </h4>
                                                     <textarea cols="40" name="description" rows="10">{{description}}</textarea>
-                                                    <br>
-                                                        Max Size:
-                                                        <br>
+                                                         <h4>Max Size:</h4>
                                                             <input name="max_size" type="text" value="{{max_size}}">
-                                                                Days Offered:
+                                                              <br>
+                                                                <h4> Days Offered:</h4>
                                                                          <table style="margin:1px; padding:2px;">
                                                                         {{#dayData}}
                                                                        <tr>
