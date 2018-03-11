@@ -173,7 +173,7 @@ module.exports = function(app, socket) {
 		var teacherId = req.user.local.uid_teacher;
 		var isNew = req.body.isNew;
 		var days = req.body.days;
-
+		if (!Array.isArray(days)){days = [days]}
 		if (isNew){
 			con.query('INSERT into offerings (name, location, max_size, description, uid_teacher) values (?, ?, ?, ?, ?);', [name, location, max_size,  description, teacherId ], function(err, id) {
 				if (!err) {
@@ -206,7 +206,7 @@ module.exports = function(app, socket) {
 										for (var d = 0; d < days.length; d++) {	
 											con.query('insert ignore into calendar (uid_day, uid_offering) values (?,?); ', [days[d], offering_id], function(err,result) {
 												if (err){
-													res.render("error.html", {err: err});
+													console.log(err);
 												} 
 											});
 										}
