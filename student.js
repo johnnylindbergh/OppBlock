@@ -12,14 +12,11 @@ module.exports = {
  // Gets the number of students in an offering on a day
  numStudents: function (uid_day, uid_offering, callback) {
  	var numStud = 0;
- 	con.query('SELECT students.uid_student FROM choices JOIN students ON choices.uid_student = students.uid_student WHERE uid_offering = ? AND uid_day = ?', [uid_offering, uid_day], function(err, students) {
+ 	con.query('SELECT COUNT(*) AS count FROM choices WHERE uid_offering = ? AND uid_day = ?', [uid_offering, uid_day], function(err, students) {
  		if(!err) {
-	 		for (var i = 0; i < students.length; i++) {
-	 			numStud += 1;
-	 		}
-	 		callback(numStud);
+	 		callback(students[0].count);
  		} else {
- 			console.log("Join Query Produced an Error.");
+ 			console.error("Cannot count students in offering.");
  		}
  	});
  },
@@ -112,7 +109,7 @@ module.exports = {
  //	A middleware to determine whether an offering is full or not
  //	Used in the post request to make sure students don't sign up for closed offerings
  isOpenOffering:function(req,res,next){
- 	con.query('SELECT max_size FROM offerings WHERE uid_offering', [req.body.choice], function(err, result) {
+ 	con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [req.body.choice], function(err, result) {
  		if(!err && result != undefined && result.length != 0) {
  			//	Checks if the offering is full
 		 	module.exports.isOfferingFull(req.body.uid_day, req.body.choice, result[0].max_size, function(truth) {
