@@ -26,6 +26,8 @@ module.exports = {
     //	Gets the number of students in an offering 
     module.exports.numStudents(uid_day, uid_offering, function(numStud) {
         //	Compares that number to the offering's maximum size
+        //	CHANGE
+        console.log((numStud >= max_size));
         if(numStud >= max_size) {
           callback("disabled");
         } else {
@@ -62,31 +64,45 @@ module.exports = {
 	});
  },
 
-// Takes in nothing
-// Returns two values:
-// A uid_day of the coming oppblock (null if the students can't yet choose) AND
-// A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
- getSoonestOppblockDay: function(callback) {
-	// Gets all Oppblock days
-	con.query('SELECT * FROM opp_block_day', function(err, results){	
+ //	A middleware to get the uid and date of the next OppBlock
+ nextOppblockDay: function(req, res, next) {
+ 	// Gets all Oppblock days
+	con.query('SELECT * FROM opp_block_day ORDER BY day DESC', function(err, results){	
 		if(!err){
-			var uid_day = null;
-			var closest = moment().add(1, 'y');
+			var closest;
+			var uid_day;
+			//	Loops to find soonest Oppblock
 			for (var i=0; i<results.length; i++) {
-				//	Loops to find soonest Oppblock
 				var curr = moment(results[i].day, 'YYYY-MM-DD');
 				// 	Specficies the oppblock to the end of oppblock on that date
-				//	TO DO: SIMPLY THIS CODE
 				curr.add({hours:settings["hours_close_oppblock"].value_int, minutes:settings["minutes_close_oppblock"].value_int}); 
 				curr.add({minutes:settings["minutes_length_oppblock"].value_int}); 
-				//	Checks if the current oppBlock day is in the future and before the closest
-				//	If so, replaces closest with the current
-				if (curr.isBefore(closest) && curr.isSameOrAfter(moment())) {
+				//	Checks if the current oppBlock day is in the future and replaces it as the closest if so
+				if (curr.isSameOrAfter(moment())) {
 					closest = moment(curr.format('YYYY-MM-DD'));	
-					uid_day = results[i].uid_day;				
+					uid_day = results[i].uid_day;
 				}
 			} 
-			// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
+			//	Leaves the uid_day and moment date object in req.student for use by future middlewares
+			req.student.uid_day = uid_day;
+			req.student.day = closest;
+			
+			return next();
+		} else {
+			console.log("An error done occured.");
+			res.render('error.html', {err:err});
+		}
+	});
+ },
+
+ //	A middleware
+ isStudentExcluded: function(req, res, next) {
+
+ },
+
+ //	A middleware
+ isStudentTime: function(req, res, next) {
+ 	// 	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 			var studentCutoff = moment(closest.add({hours:settings["hours_close_student"].value_int}));
 			var teacherCutoff = moment(closest.add({hours:settings["hours_close_teacher"].value_int}));
 			
@@ -100,15 +116,23 @@ module.exports = {
 			} else {
 				callback(null, null);
 			}
-		} else {
-			console.log("Error in finding the upcoming oppblock");
-		}
-	});
+ },
+
+ //	A middleware
+ isValidChoice: function(req, res, next) {
+
+ },
+
+// Returns two values:
+// A uid_day of the coming oppblock (null if the students can't yet choose) AND
+// A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
+ getSoonestOppblockDay: function(callback) {
+	
  },
 
  //	A middleware to determine whether an offering is full or not
  //	Used in the post request to make sure students don't sign up for closed offerings
- isOpenOffering:function(req,res,next){
+ isOpenOffering: function(req,res,next){
  	con.query('SELECT max_size FROM offerings WHERE uid_offering = ?', [req.body.choice], function(err, result) {
  		if(!err && result != undefined && result.length != 0) {
  			//	Checks if the offering is full
