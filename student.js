@@ -29,9 +29,9 @@ module.exports = {
         //	CHANGE
         console.log((numStud >= max_size));
         if(numStud >= max_size) {
-          callback("disabled");
+          callback(true);
         } else {
-          callback("able");
+          callback(false);
         }    
     });
  },
@@ -121,13 +121,6 @@ module.exports = {
  //	A middleware
  isValidChoice: function(req, res, next) {
 
- },
-
-// Returns two values:
-// A uid_day of the coming oppblock (null if the students can't yet choose) AND
-// A boolean cutOff, signifying whether the user is now past the cutoff time for students' choices
- getSoonestOppblockDay: function(callback) {
-	
  },
 
  //	A middleware to determine whether an offering is full or not
