@@ -25,14 +25,8 @@ module.exports = {
  isOfferingFull: function (uid_day, uid_offering, max_size, callback) {
     //	Gets the number of students in an offering 
     module.exports.numStudents(uid_day, uid_offering, function(numStud) {
-        //	Compares that number to the offering's maximum size
-        //	CHANGE
-        console.log((numStud >= max_size));
-        if(numStud >= max_size) {
-          callback(true);
-        } else {
-          callback(false);
-        }    
+        //	Calls back that number compared to the offering's maximum size
+        callback((numStud >= max_size));
     });
  },
 
@@ -88,11 +82,11 @@ module.exports = {
 					closest = moment(curr.format('YYYY-MM-DD'));	
 					uid_day = results[i].uid_day;
 				}
-			} 
+			}
+
 			//	Leaves the uid_day and moment date object in req.student for use by future middlewares
-			req.student.uid_day = uid_day;
-			req.student.day = closest;
-			
+			req.student = {uid_day: uid_day, day: closest};
+
 			return next();
 		} else {
 			//	Renders an error page if one occured
@@ -104,16 +98,29 @@ module.exports = {
  //	A middleware checking if the student exists in the choices table; saves his/her choice for future use if so; otherwise renders the excluded student page
  isStudentExcluded: function(req, res, next) {
  	//	Gets student/day from req object
-	var uid_student = req.user.local[0].uid_student;  
+	var student = req.user.local[0];
+	var uid_student = student.uid_student;
  	var uid_day = req.student.uid_day;
  	
- 	con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, choice) { // only gets the uid not the name
+ 	//	Gets a student's choice or lack thereof
+ 	con.query('SELECT uid_offering FROM choices WHERE uid_student = ? AND uid_day = ?', [uid_student, uid_day], function(err, choiceUid) { // only gets the uid not the name
  		if(!err) {
- 			if (choice.length != 0) {
- 				//	Leaves the choice in req.student for use by future middlewares
- 				req.student.choice = choice[0].uid_offering;
+ 			if (choiceUid.length != 0) {
+ 				//	Gets specific information about the student's choice
+ 				con.query('SELECT uid_offering, name, location FROM offerings WHERE uid_offering = ?', [choiceUid[0].uid_offering], function(err, choice) {
+					if(!err) {
+						if (choice.length == 0) {
+							choice = [choiceUid[0].uid_offering];
+						}
+		 				//	Leaves the choice in req.student for use by future middlewares
+		 				req.student.choice = choice[0];
 
- 				return next();
+		 				return next();
+					} else {
+						//	Renders an error page if one occured
+						res.render('error.html', {err:err});
+					}
+				});
  			} else {
  				// Renders the page without any choices, since the student is excluded
 				res.render('student.html', {Student:student.firstname, Choice:"No Choice Required", Description:"Due to a sport or perhaps some other commitment, you will not participate in Oppblock today. Press Override if this doesn't apply to you.", uid_day:uid_day, oppTime:true});
@@ -125,17 +132,18 @@ module.exports = {
  	});
  },
 
- //	A middleware
+ //	A middleware checking whether the students should be waiting to choose, choosing, or attending their choices, only moving on if it is choice time
  isStudentTime: function(req, res, next) {
  	// Gets Student's id from the req object
 	var student = req.user.local[0];
 	var uid_student = student.uid_student; 
+	var choice = req.student.choice;
 
  	//	Creates Cutoff time variables relative to closest oppblock, based on admin settings
 	var oppBlockDay = req.student.day;
 	var studentCutoff = moment(oppBlockDay.add({hours:settings["hours_close_student"].value_int}));
 	var teacherCutoff = moment(oppBlockDay.add({hours:settings["hours_close_teacher"].value_int}));
-	
+
 	//	Checks if after the teacher cutoff
 	if (moment().isSameOrAfter(teacherCutoff)) {
 		//	Checks if after the student cutoff
@@ -146,7 +154,7 @@ module.exports = {
 				res.render('student.html', {Student:student.firstname, Choice:"None (You Forgot to Sign Up!)", Description:message_students_notsignedup, oppTime:true, notExcluded:true});
 			} else {
 				// Renders the page only with the user's current choice
-				res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"The time for choosing has passed. At 2:45, head to " + choice[0].location + "!", oppTime:true, notExcluded:true}); //Change Constant Time
+				res.render('student.html', {Student:student.firstname, Choice:choice.name, Description:"The time for selection has passed. At 2:45, head to " + choice.location + "!", oppTime:true, notExcluded:true}); //Change Constant Time
 			}
 		} else {
 			return next();
@@ -165,11 +173,11 @@ module.exports = {
  	// Makes sure the student has actually made a choice
 	if(uid_offering != undefined) {
 		//	Join query checks if the offering has a valid uid and is offered on the current day
-		con.query('SELECT offerings.name, offerings.max_size calendar.uid_offering FROM calendar JOIN offerings ON calendar.uid_offering = offerings.uid_offering WHERE calendar.uid_offering = ? AND calendar.uid_day = ?', [uid_offering, uid_day], function(err, resultsOffering) {
-			if(!err && resultsOffering != undefined && resultsOffering.length != 0 && ) {
+		con.query('SELECT offerings.name, offerings.max_size, calendar.uid_offering FROM offerings JOIN calendar ON offerings.uid_offering = calendar.uid_offering WHERE calendar.uid_offering = ? AND calendar.uid_day = ?', [uid_offering, uid_day], function(err, resultsOffering) {
+			if(!err && resultsOffering != undefined && resultsOffering.length != 0) {
 				//	Checks if the offering is full
-				isOfferingFull(uid_day, uid_offering, resultsOffering[0].max_size, function(full) {
-					if(!full) {
+				module.exports.isOfferingFull(uid_day, uid_offering, resultsOffering[0].max_size, function(full) {
+					if (!full) {
 						return next();
 					} else {
 						res.render('error.html', {err:"You tried to sign up for a full offering! Go back."});
@@ -183,14 +191,16 @@ module.exports = {
 	} else {
 		res.redirect('/student');
 	}
- 	return next();
  },
 
  init: function(app) {
+	//	General Student Endpoint
 	app.get('/student', middleware.isStudent, module.exports.nextOppblockDay, module.exports.isStudentExcluded, module.exports.isStudentTime, function(req, res){
-		// Gets Student's id from the req object
+		// Gets Student's id and the day from the req object
 		var student = req.user.local[0];
 		var uid_student = student.uid_student; 
+		var uid_day = req.student.uid_day;
+		var choice = req.student.choice;
 
 		// Gets all offerings for the user 
 		module.exports.getOfferings(uid_day, function(offerings) {
@@ -200,7 +210,7 @@ module.exports = {
 				res.render('student.html', {Student:student.firstname, Choice:"None", Description:"Choose an offering from the table below!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 			} else {
 				// At last, renders the page with the current choice, and the choices table
-				res.render('student.html', {Student:student.firstname, Choice:choice[0].name, Description:"You've already chosen, but if you'd like to change your choice, choose a different offering!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
+				res.render('student.html', {Student:student.firstname, Choice:choice.name, Description:"You've already chosen, but if you'd like to change your choice, choose a different offering!", uid_day:uid_day, data:offerings, cutOffStudent:settings["hours_close_student"].value_int, notExcluded:true});
 			}
 		});
 	});
@@ -215,7 +225,7 @@ module.exports = {
 		// Updates the student's choice in the database
 		con.query('UPDATE choices SET uid_offering = ? WHERE uid_student = ? AND uid_day = ?', [uid_offering, uid_student, uid_day], function(err, results) {
 			if(!err) {
-				//	Redirects back once the update has been carried out
+				//	Redirects back after update
 				res.redirect('/student');
 			} else {
 				//	Renders an error page if one occured
@@ -230,10 +240,17 @@ module.exports = {
 		var uid_student = req.user.local[0].uid_student;
 		var uid_day = req.student.uid_day;
 
-		// Overrides an excluded group by adding the student into the choice table
-		con.query('INSERT INTO choices (uid_student, uid_day) values (?, ?)', [uid_student, uid_day], function(err) {
+		// Overrides an excluded group by adding the student into the choice table // Deletes first for security
+		con.query('DELETE FROM choices WHERE uid_student = ? AND uid_day = ? AND uid_offering IS NULL', [uid_student, uid_day], function(err) {
 			if(!err) {
-				res.redirect('/student');
+				con.query('INSERT INTO choices (uid_student, uid_day) values (?, ?)', [uid_student, uid_day], function(err) {
+					if(!err) {
+						res.redirect('/student');
+					} else {
+						//	Renders an error page if one occured
+						res.render('error.html', {err:err});
+					}
+				});
 			} else {
 				//	Renders an error page if one occured
 				res.render('error.html', {err:err});
