@@ -3,11 +3,6 @@ OppBlock service for St. Anne's Belfield School
 
 ##### Creators: William Du, Hewson Duffy, Milo Last-Yuen, Johnny Lindbergh, Conrad MacKethan, and Jerry Yao
 
-# OppBlock
-
-OppBlock service for St. Anne's Belfield School 
-
-
 ## Introduction 
 
 The purpose of this project is to streamline the OppBlock™ program while addressing some of its issues. 
